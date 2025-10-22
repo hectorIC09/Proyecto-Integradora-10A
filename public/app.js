@@ -17,7 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const d = await res.json();
     document.querySelector("#msg").textContent = d.message;
-    if (d.ok) window.location.href = "/dashboard";
+    
+    // 💡 CAMBIO: Esto ya está bien si quieres ir al dashboard,
+    // pero si usas el App Shell privado, debes cambiarlo a /app.html
+    // Si /dashboard es tu App Shell Privado, déjalo así:
+    if (d.ok) window.location.href = "/dashboard"; 
   });
 
   // --- REGISTRO ---
@@ -37,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#msg-reg").textContent = d.message;
 
     if (d.ok) {
-      // Si se registró bien → regresar al login
+      // Si se registró bien → regresar al login (ahora login.html)
       regForm.classList.remove("active");
       loginForm.classList.add("active");
       formTitle.textContent = "Iniciar sesión";
@@ -59,3 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
     formTitle.textContent = "Iniciar sesión";
   });
 });
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/serviceWorker.js") 
+        .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
+        .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
+    });
+  }

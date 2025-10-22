@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 id="form-title"> LOGIN </h1>
+
+    <!-- Formulario de login -->
+    <form id="login-form" class="form active">
+      <input type="email" id="email" placeholder="Correo" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Iniciar sesión</button>
+      <p class="toggle-text">
+        ¿No tienes cuenta?
+        <a href="#" id="show-register">Regístrate</a>
+      </p>
+      <div id="msg"></div>
+    </form>
+
+    <!-- Formulario de registro-->
+    <form id="register-form" class="form">
+      <input type="text" id="rname" placeholder="Nombre" required>
+      <input type="email" id="remail" placeholder="Correo" required>
+      <input type="password" id="rpassword" placeholder="Contraseña" required>
+      <button type="submit">Registrarse</button>
+      <p class="toggle-text">
+        ¿Ya tienes cuenta?
+        <a href="#" id="show-login">Inicia sesión</a>
+      </p>
+      <div id="msg-reg"></div>
+    </form>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

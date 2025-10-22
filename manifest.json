@@ -1,0 +1,11 @@
+{
+  "name": "Campus Watch",
+  "short_name": "Campus",
+  "description": "Aplicación web del proyecto escolar Campus Watch.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2575fc",
+  "orientation": "portrait"
+}

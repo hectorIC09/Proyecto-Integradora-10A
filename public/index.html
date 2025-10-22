@@ -1,40 +1,133 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <link rel="stylesheet" href="/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2575fc">
+    <title>Campus Watch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Nuevos colores inspirados en tu logo */
+        .gradient-bg {
+            /* De un morado oscuro a un azul brillante */
+            background: linear-gradient(135deg, #764ba2 0%, #2575fc 100%);
+        }
+        .text-primary {
+            /* Morado de la marca */
+            color: #764ba2; 
+        }
+        .bg-accent {
+             /* Amarillo para acento */
+            background-color: #ffc107; 
+        }
+        .bg-accent:hover {
+            background-color: #e0ac00;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <h1 id="form-title"> LOGIN </h1>
+<body class="bg-gray-50 font-sans">
+    
+    <nav class="bg-white shadow-lg sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+            <div class="flex items-center">
+                <span class="text-xl font-bold text-primary">Campus Watch</span>
+            </div>
+            <div class="space-x-6 flex items-center">
+                <a href="#caracteristicas" class="text-gray-700 hover:text-primary text-sm font-medium">Características</a>
+                <a href="#contacto" class="text-gray-700 hover:text-primary text-sm font-medium">Contacto</a>
+                <a href="index.html" class="bg-primary hover:opacity-90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Formulario de login -->
-    <form id="login-form" class="form active">
-      <input type="email" id="email" placeholder="Correo" required>
-      <input type="password" id="password" placeholder="Contraseña" required>
-      <button type="submit">Iniciar sesión</button>
-      <p class="toggle-text">
-        ¿No tienes cuenta?
-        <a href="#" id="show-register">Regístrate</a>
-      </p>
-      <div id="msg"></div>
-    </form>
+    <section id="inicio" class="gradient-bg py-24 text-white">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h1 class="text-5xl font-extrabold mb-4">
+                Bienvenido a <span class="text-yellow-300">Campus Watch</span>
+            </h1>
+            <p class="text-xl mb-10 opacity-90 max-w-3xl mx-auto">
+                Plataforma digital para monitorear la seguridad de estudiantes con autonomía reducida usando sensores IoT y alertas inteligentes.
+            </p>
+            <a href="#contacto" class="bg-accent hover:opacity-90 text-gray-900 font-bold py-3 px-10 rounded-lg text-lg transition-colors">
+                Comenzar Ahora
+            </a>
+        </div>
+    </section>
 
-    <!-- Formulario de registro-->
-    <form id="register-form" class="form">
-      <input type="text" id="rname" placeholder="Nombre" required>
-      <input type="email" id="remail" placeholder="Correo" required>
-      <input type="password" id="rpassword" placeholder="Contraseña" required>
-      <button type="submit">Registrarse</button>
-      <p class="toggle-text">
-        ¿Ya tienes cuenta?
-        <a href="#" id="show-login">Inicia sesión</a>
-      </p>
-      <div id="msg-reg"></div>
-    </form>
-  </div>
+    <section id="caracteristicas" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                    Características Principales
+                </h2>
+                <p class="text-lg text-gray-600">Tecnología IoT para seguridad y bienestar.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-hover">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg mb-3 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Sensores IoT Avanzados</h3>
+                    <p class="text-gray-600 text-sm">Monitoreo continuo de ubicación y estado mediante dispositivos IoT discretos.</p>
+                </div>
 
-  <script src="/app.js"></script>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-hover">
+                    <div class="w-10 h-10 bg-red-100 rounded-lg mb-3 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Alertas Inteligentes</h3>
+                    <p class="text-gray-600 text-sm">Notificaciones automáticas para emergencias, salidas no autorizadas o cambios de estado.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-hover">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg mb-3 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Interfaces Accesibles</h3>
+                    <p class="text-gray-600 text-sm">Herramientas adaptadas para diferentes capacidades, promoviendo la independencia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="py-20 bg-gray-100">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                Contáctanos Hoy
+            </h2>
+            <p class="text-lg text-gray-600 mb-8">
+                Descubre cómo Campus Watch puede transformar la seguridad en tu institución. Llámanos o escríbenos.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <div class="flex items-center text-left">
+                    <svg class="w-6 h-6 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <span class="text-gray-700 font-medium">+1 (555) 123-4567</span>
+                </div>
+                <div class="flex items-center text-left">
+                    <svg class="w-6 h-6 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span class="text-gray-700 font-medium">info@campuswatch.com</span>
+                </div>
+            </div>
+            
+            <a href="login.html" class="mt-8 inline-block bg-accent hover:opacity-90 text-gray-900 font-bold py-3 px-10 rounded-lg transition-colors">
+                Acceder al Sistema
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-6">
+        <div class="max-w-6xl mx-auto text-center px-4">
+            <p class="text-gray-400">&copy; 2024 Campus Watch. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
