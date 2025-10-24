@@ -2,44 +2,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Campus Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
-  <div class="container">
-  <h1 id="welcome">Bienvenido</h1>
-  <button id="btn-logout">Cerrar sesión</button>
+  <header class="main-header">
+    <nav class="container">
+      <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
+      <ul class="nav-links">
+        <li><a href="#alumnos">Alumnos</a></li>
+        <li><a href="#alertas">Alertas</a></li>
+        <li><a href="/mapa.html">Mapa en Vivo</a></li>
+        <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
 
-  <script>
-    async function loadUser() {
-      const res = await fetch("/api/me");
-      if (res.ok) {
-        const d = await res.json();
-        if (d.ok) {
-          document.querySelector("#welcome").textContent = `Bienvenido, ${d.user.name}`;
-        }
-      } else {
-        window.location.href = "/";
-      }
-    }
+  <main class="container dashboard-content">
+    <div class="dashboard-header">
+      <h1 id="welcome">Bienvenido</h1>
+      <a href="/registrar-alumno.html" role="button" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Registrar Alumno
+      </a>
+    </div>
+    <section class="stats-grid">
+      </section>
+    <section id="alumnos" class="main-content-panel">
+      </section>
+  </main>
 
-    document.querySelector("#btn-logout").addEventListener("click", async () => {
-      const res = await fetch("/api/logout", { method: "POST" });
-      const d = await res.json();
-      if (d.ok) window.location.href = "/";
-    });
-
-    loadUser();
-
-     if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("./serviceWorker.js") 
-        .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
-        .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
-    });
-  }
-  </script>
-  </div>
-</body>
+  <script src="app.js"></script>
+  
+  </body>
 </html>

@@ -269,3 +269,255 @@ section h2 {
 .main-footer small {
   color: var(--text-muted);
 }
+
+/* --- 8. Estilos de Login --- */
+body.login-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.form-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* Ocultar formularios inactivos */
+.form {
+  display: none;
+}
+.form.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo para los inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  background-color: var(--bg-dark); /* Fondo más oscuro */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); /* Sombra de foco */
+}
+
+.btn.full-width {
+  width: 100%;
+  padding: 1rem;
+}
+
+.toggle-text {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+}
+.toggle-text a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+.toggle-text a:hover {
+  text-decoration: underline;
+}
+
+.form-message {
+  text-align: center;
+  color: #F87171; /* Un color de error */
+  margin-top: 1rem;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 2rem;
+}
+.back-link a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.back-link a:hover {
+  color: var(--text-light);
+}
+
+
+/* --- 9. Estilos de Dashboard --- */
+
+/* Ajuste para que el contenido no quede debajo del header sticky */
+.dashboard-content {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Para móviles */
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Grid para las stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  position: relative;
+  padding: 1.5rem;
+}
+.stat-card h3 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.stat-card p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Indicador de color para stats */
+.stat-indicator {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.stat-indicator.positive { background-color: #4ADE80; /* Verde */ }
+.stat-indicator.negative { background-color: #F87171; /* Rojo */ }
+.stat-indicator.warning { background-color: #FACC15; /* Amarillo */ }
+
+
+/* Panel principal (para la tabla) */
+.main-content-panel {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.main-content-panel h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: left; /* Sobreescribe el 'center' general */
+}
+
+/* Estilos de Tabla Tech */
+.table-container {
+  overflow-x: auto; /* Responsive para tablas */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+
+table thead {
+  background-color: var(--bg-dark); /* Un poco más oscuro */
+}
+
+table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-light);
+  vertical-align: middle;
+}
+
+table tbody tr {
+  transition: background-color 0.2s ease;
+}
+table tbody tr:hover {
+  background-color: #2a3a52; /* Un hover sutil */
+}
+
+/* Puntos de estado */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.status-dot.connected { background-color: #4ADE80; /* Verde */ }
+.status-dot.alert { background-color: #F87171; /* Rojo */ }
+.status-dot.warning { background-color: #FACC15; /* Amarillo */ }
+.status-dot.disconnected { background-color: #64748B; /* Gris */ }
+
+/* Botones dentro de la tabla */
+.btn-table {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+.btn-table:hover {
+  text-decoration: underline;
+}
+.btn-table.alert {
+  color: #F87171;
+  font-weight: 700;
+}
