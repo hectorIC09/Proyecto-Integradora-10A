@@ -3,12 +3,13 @@ const CACHE_NAME = `campus-watch-${VERSION}`;
 
 // Rutas corregidas, relativas a la carpeta 'public'
 const appShell = [
-    './index.html', 
-    './login.html', 
+    '/',
+    '/index.html', 
+    '/login.html', 
     '/dashboard.html', 
-    './styles.css', 
-    './app.js',
-    './manifest.json'
+    '/styles.css', 
+    '/app.js',
+    '/manifest.json'
 ];
 
 self.addEventListener("install", (event) => {
