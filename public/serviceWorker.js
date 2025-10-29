@@ -5,7 +5,6 @@ const CACHE_NAME = `campus-watch-${VERSION}`;
 const appShell = [
     '/',
     '/index.html', 
-    '/login.html', 
     '/dashboard.html', 
     '/styles.css', 
     '/app.js',
