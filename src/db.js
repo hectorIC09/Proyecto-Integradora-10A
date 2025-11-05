@@ -1,12 +1,18 @@
-import mysql from "mysql2/promise";
+// db.js
+import pg from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME
+// Configura el pool de conexiones de PostgreSQL.
+const pool = new pg.Pool({
+    // Render expone la conexión en DATABASE_URL
+    connectionString: process.env.DATABASE_URL, 
+    
+    // Importante: Render requiere esta configuración SSL para la conexión
+    ssl: process.env.NODE_ENV === "production" ? {
+        rejectUnauthorized: false
+    } : false
 });
 
 export default pool;
