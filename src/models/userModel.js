@@ -1,21 +1,32 @@
-// userModel.js (CORREGIDO PARA POSTGRESQL)
+// userModel.js (CORRECCIÓN FINAL)
 
 import db from "../db.js";
 
 // Buscar usuario por email
 export async function findByEmail(email) {
-  // 1. Cambios: Usar $1 en lugar de ? y usar la tabla _login
-  const result = await db.query("SELECT * FROM public._login WHERE email = $1", [email]); 
   
-  // 2. Cambio: Devolver el primer elemento de la propiedad 'rows'
+  // 1. **CRÍTICO:** Aseguramos que la columna se llame password_hash (todo minúsculas) 
+  // y que is_active se devuelva.
+  const result = await db.query(
+      `SELECT 
+          id, 
+          name, 
+          email, 
+          password_hash, 
+          is_active 
+       FROM public._login 
+       WHERE email = $1`, 
+      [email]
+  ); 
+  
+  // Devolvemos el objeto de usuario
   return result.rows[0]; 
 }
 
-// Crear usuario nuevo
+// Crear usuario nuevo (ESTO YA ESTÁ BIEN)
 export async function createUser({ name, email, password_hash }) {
-  // Cambios: Usar $1, $2, $3 en lugar de ?, ?, ? y usar la tabla _login
   await db.query(
-    "INSERT INTO public._login (name, email, password_hash) VALUES ($1, $2, $3)",
+    "INSERT INTO public._login (name, email, password_hash, is_active) VALUES ($1, $2, $3, 1)", // Añadimos 'is_active'
     [name, email, password_hash]
   );
 }
