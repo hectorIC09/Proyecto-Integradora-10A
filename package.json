@@ -1,10 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "@capacitor/android": "^7.4.4",
-    "@picocss/pico": "^2.1.1",
     "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
@@ -14,9 +11,6 @@
   "version": "1.0.0",
   "description": "Primer paso.. abre XAMPP y ejecuta apache y sql... despues en sql te iras al boton de admin y esperaras a que te cargue la pagina... dentro de este repo.. esta la BD lo que haras es que la vas a importar.. ya que la hayas importado correctamente.\r Necesitaras intalar las dependencias necesarias para correr el programa ... esto lo haras dentro de vscode y en la terminal pondras:  npm i\r Despues de que se instalaron todo... ejecutaras el servidor con el siguiente comando:  node src/server.js",
   "main": "index.js",
-  "devDependencies": {
-    "tailwindcss": "^4.1.16"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
