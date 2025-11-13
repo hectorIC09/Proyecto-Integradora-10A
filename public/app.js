@@ -294,35 +294,40 @@ document.addEventListener("DOMContentLoaded", () => {
       className: 'marker-alert' // Clase CSS definida en styles.css
     });
 
-    // 1. Iniciar el Mapa
-    function iniciarMapa() {
-      // Verificar si el div del mapa existe
-      const mapDiv = document.getElementById('map');
-      if (!mapDiv) {
-        console.log("No se encontró el div #map. Saliendo de iniciarMapa().");
-        return;
-      }
-      
-      mapa = L.map('map').setView([19.3240, -99.1795], 16); // Coordenadas de ejemplo
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-      }).addTo(mapa);
+  // 1. Iniciar el Mapa
+function iniciarMapa() {
+  // Verificar si el div del mapa existe
+  const mapDiv = document.getElementById('map');
+  if (!mapDiv) {
+    console.log("No se encontró el div #map. Saliendo de iniciarMapa().");
+    return;
+  }
 
-      // ✨ ARREGLO MAPA ✨
-      // Forzar al mapa a recalcular su tamaño 100ms después de cargar
-      // Esto arregla el problema de los cuadros grises
-     setTimeout(() => {
+  // 🗺️ Mapa centrado en Santa Catarina, NL (modo oscuro)
+  mapa = L.map('map').setView([25.6768, -100.4581], 14);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+  }).addTo(mapa);
+
+  // ✨ ARREGLO MAPA ✨
+  // Forzar al mapa a recalcular su tamaño 400ms después de cargar
+  setTimeout(() => {
     if (mapa) {
-    mapa.invalidateSize();
-    mapa.setView([19.3240, -99.1795], 16);
-     }
-    }, 400);
-
-   window.addEventListener("resize", () => {
-  if (mapa) mapa.invalidateSize();
-    });
-
+      mapa.invalidateSize();
+      mapa.setView([25.6768, -100.4581], 14);
     }
+  }, 400);
+
+  // Cuando cambie el tamaño de la ventana, reajustar el mapa
+  window.addEventListener("resize", () => {
+    if (mapa) mapa.invalidateSize();
+  });
+}
+
 
     // 2. Cargar Paneles (Alertas y Alumnos) y Marcadores
     async function actualizarDatos() {
