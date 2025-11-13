@@ -18,115 +18,708 @@
 }
 
 /* Reset Básico */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--font-family); background-color: var(--bg-dark); color: var(--text-light); line-height: 1.6; }
-
-/* --- 2. Clases Utilitarias --- */
-.container { max-width: 1140px; margin: 0 auto; padding: 0 1rem; }
-.btn { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1rem; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer; }
-.btn-primary { background-color: var(--primary); color: var(--bg-dark); border-color: var(--primary); }
-.btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-2px); }
-.btn-secondary { background-color: transparent; color: var(--primary); border-color: var(--primary); }
-.btn-secondary:hover { background-color: var(--primary); color: var(--bg-dark); transform: translateY(-2px); }
-
-/* --- 3. Header --- */
-.main-header { background-color: var(--bg-light); border-bottom: 1px solid var(--border-color); padding: 1.25rem 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); }
-.main-header .container { display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 1.4rem; font-weight: 800; color: var(--text-light); text-decoration: none; }
-.nav-links { list-style: none; display: flex; align-items: center; gap: 1.5rem; }
-.nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color 0.2s ease; }
-.nav-links a:hover { color: var(--text-light); }
-
-/* --- 4. Login Styles --- */
-body.login-page { display: grid; place-items: center; min-height: 100vh; padding: 2rem 1rem; }
-.form-container { width: 100%; max-width: 450px; background-color: var(--bg-light); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 2.5rem 2rem 2rem; box-shadow: var(--shadow); }
-.form-container h2 { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 2rem; }
-.form { display: none; }
-.form.active { display: block; }
-.form-group { margin-bottom: 1.5rem; }
-.form-group label { display: block; font-weight: 500; color: var(--text-muted); margin-bottom: 0.5rem; }
-input[type="text"], input[type="email"], input[type="password"] { display: block; width: 100%; padding: 0.9rem 1rem; font-size: 1rem; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-light); margin-bottom: 10px; }
-.btn.full-width { width: 100%; padding: 1rem; }
-.toggle-text { text-align: center; color: var(--text-muted); margin-top: 1.5rem; }
-.toggle-text a { color: var(--primary); cursor: pointer; }
-.form-message { text-align: center; color: #F87171; margin-top: 1rem; }
-
-/* =========================================
-   --- NUEVOS ESTILOS PARA EL DASHBOARD ---
-   (Esto arregla el layout roto)
-========================================= */
-
-/* 1. Resetear el body solo cuando estamos en el dashboard */
-body:has(.dashboard-container) {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden; /* Evita scroll global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* 2. Contenedor Principal dividido */
-.dashboard-container {
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- ESTILO ORIGINAL DEL BODY (NO SE ROMPERÁ) --- */
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* --- 2. Clases Utilitarias (Contenedor y Botones) --- */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--bg-dark); /* Texto oscuro para contraste */
+  border-color: var(--primary);
+}
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-secondary:hover {
+  background-color: var(--primary);
+  color: var(--bg-dark);
+  transform: translateY(-2px);
+}
+
+.btn-large {
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+}
+
+
+/* --- 3. Header y Navegación --- */
+.main-header {
+  background-color: var(--bg-light);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 0;
+  
+  /* Efecto "sticky" para que se quede fijo */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
+  /* Sombra sutil para despegarlo del contenido */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.main-header .container {
   display: flex;
-  height: calc(100vh - 73px); /* Altura total menos el header */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-light);
+  text-decoration: none;
+}
+.logo:hover {
+  color: var(--primary);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Espacio entre links */
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.nav-links a:hover {
+  color: var(--text-light);
+}
+
+.nav-links a.btn {
+  /* Asegura que el botón en el nav no tenga márgenes raros */
+  margin-left: 1rem;
+}
+
+
+/* --- 4. Hero Section --- */
+.hero {
+  padding: 7rem 1rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem; /* Más grande e impactante */
+  font-weight: 800;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: var(--primary);
+}
+
+.hero .subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+}
+
+/* --- 5. Secciones Generales y Features --- */
+section {
+  padding: 5rem 0;
+}
+
+section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.grid {
+  display: grid;
+  /* Columnas responsivas automáticas */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2); /* Sombra de color --primary */
+}
+
+.feature-icon {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  /* Hacemos los iconos un poco más gruesos */
+  stroke-width: 1.5;
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  color: var(--text-light);
+  margin-bottom: 0.75rem;
+}
+
+.card p {
+  color: var(--text-muted);
+}
+
+/* --- 6. Sección de Contacto --- */
+#contacto .contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  margin: 3rem auto 0;
+}
+
+.contact-item {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.contact-item strong {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.contact-item p {
+  font-size: 1.1rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+
+/* --- 7. Footer --- */
+.main-footer {
+  background-color: var(--bg-light);
+  padding: 2.5rem 0;
+  margin-top: 5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.main-footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; 
+  gap: 1rem;
+}
+
+.main-footer small {
+  color: var(--text-muted);
+}
+
+/* --- 8. Estilos de Login --- */
+body.login-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.form-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* Ocultar formularios inactivos */
+.form {
+  display: none;
+}
+.form.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo para los inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  background-color: var(--bg-dark); /* Fondo más oscuro */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); /* Sombra de foco */
+}
+
+.btn.full-width {
+  width: 100%;
+  padding: 1rem;
+}
+
+.toggle-text {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+}
+.toggle-text a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+.toggle-text a:hover {
+  text-decoration: underline;
+}
+
+.form-message {
+  text-align: center;
+  color: #F87171; /* Un color de error */
+  margin-top: 1rem;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 2rem;
+}
+.back-link a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.back-link a:hover {
+  color: var(--text-light);
+}
+
+
+/* --- 9. Estilos de Dashboard (TUS ESTILOS ORIGINALES) --- */
+
+/* Ajuste para que el contenido no quede debajo del header sticky */
+.dashboard-content {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Para móviles */
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Grid para las stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  position: relative;
+  padding: 1.5rem;
+}
+.stat-card h3 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.stat-card p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Indicador de color para stats */
+.stat-indicator {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.stat-indicator.positive { background-color: #4ADE80; /* Verde */ }
+.stat-indicator.negative { background-color: #F87171; /* Rojo */ }
+.stat-indicator.warning { background-color: #FACC15; /* Amarillo */ }
+
+
+/* Panel principal (para la tabla) */
+.main-content-panel {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.main-content-panel h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: left; /* Sobreescribe el 'center' general */
+}
+
+/* Estilos de Tabla Tech */
+.table-container {
+  overflow-x: auto; /* Responsive para tablas */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+
+table thead {
+  background-color: var(--bg-dark); /* Un poco más oscuro */
+}
+
+table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-light);
+  vertical-align: middle;
+}
+
+table tbody tr {
+  transition: background-color 0.2s ease;
+}
+table tbody tr:hover {
+  background-color: #2a3a52; /* Un hover sutil */
+}
+
+/* Puntos de estado */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.status-dot.connected { background-color: #4ADE80; /* Verde */ }
+.status-dot.alert { background-color: #F87171; /* Rojo */ }
+.status-dot.warning { background-color: #FACC15; /* Amarillo */ }
+.status-dot.disconnected { background-color: #64748B; /* Gris */ }
+
+/* Botones dentro de la tabla */
+.btn-table {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+.btn-table:hover {
+  text-decoration: underline;
+}
+.btn-table.alert {
+  color: #F87171;
+  font-weight: 700;
+}
+
+/* --- FIN DE TUS ESTILOS ORIGINALES --- */
+
+
+/* ==========================================================================
+   --- 10. NUEVOS ESTILOS (ARREGLO PARA INDEX.HTML) ---
+   Ahora estos estilos SOLO se aplican si el body
+   tiene la clase ".dashboard-page"
+========================================================================== 
+*/
+
+/* 1. Resetear el body para el layout de mapa */
+body.dashboard-page {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Evita el scroll en la página principal */
+}
+
+/* 2. Contenedor principal del dashboard (mapa + paneles) */
+.dashboard-page .dashboard-container {
+  display: flex;
+  /* Altura = 100% de la ventana MENOS la altura del header (aprox 73px) */
+  height: calc(100vh - 73px); 
   width: 100%;
 }
 
-/* 3. Columna Izquierda (Mapa) */
-.map-wrapper {
-  flex: 6; /* 60% del ancho */
+/* 3. Columna del Mapa (Izquierda) */
+.dashboard-page .map-wrapper {
+  flex: 6; /* Ocupa 60% del espacio */
   height: 100%;
   position: relative;
-  background-color: var(--bg-dark);
+  background-color: var(--bg-dark); /* Color de fondo mientras carga */
 }
-#map { width: 100%; height: 100%; }
 
-/* 4. Columna Derecha (Paneles) */
-.panels-wrapper {
-  flex: 4; /* 40% del ancho */
+/* El mapa debe llenar su contenedor */
+.dashboard-page #map {
+  width: 100%;
   height: 100%;
-  overflow-y: auto; /* Scroll interno solo aquí */
+}
+
+/* 4. Columna de Paneles (Derecha) */
+.dashboard-page .panels-wrapper {
+  flex: 4; /* Ocupa 40% del espacio */
+  height: 100%;
+  overflow-y: auto; /* Permite scroll SÓLO en esta columna */
   padding: 1.5rem 2rem;
-  background-color: var(--bg-dark);
+  background-color: var(--bg-dark); /* Tu fondo oscuro */
   border-left: 1px solid var(--border-color);
 }
 
-/* 5. Estilos de Paneles */
-.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.panel {
+/* 5. Estilos de los paneles (re-usando tu .card) */
+/* Usamos .panel en lugar de .card para no afectar 
+  tus .card de la página principal 
+*/
+.dashboard-page .panel {
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow);
+  /* Sobreescribir 'section' padding */
+  padding: 1.5rem; 
 }
-.panel h2 {
+
+.dashboard-page .panel h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
+  text-align: left; /* Sobreescribe el 'center' general */
 }
 
-/* 6. Listas de Alumnos/Alertas */
+/*
+  Arreglar el .dashboard-header que está DENTRO
+  de .panels-wrapper
+*/
+.dashboard-page .panels-wrapper .dashboard-header {
+  margin-bottom: 1rem;
+  /* Quitar el padding-top de .dashboard-content */
+  padding-top: 0; 
+}
+.dashboard-page .panels-wrapper .dashboard-header h1 {
+  font-size: 2rem; /* Un poco más chico */
+}
+
+/* 6. Estilos de los items en las listas */
 .alert-list-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem; border-radius: 8px;
-  background: rgba(248, 113, 113, 0.15); border: 1px solid rgba(248, 113, 113, 0.4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.1); /* Fondo rojo transparente */
+  border: 1px solid rgba(248, 113, 113, 0.4);
   margin-bottom: 10px;
 }
-.student-list-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem 0; border-bottom: 1px solid var(--border-color);
+.alert-list-item strong {
+  color: #F87171; /* Rojo claro */
 }
 
-/* 7. Botones pequeños de acción */
-.btn-safe { background-color: #22C55E; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-.btn-alert { background-color: #EF4444; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+.student-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.student-list-item:last-child {
+  border-bottom: none;
+}
+.student-list-item small {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
 
-/* 8. Estilos del Mapa Leaflet */
-.marker-alert { filter: hue-rotate(280deg) brightness(1.2) saturate(1.5); } /* Marcador rojo */
-.leaflet-popup-content-wrapper { background-color: var(--bg-light); color: var(--text-light); border-radius: 8px; }
-.leaflet-popup-tip { background-color: var(--bg-light); }
-.popup-title { font-weight: bold; display: block; margin-bottom: 5px; }
-.popup-alert .popup-title { color: #EF4444; }
+/* 7. Nuevos botones de Alerta (rojo) y Seguro (verde) */
+.btn-alert {
+  background-color: #F87171;
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-alert:hover {
+  background-color: #EF4444;
+}
+
+.btn-safe {
+  background-color: #4ADE80;
+  color: var(--bg-dark);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-safe:hover {
+  background-color: #22C55E;
+}
+
+
+/* 8. Estilos para el Mapa (Leaflet) */
+
+/* Vuelve rojo el ícono del marcador */
+.marker-alert {
+  filter: hue-rotate(280deg) brightness(1.2) saturate(1.5);
+}
+
+/* Estilos para el popup del mapa */
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+.leaflet-popup-content {
+  margin: 1rem;
+  font-family: var(--font-family);
+  color: var(--text-light);
+}
+.leaflet-popup-tip {
+  background-color: var(--bg-light);
+}
+/* Flecha del popup (oscura) */
+.leaflet-popup-tip-container {
+  width: 40px;
+  height: 20px;
+  margin-left: -20px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.leaflet-popup-tip {
+  width: 17px;
+  height: 17px;
+  padding: 1px;
+  margin: -10px auto 0;
+  transform: rotate(45deg);
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.popup-title {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--text-light);
+  margin: 0 0 5px;
+}
+.popup-body {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+.popup-alert .popup-title {
+  color: #F87171; /* Rojo */
+}

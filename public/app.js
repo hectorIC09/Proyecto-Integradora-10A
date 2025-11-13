@@ -142,24 +142,29 @@ document.addEventListener("DOMContentLoaded", () => {
 //-----------------------------------------------------------------------------------//
 
 
+// Espera a que todo el HTML esté cargado
 document.addEventListener("DOMContentLoaded", () => {
   
-  // --- SERVICE WORKER ---
+  // --- LÓGICA DEL SERVICE WORKER (GLOBAL) ---
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./serviceWorker.js")
-        .catch(err => console.error("Error SW:", err));
+      navigator.serviceWorker
+        .register("./serviceWorker.js") 
+        .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
+        .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
     });
   }
 
+  
   // --- LÓGICA DE LOGIN / REGISTRO ---
   const loginForm = document.querySelector("#login-form");
   const regForm = document.querySelector("#register-form");
 
   if (loginForm && regForm) {
     const formTitle = document.querySelector("#form-title");
-    
-    // Login
+    console.log("Estoy en la página de Login.");
+
+    // --- LOGIN ---
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.querySelector("#email").value;
@@ -173,12 +178,18 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ email, password })
         });
         const d = await res.json();
-        if (d.ok) window.location.href = "/dashboard.html"; 
-        else msg.textContent = d.message || "Error de credenciales";
-      } catch (err) { msg.textContent = "Error de conexión"; }
+        
+        if (d.ok) {
+          window.location.href = "/dashboard.html"; 
+        } else {
+          msg.textContent = d.message || "Error: Revisa tus credenciales.";
+        }
+      } catch (err) {
+        msg.textContent = "Error de conexión con el servidor.";
+      }
     });
 
-    // Registro
+    // --- REGISTRO ---
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.querySelector("#rname").value;
@@ -193,141 +204,282 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ name, email, password })
         });
         const d = await res.json();
+        
         if (d.ok) {
           regForm.classList.remove("active");
           loginForm.classList.add("active");
           formTitle.textContent = "Iniciar Sesión";
-          alert("Registro exitoso. Inicia sesión.");
-        } else msgReg.textContent = d.message || "Error al registrar";
-      } catch (err) { msgReg.textContent = "Error de conexión"; }
+          document.querySelector("#msg").textContent = d.message || "¡Registro exitoso! Inicia sesión.";
+        } else {
+          msgReg.textContent = d.message || "Error al registrar la cuenta.";
+        }
+      } catch (err) {
+        msgReg.textContent = "Error de conexión con el servidor.";
+      }
     });
 
-    // Toggle Forms
+    // --- TOGGLE ENTRE LOGIN Y REGISTRO ---
     document.querySelector("#show-register").addEventListener("click", (e) => {
-      e.preventDefault(); loginForm.classList.remove("active"); regForm.classList.add("active"); formTitle.textContent = "Crear Cuenta";
+      e.preventDefault();
+      loginForm.classList.remove("active");
+      regForm.classList.add("active");
+      formTitle.textContent = "Crear Cuenta";
     });
+
     document.querySelector("#show-login").addEventListener("click", (e) => {
-      e.preventDefault(); regForm.classList.remove("active"); loginForm.classList.add("active"); formTitle.textContent = "Iniciar Sesión";
+      e.preventDefault();
+      regForm.classList.remove("active");
+      loginForm.classList.add("active");
+      formTitle.textContent = "Iniciar Sesión";
     });
-  }
+  } // <-- Fin del bloque "if (loginForm)"
+
 
   // --- LÓGICA DEL DASHBOARD ---
   const btnLogout = document.getElementById('btn-logout');
   
+  // (Usamos btnLogout para detectar si estamos en dashboard.html)
   if (btnLogout) {
-    // 1. Cargar Usuario y Logout
-    fetch("/api/me").then(res => res.json()).then(d => {
-      if(d.ok) document.querySelector("#welcome").textContent = `Bienvenido, ${d.user.name}`;
-      else window.location.href = "/login.html";
-    }).catch(() => window.location.href = "/login.html");
+    console.log("Estoy en la página de Dashboard.");
 
+    // --- Lógica de Usuario (Tu código original) ---
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.ok) {
+          const d = await res.json();
+          if (d.ok) {
+            document.querySelector("#welcome").textContent = `Bienvenido, ${d.user.name}`;
+          }
+        } else {
+          // Si la API falla (no logueado), lo echamos al login
+          window.location.href = "/login.html";
+        }
+      } catch (err) {
+        console.error("Error cargando usuario:", err);
+        window.location.href = "/login.html"; // Error de red, lo echamos
+      }
+    }
+
+    // 2. Lógica del botón de Logout
     btnLogout.addEventListener("click", async () => {
-      await fetch("/api/logout", { method: "POST" });
-      window.location.href = "/";
+      try {
+        const res = await fetch("/api/logout", { method: "POST" });
+        const d = await res.json();
+        if (d.ok) window.location.href = "/"; // Lo mandamos al index
+      } catch (err) {
+        console.error("Error al cerrar sesión:", err);
+      }
     });
 
-    // --- LÓGICA DEL MAPA Y PANELES ---
-    let mapa = null;
-    const marcadores = {};
+    // 3. Ejecutar la carga del usuario al entrar al dashboard
+    loadUser();
 
-    // Iconos
+    // --- LÓGICA NUEVA DEL MAPA Y PANELES ---
+
+    let mapa = null;
+    const marcadores = {}; // Objeto para guardar los marcadores
+
+    // --- Definir Iconos ---
     const iconDefault = new L.Icon({
       iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
       iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
     });
+
     const iconAlert = new L.Icon({
       iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
       iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41],
-      className: 'marker-alert'
+      className: 'marker-alert' // Clase CSS definida en styles.css
     });
 
+    // 1. Iniciar el Mapa
     function iniciarMapa() {
+      // Verificar si el div del mapa existe
       const mapDiv = document.getElementById('map');
-      if (!mapDiv) return;
+      if (!mapDiv) {
+        console.log("No se encontró el div #map. Saliendo de iniciarMapa().");
+        return;
+      }
       
-      mapa = L.map('map').setView([19.3240, -99.1795], 16); 
+      mapa = L.map('map').setView([19.3240, -99.1795], 16); // Coordenadas de ejemplo
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
       }).addTo(mapa);
 
-      // ✨ ARREGLO IMPORTANTE: Recalcular tamaño tras carga
-      setTimeout(() => { mapa.invalidateSize(); }, 200);
+      // ✨ ARREGLO MAPA ✨
+      // Forzar al mapa a recalcular su tamaño 100ms después de cargar
+      // Esto arregla el problema de los cuadros grises
+      setTimeout(() => {
+        if (mapa) {
+          mapa.invalidateSize();
+          console.log("Mapa recalculado.");
+        }
+      }, 100);
     }
 
-    async function cargarDatos() {
+    // 2. Cargar Paneles (Alertas y Alumnos) y Marcadores
+    async function actualizarDatos() {
       try {
-        const res = await fetch('/api/alumnos');
+        const res = await fetch('/api/alumnos'); // Llama a la API del backend
+        if (!res.ok) throw new Error('Respuesta de API no fue OK');
         const alumnos = await res.json();
-        if(!alumnos.length) return;
 
         const listaAlertas = document.getElementById('alertas-lista');
         const listaAlumnos = document.getElementById('alumnos-lista');
-        
-        listaAlertas.innerHTML = '';
-        listaAlumnos.innerHTML = '';
+        const msgNoAlertas = document.getElementById('no-alertas-msg');
+
+        listaAlertas.innerHTML = ''; // Limpiar
+        listaAlumnos.innerHTML = ''; // Limpiar
         let hayAlertas = false;
+        
+        // Si no hay alumnos, mostrar mensaje y salir
+        if (!alumnos.length) {
+            listaAlumnos.innerHTML = '<p>No hay alumnos registrados.</p>';
+            listaAlertas.appendChild(msgNoAlertas);
+            return;
+        }
 
-        alumnos.forEach(a => {
-          // Actualizar Mapa (Simulación de movimiento)
-          const lat = parseFloat(a.lat_actual) + (Math.random() - 0.5) * 0.0002;
-          const lng = parseFloat(a.lng_actual) + (Math.random() - 0.5) * 0.0002;
-          
-          const icono = a.en_alerta ? iconAlert : iconDefault;
-          const popupClass = a.en_alerta ? 'popup-alert' : '';
-          const popupContent = `<span class="popup-title">${a.nombre}</span>${a.matricula}`;
+        alumnos.forEach(alumno => {
+          const { id, nombre, matricula, lat_actual, lng_actual, en_alerta } = alumno;
 
-          if (marcadores[a.id]) {
-            marcadores[a.id].setLatLng([lat, lng]);
-            marcadores[a.id].setIcon(icono);
-            // Actualizar popup si cambia estado (opcional)
-          } else {
-            marcadores[a.id] = L.marker([lat, lng], {icon: icono}).addTo(mapa)
-              .bindPopup(popupContent, {className: popupClass});
-          }
-
-          // Llenar Paneles
-          const btnHTML = a.en_alerta 
-            ? `<button class="btn-safe" onclick="cambiarAlerta(${a.id}, false)">Marcar Seguro</button>`
-            : `<button class="btn-alert" onclick="cambiarAlerta(${a.id}, true)">Simular Alerta</button>`;
-
-          // Lista Gestión
-          listaAlumnos.innerHTML += `
-            <div class="student-list-item">
-              <div><strong>${a.nombre}</strong> <br><small>${a.matricula}</small></div>
-              ${btnHTML}
-            </div>`;
-
-          // Lista Alertas
-          if(a.en_alerta) {
+          // --- Panel de Alertas ---
+          if (alumno.en_alerta) {
             hayAlertas = true;
-            listaAlertas.innerHTML += `
-              <div class="alert-list-item">
-                <div><strong>${a.nombre}</strong></div>
-                <button class="btn-safe" onclick="cambiarAlerta(${a.id}, false)">Atendido</button>
-              </div>`;
+            const item = document.createElement('div');
+            item.className = 'alert-list-item'; // Estilo de styles.css
+            item.innerHTML = `
+              <div>
+                <strong>${alumno.nombre}</strong>
+                <br><small>${alumno.matricula}</small>
+              </div>
+              <button class="btn btn-safe" data-id="${alumno.id}">Marcar Seguro</button>
+            `;
+            listaAlertas.appendChild(item);
           }
+
+          // --- Panel de Gestión de Alumnos ---
+          const itemAlumno = document.createElement('div');
+          itemAlumno.className = 'student-list-item'; // Estilo de styles.css
+          itemAlumno.innerHTML = `
+            <div>
+              <strong>${alumno.nombre}</strong>
+              <br><small>${alumno.matricula}</small>
+            </div>
+            ${alumno.en_alerta
+              ? `<button class="btn btn-safe" data-id="${alumno.id}">Marcar Seguro</button>`
+              : `<button class="btn btn-alert" data-id="${alumno.id}">Simular Alerta</button>`
+            }
+          `;
+          listaAlumnos.appendChild(itemAlumno);
+          
+          // --- Actualizar Marcadores en Mapa ---
+          if(mapa) { // Solo si el mapa se inició
+            // Simular movimiento (para que parezca "en vivo")
+            // Usamos lat_actual o la inicial si es nula
+            const latBase = parseFloat(lat_actual || alumno.lat_inicial);
+            const lngBase = parseFloat(lng_actual || alumno.lng_inicial);
+            
+            let latSim, lngSim;
+
+            if (marcadores[id] && marcadores[id].currentLat) {
+              // Si ya existe, simular desde su última pos
+              latSim = parseFloat(marcadores[id].currentLat) + (Math.random() - 0.5) * 0.0002;
+              lngSim = parseFloat(marcadores[id].currentLng) + (Math.random() - 0.5) * 0.0002;
+            } else {
+              // Si es nuevo, usar la pos base
+              latSim = latBase;
+              lngSim = lngBase;
+            }
+  
+            const icono = en_alerta ? iconAlert : iconDefault;
+            const popupClase = en_alerta ? 'popup-alert' : '';
+            const popupContenido = `
+              <div class="popup-title">${nombre}</div>
+              <div class="popup-body">Matrícula: ${matricula}</div>
+              ${en_alerta ? '<div class="popup-body" style="color:#F87171; font-weight:bold;">¡NECESITA AYUDA!</div>' : ''}
+            `;
+  
+            if (marcadores[id]) {
+              // Si el marcador existe, moverlo y actualizarlo
+              marcadores[id].setLatLng([latSim, lngSim]);
+              marcadores[id].setIcon(icono);
+              marcadores[id].setPopupContent(popupContenido);
+              if (marcadores[id].getPopup()) {
+                marcadores[id].getPopup().options.className = popupClase;
+              }
+              // Guardar la nueva pos simulada
+              marcadores[id].currentLat = latSim;
+              marcadores[id].currentLng = lngSim;
+            } else {
+              // Si no existe, crearlo
+              marcadores[id] = L.marker([latSim, lngSim], { icon: icono })
+                .addTo(mapa)
+                .bindPopup(popupContenido, { className: popupClase });
+              // Guardar la pos base
+              marcadores[id].currentLat = latSim;
+              marcadores[id].currentLng = lngSim;
+            }
+          }
+
         });
 
-        if(!hayAlertas) listaAlertas.innerHTML = '<p style="color:#888">Sin alertas activas.</p>';
+        if (!hayAlertas && msgNoAlertas) {
+          listaAlertas.appendChild(msgNoAlertas);
+        }
 
-      } catch (err) { console.error("Error actualizando:", err); }
+      } catch (err) {
+        console.error("Error al actualizar datos:", err);
+      }
     }
 
-    // Función global para los botones
-    window.cambiarAlerta = async (id, estado) => {
-      await fetch(`/api/alumnos/alerta/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ en_alerta: estado })
-      });
-      cargarDatos(); // Refrescar inmediato
-    };
+    // 4. Manejador de Clics para botones de Alerta
+    async function manejarClicPaneles(e) {
+      const target = e.target;
+      const id = target.dataset.id;
+      
+      // Si no es un botón con data-id, ignorar
+      if (!id || !(target.classList.contains('btn-alert') || target.classList.contains('btn-safe'))) return;
 
-    // Iniciar
+      let nuevoEstado;
+      if (target.classList.contains('btn-alert')) {
+        nuevoEstado = true; // Botón "Simular Alerta"
+      } else if (target.classList.contains('btn-safe')) {
+        nuevoEstado = false; // Botón "Marcar Seguro"
+      } else {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/alumnos/alerta/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ en_alerta: nuevoEstado })
+        });
+        if (!res.ok) throw new Error('No se pudo actualizar la alerta');
+        
+        actualizarDatos(); // Refrescar todo inmediatamente
+
+      } catch (err) {
+        console.error("Error al cambiar alerta:", err);
+      }
+    }
+
+    // 5. Iniciar todo
     iniciarMapa();
-    cargarDatos();
-    setInterval(cargarDatos, 3000); // Loop cada 3s
-  }
-});
+    actualizarDatos();
+    
+    // Iniciar loops de actualización
+    setInterval(actualizarDatos, 3000); // Actualizar todo (mapa y paneles) cada 3 seg
+
+    // Agregar el listener de clics al contenedor de paneles
+    // (Asegurarse de que .panels-wrapper exista)
+    const panelWrapper = document.querySelector('.panels-wrapper');
+    if (panelWrapper) {
+      panelWrapper.addEventListener('click', manejarClicPaneles);
+    }
+
+  } // <-- Fin del bloque "if (btnLogout)"
+
+}); // <-- Fin del DOMContentLoaded
