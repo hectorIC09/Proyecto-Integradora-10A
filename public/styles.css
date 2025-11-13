@@ -723,3 +723,34 @@ body.dashboard-page {
 .popup-alert .popup-title {
   color: #F87171; /* Rojo */
 }
+/* --- Contenedor del mapa principal --- */
+.map-wrapper {
+  width: 100%;
+  height: 500px; /* puedes ajustar esta altura a lo que se vea mejor */
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Div del mapa (Leaflet) --- */
+#map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Ajuste opcional si el dashboard usa flex o grid */
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* Para que los paneles no tapen el mapa */
+.panels-wrapper {
+  flex: 1;
+  min-width: 350px;
+  z-index: 2;
+}
