@@ -311,12 +311,17 @@ document.addEventListener("DOMContentLoaded", () => {
       // ✨ ARREGLO MAPA ✨
       // Forzar al mapa a recalcular su tamaño 100ms después de cargar
       // Esto arregla el problema de los cuadros grises
-      setTimeout(() => {
-        if (mapa) {
-          mapa.invalidateSize();
-          console.log("Mapa recalculado.");
-        }
-      }, 1000);
+     setTimeout(() => {
+    if (mapa) {
+    mapa.invalidateSize();
+    mapa.setView([19.3240, -99.1795], 16);
+     }
+    }, 400);
+
+   window.addEventListener("resize", () => {
+  if (mapa) mapa.invalidateSize();
+    });
+
     }
 
     // 2. Cargar Paneles (Alertas y Alumnos) y Marcadores
