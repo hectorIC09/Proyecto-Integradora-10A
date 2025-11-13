@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
           mapa.invalidateSize();
           console.log("Mapa recalculado.");
         }
-      }, 500);
+      }, 1000);
     }
 
     // 2. Cargar Paneles (Alertas y Alumnos) y Marcadores
