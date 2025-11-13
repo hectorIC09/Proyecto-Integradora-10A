@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,7 @@
   <title>Dashboard | Campus Watch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -44,4 +45,96 @@
   <script src="app.js"></script>
   
   </body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Campus Watch</title>
+  
+  <!-- CSS de Leaflet (para el mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhpmA9ZQBTioPzGxzVLmYYaEInJTRAzRSLro="
+     crossorigin=""/>
+  
+  <!-- Tus fuentes y estilos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"> <!-- Tu CSS existente -->
+  
+  <!-- 
+    Los estilos nuevos para el layout del dashboard
+    están en el archivo 'additional_styles.css'
+    que te pasé. ¡No olvides agregarlos! 
+  -->
+</head>
+
+<body>
+  <!-- Tu Header (¡Lo conservamos!) -->
+  <header class="main-header">
+    <nav class="container">
+      <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
+      <ul class="nav-links">
+        <li><a href="#alertas">Alertas</a></li>
+        <li><a href="#alumnos">Gestión</a></li>
+        <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Nuevo Contenedor Principal (Mapa + Paneles) -->
+  <main class="dashboard-container">
+    
+    <!-- Columna Izquierda: El Mapa (60%) -->
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+
+    <!-- Columna Derecha: Los Paneles (40%) -->
+    <div class="panels-wrapper">
+      
+      <!-- Tu header de "Bienvenido" (¡Lo conservamos!) -->
+      <div class="dashboard-header">
+        <h1 id="welcome">Bienvenido</h1>
+        <a href="/registrar-alumno.html" role="button" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Registrar Alumno
+        </a>
+      </div>
+      
+      <!-- Panel de Alertas -->
+      <section id="alertas" class="panel">
+        <h2>🚨 Alertas Activas</h2>
+        <div id="alertas-lista">
+          <p id="no-alertas-msg">Cargando alertas...</p>
+        </div>
+      </section>
+
+      <!-- Panel de Alumnos -->
+      <section id="alumnos" class="panel">
+        <h2>👨‍🎓 Gestión de Alumnos</h2>
+        <div id="alumnos-lista">
+          <p>Cargando alumnos...</p>
+        </div>
+      </section>
+
+    </div> <!-- Fin .panels-wrapper -->
+
+  </main> <!-- Fin .dashboard-container -->
+
+  <!-- JS de Leaflet (primero) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+     
+  <!-- Tu JS principal (¡aquí está toda la magia!) -->
+  <script src="app.js"></script>
+
+</body>
 </html>

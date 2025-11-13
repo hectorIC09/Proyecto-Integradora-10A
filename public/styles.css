@@ -521,3 +521,130 @@ table tbody tr:hover {
   color: #F87171;
   font-weight: 700;
 }
+
+/* Estructura del nuevo Dashboard */
+body, html {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Evitar scroll en toda la página */
+}
+
+/* Contenedor principal del dashboard (mapa + paneles) */
+.dashboard-container {
+  display: flex;
+  /* Altura = 100% de la ventana menos la altura del header (60px) */
+  height: calc(100vh - 60px); 
+}
+
+/* Columna del Mapa */
+.map-wrapper {
+  flex: 6; /* 60% del ancho */
+  height: 100%;
+  position: relative;
+}
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Columna de Paneles */
+.panels-wrapper {
+  flex: 4; /* 40% del ancho */
+  height: 100%;
+  overflow-y: auto; /* Scroll solo en esta columna */
+  padding: 24px;
+  box-sizing: border-box;
+  background-color: #f9fafa;
+  border-left: 1px solid #e0e0e0;
+}
+
+/* Estilo de cada panel (Alertas, Gestión) */
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+.panel h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+/* Estilos de los items en las listas */
+.alert-list-item {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 12px; 
+  border-radius: 8px; 
+  background: #fff8f8; /* Fondo rojo claro para alertas */
+  border: 1px solid #fdd; 
+  margin-bottom: 10px;
+}
+.alert-list-item strong { 
+  color: #d90000; 
+}
+
+.student-list-item {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px; 
+  border-bottom: 1px solid #f0f0f0;
+}
+.student-list-item:last-child { 
+  border-bottom: none; 
+}
+
+/* Botones de Alerta (reutiliza tu .btn) */
+.btn-alert, .btn-safe {
+  padding: 5px 10px;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+.btn-alert {
+  background-color: #f44336;
+  color: white;
+}
+.btn-safe {
+  background-color: #4caf50;
+  color: white;
+}
+.btn-alert:hover {
+  background-color: #d32f2f;
+}
+.btn-safe:hover {
+  background-color: #388e3c;
+}
+
+/* Estilos para el popup del mapa */
+.leaflet-popup-content-wrapper { 
+  border-radius: 8px; 
+}
+.leaflet-popup-content { 
+  font-family: 'Inter', sans-serif; 
+}
+.popup-title { 
+  font-weight: 700; 
+  font-size: 1.1em; 
+  margin: 0 0 5px; 
+}
+.popup-body { 
+  font-size: 0.9em; 
+  color: #333; 
+}
+.popup-alert .popup-title { 
+  color: #d90000; 
+}
+.popup-alert .popup-body { 
+  font-weight: bold; 
+  color: #333; 
+}
+
+/* Clase para hacer el ícono del marcador rojo */
+.marker-alert { 
+  filter: hue-rotate(-80deg) brightness(1.1); 
+}
