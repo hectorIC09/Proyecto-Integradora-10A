@@ -377,7 +377,7 @@ input[type="password"]:focus {
 }
 
 
-/* --- 9. Estilos de Dashboard --- */
+/* --- 9. Estilos de Dashboard (TUS ESTILOS ORIGINALES) --- */
 
 /* Ajuste para que el contenido no quede debajo del header sticky */
 .dashboard-content {
@@ -522,129 +522,183 @@ table tbody tr:hover {
   font-weight: 700;
 }
 
-/* Estructura del nuevo Dashboard */
-body, html {
-  height: 100%;
-  margin: 0;
-  overflow: hidden; /* Evitar scroll en toda la página */
+/* --- FIN DE TUS ESTILOS ORIGINALES --- */
+
+
+/* ==========================================================================
+   --- 10. NUEVOS ESTILOS PARA EL DASHBOARD-MAPA ---
+   (Esto arreglará el problema de la foto)
+========================================================================== 
+*/
+
+/* 1. Resetear el body para el layout de mapa */
+/* Usamos 'body:has()' para aplicar esto SOLO si .dashboard-container existe */
+body:has(.dashboard-container) {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Evita el scroll en la página principal */
 }
 
-/* Contenedor principal del dashboard (mapa + paneles) */
+/* 2. Contenedor principal del dashboard (mapa + paneles) */
 .dashboard-container {
   display: flex;
-  /* Altura = 100% de la ventana menos la altura del header (60px) */
-  height: calc(100vh - 60px); 
+  /* Altura = 100% de la ventana MENOS la altura del header (aprox 73px) */
+  height: calc(100vh - 73px); 
+  width: 100%;
 }
 
-/* Columna del Mapa */
+/* 3. Columna del Mapa (Izquierda) */
 .map-wrapper {
-  flex: 6; /* 60% del ancho */
+  flex: 6; /* Ocupa 60% del espacio */
   height: 100%;
   position: relative;
+  background-color: var(--bg-dark); /* Color de fondo mientras carga */
 }
+
+/* El mapa debe llenar su contenedor */
 #map {
   width: 100%;
   height: 100%;
 }
 
-/* Columna de Paneles */
+/* 4. Columna de Paneles (Derecha) */
 .panels-wrapper {
-  flex: 4; /* 40% del ancho */
+  flex: 4; /* Ocupa 40% del espacio */
   height: 100%;
-  overflow-y: auto; /* Scroll solo en esta columna */
-  padding: 24px;
-  box-sizing: border-box;
-  background-color: #f9fafa;
-  border-left: 1px solid #e0e0e0;
+  overflow-y: auto; /* Permite scroll SÓLO en esta columna */
+  padding: 1.5rem 2rem;
+  background-color: var(--bg-dark); /* Tu fondo oscuro */
+  border-left: 1px solid var(--border-color);
 }
 
-/* Estilo de cada panel (Alertas, Gestión) */
+/* 5. Estilos de los paneles (re-usando tu .card) */
 .panel {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border: 1px solid #e0e0e0;
-  margin-bottom: 24px;
-}
-.panel h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 12px;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
 }
 
-/* Estilos de los items en las listas */
+.panel h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left; /* Sobreescribe el 'center' general */
+}
+
+/* 6. Estilos de los items en las listas */
 .alert-list-item {
-  display: flex; 
-  justify-content: space-between; 
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 12px; 
-  border-radius: 8px; 
-  background: #fff8f8; /* Fondo rojo claro para alertas */
-  border: 1px solid #fdd; 
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.1); /* Fondo rojo transparente */
+  border: 1px solid rgba(248, 113, 113, 0.4);
   margin-bottom: 10px;
 }
-.alert-list-item strong { 
-  color: #d90000; 
+.alert-list-item strong {
+  color: #F87171; /* Rojo claro */
 }
 
 .student-list-item {
-  display: flex; 
-  justify-content: space-between; 
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 10px; 
-  border-bottom: 1px solid #f0f0f0;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
-.student-list-item:last-child { 
-  border-bottom: none; 
+.student-list-item:last-child {
+  border-bottom: none;
+}
+.student-list-item small {
+  color: var(--text-muted);
+  font-size: 0.9em;
 }
 
-/* Botones de Alerta (reutiliza tu .btn) */
-.btn-alert, .btn-safe {
-  padding: 5px 10px;
-  font-size: 0.9em;
-  margin-left: 10px;
-}
+/* 7. Nuevos botones de Alerta (rojo) y Seguro (verde) */
 .btn-alert {
-  background-color: #f44336;
-  color: white;
-}
-.btn-safe {
-  background-color: #4caf50;
-  color: white;
+  background-color: #F87171;
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
 }
 .btn-alert:hover {
-  background-color: #d32f2f;
+  background-color: #EF4444;
+}
+
+.btn-safe {
+  background-color: #4ADE80;
+  color: var(--bg-dark);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
 }
 .btn-safe:hover {
-  background-color: #388e3c;
+  background-color: #22C55E;
+}
+
+
+/* 8. Estilos para el Mapa (Leaflet) */
+
+/* Vuelve rojo el ícono del marcador */
+.marker-alert {
+  filter: hue-rotate(280deg) brightness(1.2) saturate(1.5);
 }
 
 /* Estilos para el popup del mapa */
-.leaflet-popup-content-wrapper { 
-  border-radius: 8px; 
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
 }
-.leaflet-popup-content { 
-  font-family: 'Inter', sans-serif; 
+.leaflet-popup-content {
+  margin: 1rem;
 }
-.popup-title { 
-  font-weight: 700; 
-  font-size: 1.1em; 
-  margin: 0 0 5px; 
+.leaflet-popup-tip {
+  background-color: var(--bg-light);
 }
-.popup-body { 
-  font-size: 0.9em; 
-  color: #333; 
+/* Flecha del popup (oscura) */
+.leaflet-popup-tip-container {
+  width: 40px;
+  height: 20px;
+  margin-left: -20px;
+  overflow: hidden;
+  pointer-events: none;
 }
-.popup-alert .popup-title { 
-  color: #d90000; 
-}
-.popup-alert .popup-body { 
-  font-weight: bold; 
-  color: #333; 
+.leaflet-popup-tip {
+  width: 17px;
+  height: 17px;
+  padding: 1px;
+  margin: -10px auto 0;
+  transform: rotate(45deg);
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
-/* Clase para hacer el ícono del marcador rojo */
-.marker-alert { 
-  filter: hue-rotate(-80deg) brightness(1.1); 
+.popup-title {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--text-light);
+  margin: 0 0 5px;
+}
+.popup-body {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+.popup-alert .popup-title {
+  color: #F87171; /* Rojo */
 }
