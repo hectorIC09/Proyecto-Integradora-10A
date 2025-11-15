@@ -236,13 +236,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // --- LÓGICA DEL DASHBOARD ---
-  const btnLogout = document.getElementById('btn-logout');
+  // 🧠 Comprobamos si estamos en el dashboard buscando la clase del body
+  const isDashboard = document.body.classList.contains('dashboard-page');
   
-  // (Usamos btnLogout para detectar si estamos en dashboard.html)
-  if (btnLogout) {
+  if (isDashboard) {
     console.log("Estoy en la página de Dashboard.");
 
     // --- Lógica de Usuario (Tu código original) ---
+    const btnLogout = document.getElementById('btn-logout');
+
     async function loadUser() {
       try {
         const res = await fetch("/api/me");
@@ -262,15 +264,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 2. Lógica del botón de Logout
-    btnLogout.addEventListener("click", async () => {
-      try {
-        const res = await fetch("/api/logout", { method: "POST" });
-        const d = await res.json();
-        if (d.ok) window.location.href = "/"; // Lo mandamos al index
-      } catch (err) {
-        console.error("Error al cerrar sesión:", err);
-      }
-    });
+    if (btnLogout) {
+      btnLogout.addEventListener("click", async () => {
+        try {
+          const res = await fetch("/api/logout", { method: "POST" });
+          const d = await res.json();
+          if (d.ok) window.location.href = "/"; // Lo mandamos al index
+        } catch (err) {
+          console.error("Error al cerrar sesión:", err);
+        }
+      });
+    }
 
     // 3. Ejecutar la carga del usuario al entrar al dashboard
     loadUser();
@@ -294,40 +298,35 @@ document.addEventListener("DOMContentLoaded", () => {
       className: 'marker-alert' // Clase CSS definida en styles.css
     });
 
-  // 1. Iniciar el Mapa
-function iniciarMapa() {
-  // Verificar si el div del mapa existe
-  const mapDiv = document.getElementById('map');
-  if (!mapDiv) {
-    console.log("No se encontró el div #map. Saliendo de iniciarMapa().");
-    return;
-  }
+    // 1. Iniciar el Mapa
+    function iniciarMapa() {
+      // Verificar si el div del mapa existe
+      const mapDiv = document.getElementById('map');
+      if (!mapDiv) {
+        console.log("No se encontró el div #map. Saliendo de iniciarMapa().");
+        return;
+      }
+      
+      mapa = L.map('map').setView([19.3240, -99.1795], 16); // Coordenadas de ejemplo
+      
+      // ============= CAMBIO AQUÍ =============
+      // Usamos un mapa oscuro que va con tu tema
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      }).addTo(mapa);
+      // =======================================
 
-  // 🗺️ Mapa centrado en Santa Catarina, NL (modo oscuro)
-  mapa = L.map('map').setView([25.6768, -100.4581], 14);
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://carto.com/attributions">CartoDB</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
-  }).addTo(mapa);
-
-  // ✨ ARREGLO MAPA ✨
-  // Forzar al mapa a recalcular su tamaño 400ms después de cargar
-  setTimeout(() => {
-    if (mapa) {
-      mapa.invalidateSize();
-      mapa.setView([25.6768, -100.4581], 14);
+      // ✨ ARREGLO MAPA ✨
+      // ============= CAMBIO AQUÍ =============
+      // Aumentamos el tiempo a 250ms para asegurar que el CSS cargue
+      setTimeout(() => {
+        if (mapa) {
+          mapa.invalidateSize();
+          console.log("Mapa recalculado.");
+        }
+      }, 250); // <-- 250 milisegundos
+      // =======================================
     }
-  }, 400);
-
-  // Cuando cambie el tamaño de la ventana, reajustar el mapa
-  window.addEventListener("resize", () => {
-    if (mapa) mapa.invalidateSize();
-  });
-}
-
 
     // 2. Cargar Paneles (Alertas y Alumnos) y Marcadores
     async function actualizarDatos() {
@@ -347,12 +346,12 @@ function iniciarMapa() {
         // Si no hay alumnos, mostrar mensaje y salir
         if (!alumnos.length) {
             listaAlumnos.innerHTML = '<p>No hay alumnos registrados.</p>';
-            listaAlertas.appendChild(msgNoAlertas);
+            if (msgNoAlertas) listaAlertas.appendChild(msgNoAlertas);
             return;
         }
 
         alumnos.forEach(alumno => {
-          const { id, nombre, matricula, lat_actual, lng_actual, en_alerta } = alumno;
+          const { id, nombre, matricula, lat_actual, lng_actual, en_alerta, lat_inicial, lng_inicial } = alumno;
 
           // --- Panel de Alertas ---
           if (alumno.en_alerta) {
@@ -386,13 +385,13 @@ function iniciarMapa() {
           
           // --- Actualizar Marcadores en Mapa ---
           if(mapa) { // Solo si el mapa se inició
-            // Simular movimiento (para que parezca "en vivo")
             // Usamos lat_actual o la inicial si es nula
-            const latBase = parseFloat(lat_actual || alumno.lat_inicial);
-            const lngBase = parseFloat(lng_actual || alumno.lng_inicial);
+            const latBase = parseFloat(lat_actual || lat_inicial);
+            const lngBase = parseFloat(lng_actual || lng_inicial);
             
             let latSim, lngSim;
 
+            // Simular movimiento (para que parezca "en vivo")
             if (marcadores[id] && marcadores[id].currentLat) {
               // Si ya existe, simular desde su última pos
               latSim = parseFloat(marcadores[id].currentLat) + (Math.random() - 0.5) * 0.0002;
@@ -436,7 +435,11 @@ function iniciarMapa() {
         });
 
         if (!hayAlertas && msgNoAlertas) {
-          listaAlertas.appendChild(msgNoAlertas);
+          // Re-seleccionar msgNoAlertas en caso de que se haya borrado
+          const msg = document.getElementById('no-alertas-msg') || document.createElement('p');
+          msg.id = 'no-alertas-msg';
+          msg.textContent = "No hay alertas activas.";
+          listaAlertas.appendChild(msg);
         }
 
       } catch (err) {
@@ -484,12 +487,11 @@ function iniciarMapa() {
     setInterval(actualizarDatos, 3000); // Actualizar todo (mapa y paneles) cada 3 seg
 
     // Agregar el listener de clics al contenedor de paneles
-    // (Asegurarse de que .panels-wrapper exista)
     const panelWrapper = document.querySelector('.panels-wrapper');
     if (panelWrapper) {
       panelWrapper.addEventListener('click', manejarClicPaneles);
     }
 
-  } // <-- Fin del bloque "if (btnLogout)"
+  } // <-- Fin del bloque "if (isDashboard)"
 
 }); // <-- Fin del DOMContentLoaded
