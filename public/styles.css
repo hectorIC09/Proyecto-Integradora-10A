@@ -668,97 +668,109 @@ body.dashboard-page {
 }
 
 
-/* 8. Estilos para el Mapa (Leaflet) */
+/* ==========================================================================
+   --- ESTILOS PARA MAPBOX ---
+   Reemplaza TODO lo que era de Leaflet
+========================================================================== */
 
-/* Vuelve rojo el ícono del marcador */
-.marker-alert {
-  filter: hue-rotate(280deg) brightness(1.2) saturate(1.5);
-}
-
-/* Estilos para el popup del mapa */
-.leaflet-popup-content-wrapper {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-}
-.leaflet-popup-content {
-  margin: 1rem;
-  font-family: var(--font-family);
-  color: var(--text-light);
-}
-.leaflet-popup-tip {
-  background-color: var(--bg-light);
-}
-/* Flecha del popup (oscura) */
-.leaflet-popup-tip-container {
-  width: 40px;
-  height: 20px;
-  margin-left: -20px;
-  overflow: hidden;
-  pointer-events: none;
-}
-.leaflet-popup-tip {
-  width: 17px;
-  height: 17px;
-  padding: 1px;
-  margin: -10px auto 0;
-  transform: rotate(45deg);
-  box-shadow: none;
-  border-bottom: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
-}
-
-.popup-title {
-  font-weight: 700;
-  font-size: 1.1em;
-  color: var(--text-light);
-  margin: 0 0 5px;
-}
-.popup-body {
-  font-size: 0.9em;
-  color: var(--text-muted);
-}
-.popup-alert .popup-title {
-  color: #F87171; /* Rojo */
-}
-/* --- Contenedor del mapa principal --- */
+/* Contenedor del mapa */
 #map {
-  height: 450px;
+  height: 100%;
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-}
-.map-wrapper {
-  flex: 1;
-  height: calc(100vh - 80px); /* ajusta según tu header */
-  display: flex;
+  position: relative;
 }
 
-
-
-/* Ajuste opcional si el dashboard usa flex o grid */
-.dashboard-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+/* Para que el fondo del mapa combine con tu UI oscuro */
+.mapboxgl-canvas {
+  outline: none !important;
+  background-color: var(--bg-dark);
 }
 
-/* Para que los paneles no tapen el mapa */
-.panels-wrapper {
-  flex: 1;
-  min-width: 350px;
-  z-index: 2;
+/* Control de zoom (botones + / - ) */
+.mapboxgl-ctrl-zoom-in,
+.mapboxgl-ctrl-zoom-out {
+  background-color: var(--bg-light) !important;
+  color: var(--text-light) !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border-color) !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 16px !important;
 }
-.leaflet-tile {
-  border: none !important;
+.mapboxgl-ctrl-zoom-in:hover,
+.mapboxgl-ctrl-zoom-out:hover {
+  background-color: var(--primary-dark) !important;
+  color: var(--bg-dark) !important;
+}
+
+/* Barra de navegación (rotate, zoom, etc) */
+.mapboxgl-ctrl-group {
+  background-color: var(--bg-light) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Popups */
+.mapboxgl-popup {
+  max-width: 280px !important;
+  font-family: var(--font-family) !important;
+}
+
+.mapboxgl-popup-content {
+  background-color: var(--bg-light) !important;
+  color: var(--text-light) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 1rem 1.2rem !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.mapboxgl-popup-close-button {
+  color: var(--text-muted) !important;
+}
+.mapboxgl-popup-close-button:hover {
+  color: var(--primary) !important;
+}
+
+/* Flecha del popup */
+.mapboxgl-popup-tip {
+  border-top-color: var(--bg-light) !important;
+}
+
+/* 🔴 Marcador de alerta (rojo) */
+.marker-alert {
+  width: 28px;
+  height: 28px;
+  background-color: #F87171;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+}
+
+/* 🔵 Marcador normal (azul) */
+.marker-normal {
+  width: 28px;
+  height: 28px;
+  background-color: var(--primary);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+/* Fix para evitar artefactos/“cuadros” */
+.mapboxgl-tile {
+  image-rendering: auto !important;
   background: none !important;
-  transform: translateZ(0);
+}
+.mapboxgl-canvas {
+  transform: translateZ(0) !important;
 }
 
-
-.leaflet-container {
-  background: none !important;
+/* Asegurar que en el dashboard el contenedor se vea bien */
+.dashboard-page #map {
+  height: 100%;
+  width: 100%;
 }
