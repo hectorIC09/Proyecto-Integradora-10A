@@ -55,7 +55,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Campus Watch</title>
 
-  
+  <!-- MAPBOX (Movido al head) -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+  <!-- Tus fuentes y estilos -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"> 
 </head>
@@ -83,14 +87,30 @@
       
       <div class="dashboard-header">
         <h1 id="welcome">Bienvenido</h1>
-        <a href="/registrar-alumno.html" role="button" class="btn btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Registrar Alumno
-        </a>
+        <!-- El botón de registrar ya no es un link, es parte de los paneles -->
       </div>
       
+      <!-- ========================================== -->
+      <!-- ============= NUEVO PANEL AQUÍ ============= -->
+      <!-- ========================================== -->
+      <section id="invitar" class="panel">
+        <h2>📧 Invitar Alumno</h2>
+        <form id="invite-form">
+          <div class="form-group">
+            <label for="invite-email">Correo del Alumno</label>
+            <input type="email" id="invite-email" required placeholder="ejemplo@alumno.edu">
+          </div>
+          <div class="form-group">
+            <label for="invite-matricula">Matrícula</label>
+            <input type="text" id="invite-matricula" required placeholder="A00123456">
+          </div>
+          <button type="submit" class="btn btn-primary full-width">Enviar Solicitud</button>
+        </form>
+        <!-- Mensaje de éxito/error para el formulario -->
+        <div class="form-message" id="invite-msg" style="display: none; margin-top: 1rem;"></div>
+      </section>
+      <!-- ========================================== -->
+
       <section id="alertas" class="panel">
         <h2>🚨 Alertas Activas</h2>
         <div id="alertas-lista">
@@ -107,11 +127,8 @@
 
     </div> 
   </main> 
-
-  <!-- MAPBOX -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-
+     
+  <!-- Tu JS principal -->
   <script src="app.js"></script>
 
 </body>

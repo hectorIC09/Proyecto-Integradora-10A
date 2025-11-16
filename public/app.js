@@ -289,11 +289,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!mapDiv) return;
 
       map = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/dark-v11",
-        center: [-100.4583, 25.6732], // Santa Catarina
-        zoom: 14
-      });
+      container: "map",
+      style: "mapbox://styles/mapbox/dark-v11",
+      center: [-100.510669, 25.692447], // Santa Catarina
+      zoom: 15
+     });
+
 
       map.addControl(new mapboxgl.NavigationControl());
     }
