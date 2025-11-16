@@ -774,3 +774,49 @@ body.dashboard-page {
   height: 100%;
   width: 100%;
 }
+
+#invitar.panel {
+  background: #1b1b1d;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
+}
+
+#invitar h2 {
+  margin-bottom: 1rem;
+  color: #3fa7ff;
+}
+
+#invitar .form-group {
+  margin-bottom: 1rem;
+}
+
+#invitar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #2a2a2b;
+  color: white;
+}
+
+#invitar input:focus {
+  outline: 2px solid #3fa7ff;
+}
+
+#invite-msg {
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+#invite-msg.ok {
+  background: #163d21;
+  color: #7dff9c;
+}
+
+#invite-msg.err {
+  background: #3d1616;
+  color: #ff7d7d;
+}

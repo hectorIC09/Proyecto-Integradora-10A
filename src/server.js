@@ -72,6 +72,13 @@ app.use(session({
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 30 } // 30 min
 }));
+export function soloAdmin(req, res, next) {
+  const user = req.session && req.session.user;
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ ok: false, message: "No autorizado" });
+  }
+  next();
+}
 
 // Carpeta pública
 app.use(express.static(path.join(__dirname, "..", "public")));
@@ -93,7 +100,8 @@ app.get("/api/me", (req, res) => {
 // Dashboard
 // Esta ruta protege tu dashboard.html
 app.get("/dashboard", (req, res) => {
-  if (!req.session.user) return res.redirect("/");
+  const user = req.session.user;
+  if (!user || user.role !== 'admin') return res.redirect("/");
   res.sendFile(path.join(__dirname, "..", "public", "dashboard.html"));
 });
 

@@ -1,15 +1,20 @@
 import express from 'express';
 const router = express.Router();
 
-// Importamos el NUEVO controlador de alumnos
-// ¡Usamos .js en la importación porque estás en ES Modules!
-import { getAlumnos, setAlerta } from '../controllers/alumnosController.js';
+// Importamos TODOS los métodos del controller
+import { 
+  getAlumnos, 
+  setAlerta,
+  invitarAlumno
+} from '../controllers/alumnosController.js';
 
-// --- Definimos las rutas ---
-// El frontend llamará a GET /api/alumnos
+// Obtener todos los alumnos
 router.get('/alumnos', getAlumnos);
 
-// El frontend llamará a PUT /api/alumnos/alerta/:id
+// Actualizar el estado de alerta
 router.put('/alumnos/alerta/:id', setAlerta);
+
+// Invitar alumno por correo
+router.post('/alumnos/invitar', invitarAlumno);
 
 export default router;

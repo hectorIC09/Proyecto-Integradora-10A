@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Watch – Estudiante</title>
+
+  <!-- MAPBOX (Opcional) -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.1/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.1/mapbox-gl.css" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin: 0;
+      color: #57a6ff;
+    }
+
+    .card {
+      background: #161b22;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
+      margin-bottom: 20px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 18px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    #status-ok {
+      background: #1d9a50;
+      display: none;
+    }
+
+    #status-alerta {
+      background: #b30000;
+      display: none;
+    }
+
+    .panico-btn {
+      width: 100%;
+      padding: 25px;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: bold;
+      background: #d60000;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .cancel-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      background: #1d7de6;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    #map {
+      width: 100%;
+      height: 260px;
+      border-radius: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Campus Watch – Estudiante</h1>
+    <p id="welcome"></p>
+  </div>
+
+  <div class="card">
+    <h2>Estado de Seguridad</h2>
+
+    <div id="status-ok" class="status">Todo está bien ✔️</div>
+    <div id="status-alerta" class="status">🚨 ALERTA ACTIVADA 🚨</div>
+
+    <button class="panico-btn" id="btnPanico">
+      🚨 BOTÓN DE PÁNICO
+    </button>
+
+    <button class="cancel-btn" id="btnCancelar">
+      Cancelar alerta
+    </button>
+
+    <div id="map"></div>
+  </div>
+
+  <script>
+    // Obtener matrícula desde la URL
+    const p = new URLSearchParams(window.location.search);
+    const matricula = p.get("matricula");
+    let alumnoId = null;
+
+    document.getElementById("welcome").textContent = "Alumno: " + matricula;
+
+    // ============================
+    //   OBTENER ID REAL DEL ALUMNO
+    // ============================
+    async function cargarAlumno() {
+      try {
+        const res = await fetch(`/api/alumnos/matricula/${matricula}`);
+        const data = await res.json();
+
+        alumnoId = data.id; // <- ID REAL
+
+        // Mostrar estado según DB
+        if (data.en_alerta === true) {
+          document.getElementById("status-alerta").style.display = "block";
+        } else {
+          document.getElementById("status-ok").style.display = "block";
+        }
+      } catch (err) {
+        console.error("Error cargando alumno:", err);
+        alert("Error cargando datos del alumno.");
+      }
+    }
+
+    cargarAlumno();
+
+    // =================================
+    //   ACTIVAR ALERTA (BOTÓN PÁNICO)
+    // =================================
+    document.getElementById("btnPanico").onclick = async () => {
+      if (!alumnoId) return alert("Cargando datos...");
+
+      await fetch(`/api/alumnos/alerta/${alumnoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ en_alerta: true })
+      });
+
+      document.getElementById("status-ok").style.display = "none";
+      document.getElementById("status-alerta").style.display = "block";
+
+      alert("🚨 Se ha enviado la alerta a los administradores.");
+    };
+
+    // ============================
+    //   DESACTIVAR ALERTA
+    // ============================
+    document.getElementById("btnCancelar").onclick = async () => {
+      if (!alumnoId) return alert("Cargando datos...");
+
+      await fetch(`/api/alumnos/alerta/${alumnoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ en_alerta: false })
+      });
+
+      document.getElementById("status-alerta").style.display = "none";
+      document.getElementById("status-ok").style.display = "block";
+
+      alert("✔️ Alerta cancelada.");
+    };
+
+    // ============================
+    // MAPBOX (ACTÍVALO SI QUIERES)
+    // ============================
+    /*
+    mapboxgl.accessToken = "TU_MAPBOX_KEY";
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [-100.43981, 25.74339], // UTSCC
+      zoom: 15
+    });
+    document.getElementById("map").style.display = "block";
+    */
+  </script>
+
+</body>
+</html>

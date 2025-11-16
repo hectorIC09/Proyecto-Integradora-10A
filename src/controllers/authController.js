@@ -13,7 +13,8 @@ export async function register(req, res) {
     if (exists) return res.status(409).json({ ok: false, message: "Correo ya registrado" });
 
     const password_hash = await bcrypt.hash(password, 10);
-    await createUser({ name, email, password_hash });
+    // Por seguridad, todos los registros vía este endpoint serán 'admin'
+    await createUser({ name, email, password_hash, role: 'admin' });
 
     return res.json({ ok: true, message: "Usuario registrado" });
   } catch (err) {
@@ -30,15 +31,17 @@ export async function login(req, res) {
     }
 
     const user = await findByEmail(email);
-    if (!user || !user.is_active) {
+    // Si no existe o está inactivo o no es admin => rechazo
+    if (!user || !user.is_active || user.role !== 'admin') {
       return res.status(401).json({ ok: false, message: "Credenciales inválidas" });
     }
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(401).json({ ok: false, message: "Credenciales inválidas" });
 
-    req.session.user = { id: user.id, name: user.name, email: user.email };
-    return res.json({ ok: true, message: "Login correcto" });
+    // Guardamos el rol en la sesión para validaciones posteriores
+    req.session.user = { id: user.id, name: user.name, email: user.email, role: user.role };
+    return res.json({ ok: true, message: "Login correcto", role: user.role });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ ok: false, message: "Error del servidor" });
@@ -50,4 +53,3 @@ export async function logout(req, res) {
     res.json({ ok: true, message: "Sesión cerrada" });
   });
 }
-

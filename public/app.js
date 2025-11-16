@@ -438,4 +438,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   } // fin dashboard
 
+  app.get("/api/alumnos/matricula/:matricula", async (req, res) => {
+    const { matricula } = req.params;
+
+    const [rows] = await db.query(
+        "SELECT id, nombre FROM alumnos WHERE matricula = ?",
+        [matricula]
+    );
+
+    if (rows.length === 0) {
+        return res.status(404).json({ error: "Alumno no encontrado" });
+    }
+
+    res.json(rows[0]);
+});
+
 }); // fin DOMContentLoaded
