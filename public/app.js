@@ -144,18 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Espera a que todo el HTML esté cargado
 document.addEventListener("DOMContentLoaded", () => {
-  
   // --- LÓGICA DEL SERVICE WORKER (GLOBAL) ---
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("./serviceWorker.js") 
+        .register("./serviceWorker.js")
         .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
         .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
     });
   }
 
-  
   // --- LÓGICA DE LOGIN / REGISTRO ---
   const loginForm = document.querySelector("#login-form");
   const regForm = document.querySelector("#register-form");
@@ -169,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const email = document.querySelector("#email").value;
       const password = document.querySelector("#password").value;
-      const msg = document.querySelector("#msg"); 
+      const msg = document.querySelector("#msg");
 
       try {
         const res = await fetch("/api/login", {
@@ -178,9 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ email, password })
         });
         const d = await res.json();
-        
+
         if (d.ok) {
-          window.location.href = "/dashboard.html"; 
+          window.location.href = "/dashboard.html";
         } else {
           msg.textContent = d.message || "Error: Revisa tus credenciales.";
         }
@@ -204,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ name, email, password })
         });
         const d = await res.json();
-        
+
         if (d.ok) {
           regForm.classList.remove("active");
           loginForm.classList.add("active");
@@ -232,12 +230,11 @@ document.addEventListener("DOMContentLoaded", () => {
       loginForm.classList.add("active");
       formTitle.textContent = "Iniciar Sesión";
     });
-  } 
-
+  }
 
   // --- LÓGICA DEL DASHBOARD ---
   const isDashboard = document.body.classList.contains('dashboard-page');
-  
+
   if (isDashboard) {
     console.log("Estoy en la página de Dashboard.");
 
@@ -275,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadUser();
 
-
     // -----------------------------
     //     ***** MAPBOX *****
     // -----------------------------
@@ -289,16 +285,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!mapDiv) return;
 
       map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/dark-v11",
-      center: [-100.510669, 25.692447], // Santa Catarina
-      zoom: 15
-     });
-
+        container: "map",
+        style: "mapbox://styles/mapbox/dark-v11",
+        center: [-100.510669, 25.692447], // Santa Catarina
+        zoom: 15
+      });
 
       map.addControl(new mapboxgl.NavigationControl());
     }
-
 
     // -----------------------------
     //  Cargar Datos y Pintar Marcadores
@@ -317,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let hayAlertas = false;
 
         alumnos.forEach(alumno => {
-
           const {
             id,
             nombre,
@@ -360,9 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
           listaAlumnos.appendChild(itemAlumno);
 
-
           // ========= MAPBOX MARCADORES =========
-
           if (!map) return;
 
           const lat = parseFloat(lat_actual || lat_inicial);
@@ -406,7 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-
     // --- CLICK EN PANEL ---
     async function manejarClicPaneles(e) {
       const target = e.target;
@@ -425,7 +415,6 @@ document.addEventListener("DOMContentLoaded", () => {
       actualizarDatos();
     }
 
-
     // ---- INICIO ----
     iniciarMapa();
     actualizarDatos();
@@ -435,22 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (panelWrapper) {
       panelWrapper.addEventListener("click", manejarClicPaneles);
     }
-
   } // fin dashboard
 
-  app.get("/api/alumnos/matricula/:matricula", async (req, res) => {
-    const { matricula } = req.params;
-
-    const [rows] = await db.query(
-        "SELECT id, nombre FROM alumnos WHERE matricula = ?",
-        [matricula]
-    );
-
-    if (rows.length === 0) {
-        return res.status(404).json({ error: "Alumno no encontrado" });
-    }
-
-    res.json(rows[0]);
-});
-
 }); // fin DOMContentLoaded
+

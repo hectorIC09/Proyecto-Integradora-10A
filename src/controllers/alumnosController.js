@@ -101,3 +101,23 @@ export const invitarAlumno = async (req, res) => {
     res.status(500).json({ ok: false, msg: "Error enviando correo" });
   }
 };
+
+// Obtener alumno por matrícula
+export const getAlumnoByMatricula = async (req, res) => {
+  try {
+    const { matricula } = req.params;
+    const result = await pool.query(
+      "SELECT id, nombre, matricula, telefono, lat_actual, lng_actual, en_alerta FROM alumnos WHERE matricula = $1",
+      [matricula]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ ok: false, msg: "Alumno no encontrado" });
+    }
+
+    res.json({ ok: true, alumno: result.rows[0] });
+  } catch (err) {
+    console.error("Error getAlumnoByMatricula:", err);
+    res.status(500).json({ ok: false, msg: "Error del servidor" });
+  }
+};
