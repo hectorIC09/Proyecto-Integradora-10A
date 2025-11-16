@@ -66,7 +66,6 @@
 
      const transporter = nodemailer.createTransport({
      host: "smtp.gmail.com",
-     port: 465,
      secure: true,
      auth: {
      user: process.env.SMTP_EMAIL,
@@ -76,7 +75,7 @@
 
 
       await transporter.sendMail({
-        from: "Campus Watch <no-reply@campuswatch.com>",
+      from: `Campus Watch <${process.env.SMTP_EMAIL}>`,
         to: correo,
         subject: "Invitación a Campus Watch",
         html: `
