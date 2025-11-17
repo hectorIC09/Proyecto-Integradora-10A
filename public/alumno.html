@@ -118,88 +118,55 @@
     <div id="map"></div>
   </div>
 
-  <script>
-    // Obtener matrícula desde la URL
-    const p = new URLSearchParams(window.location.search);
-    const matricula = p.get("matricula");
-    let alumnoId = null;
+<script>
+  const p = new URLSearchParams(window.location.search);
+  const matricula = p.get("matricula");
+  let alumnoId = null;
 
-    document.getElementById("welcome").textContent = "Alumno: " + matricula;
+  document.getElementById("welcome").textContent = "Matrícula: " + matricula;
 
-    // ============================
-    //   OBTENER ID REAL DEL ALUMNO
-    // ============================
-    async function cargarAlumno() {
-      try {
-        const res = await fetch(`/api/alumnos/matricula/${matricula}`);
-        const data = await res.json();
+  async function cargarAlumno() {
+    try {
+      const res = await fetch(`/api/alumnos/matricula/${matricula}`);
+      const data = await res.json();
 
-        alumnoId = data.id; // <- ID REAL
+      alumnoId = data.id;
 
-        // Mostrar estado según DB
-        if (data.en_alerta === true) {
-          document.getElementById("status-alerta").style.display = "block";
-        } else {
-          document.getElementById("status-ok").style.display = "block";
-        }
-      } catch (err) {
-        console.error("Error cargando alumno:", err);
-        alert("Error cargando datos del alumno.");
+      if (data.en_alerta) {
+        document.getElementById("status-alerta").style.display = "block";
+      } else {
+        document.getElementById("status-ok").style.display = "block";
       }
+    } catch (err) {
+      console.error(err);
+      alert("Error cargando alumno");
     }
+  }
 
-    cargarAlumno();
+  cargarAlumno();
 
-    // =================================
-    //   ACTIVAR ALERTA (BOTÓN PÁNICO)
-    // =================================
-    document.getElementById("btnPanico").onclick = async () => {
-      if (!alumnoId) return alert("Cargando datos...");
-
-      await fetch(`/api/alumnos/alerta/${alumnoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ en_alerta: true })
-      });
-
-      document.getElementById("status-ok").style.display = "none";
-      document.getElementById("status-alerta").style.display = "block";
-
-      alert("🚨 Se ha enviado la alerta a los administradores.");
-    };
-
-    // ============================
-    //   DESACTIVAR ALERTA
-    // ============================
-    document.getElementById("btnCancelar").onclick = async () => {
-      if (!alumnoId) return alert("Cargando datos...");
-
-      await fetch(`/api/alumnos/alerta/${alumnoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ en_alerta: false })
-      });
-
-      document.getElementById("status-alerta").style.display = "none";
-      document.getElementById("status-ok").style.display = "block";
-
-      alert("✔️ Alerta cancelada.");
-    };
-
-    // ============================
-    // MAPBOX (ACTÍVALO SI QUIERES)
-    // ============================
-    /*
-    mapboxgl.accessToken = "TU_MAPBOX_KEY";
-    const map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [-100.43981, 25.74339], // UTSCC
-      zoom: 15
+  document.getElementById("btnPanico").onclick = async () => {
+    await fetch(`/api/alumnos/alerta/${alumnoId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ en_alerta: true })
     });
-    document.getElementById("map").style.display = "block";
-    */
-  </script>
+
+    document.getElementById("status-ok").style.display = "none";
+    document.getElementById("status-alerta").style.display = "block";
+  };
+
+  document.getElementById("btnCancelar").onclick = async () => {
+    await fetch(`/api/alumnos/alerta/${alumnoId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ en_alerta: false })
+    });
+
+    document.getElementById("status-alerta").style.display = "none";
+    document.getElementById("status-ok").style.display = "block";
+  };
+</script>
 
 </body>
 </html>

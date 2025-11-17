@@ -1,20 +1,27 @@
-import express from 'express';
+import express from "express";
+import {
+  getAlumnos,
+  getAlumnoPorMatricula,
+  setAlerta,
+  invitarAlumno,
+  eliminarAlumno
+} from "../controllers/alumnosController.js";
+
 const router = express.Router();
 
-// Importamos TODOS los métodos del controller
-import { 
-  getAlumnos, 
-  setAlerta,
-  invitarAlumno
-} from '../controllers/alumnosController.js';
-
 // Obtener todos los alumnos
-router.get('/alumnos', getAlumnos);
+router.get("/alumnos", getAlumnos);
 
-// Actualizar el estado de alerta
-router.put('/alumnos/alerta/:id', setAlerta);
+// Obtener alumno por matrícula
+router.get("/alumnos/matricula/:matricula", getAlumnoPorMatricula);
 
-// Invitar alumno por correo
-router.post('/alumnos/invitar', invitarAlumno);
+// Activar / desactivar alerta
+router.put("/alumnos/alerta/:id", setAlerta);
+
+// Invitar alumno (envía correo)
+router.post("/alumnos/invitar", invitarAlumno);
+
+// Eliminar alumno
+router.delete("/alumnos/:id", eliminarAlumno);
 
 export default router;

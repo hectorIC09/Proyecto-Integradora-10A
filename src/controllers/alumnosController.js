@@ -1,25 +1,46 @@
-import pool from '../db.js';
-import { Resend } from 'resend';
+import pool from "../db.js";
+import { Resend } from "resend";
 
-// Instancia global de Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// =========================
-// GET ALUMNOS
-// =========================
+// ========================================
+// GET: Todos los alumnos
+// ========================================
 export const getAlumnos = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM alumnos ORDER BY id ASC');
+    const result = await pool.query("SELECT * FROM alumnos ORDER BY id ASC");
     res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error obteniendo alumnos" });
+  }
+};
+
+// ========================================
+// GET: Alumno por matrícula
+// ========================================
+export const getAlumnoPorMatricula = async (req, res) => {
+  try {
+    const { matricula } = req.params;
+
+    const result = await pool.query(
+      "SELECT * FROM alumnos WHERE matricula = $1",
+      [matricula]
+    );
+
+    if (result.rows.length === 0)
+      return res.status(404).json({ error: "Alumno no encontrado" });
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error del servidor" });
   }
 };
 
-// =========================
-// SET ALERTA
-// =========================
+// ========================================
+// PUT: Activar / desactivar alerta
+// ========================================
 export const setAlerta = async (req, res) => {
   try {
     const { id } = req.params;
@@ -30,9 +51,8 @@ export const setAlerta = async (req, res) => {
       [en_alerta, id]
     );
 
-    if (result.rowCount === 0) {
+    if (result.rowCount === 0)
       return res.status(404).json({ error: "Alumno no encontrado" });
-    }
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -41,56 +61,44 @@ export const setAlerta = async (req, res) => {
   }
 };
 
-// =========================
-// INVITAR ALUMNO (Resend)
-// =========================
+// ========================================
+// POST: Enviar invitación por correo
+// ========================================
 export const invitarAlumno = async (req, res) => {
   try {
     const { correo, matricula } = req.body;
 
-    if (!correo || !matricula) {
+    if (!correo || !matricula)
       return res.status(400).json({ ok: false, msg: "Faltan datos" });
-    }
 
-    // Verificar si ya está registrado
+    // Verificar si ya existe
     const existe = await pool.query(
       "SELECT * FROM alumnos WHERE matricula = $1",
       [matricula]
     );
 
-    if (existe.rows.length > 0) {
-      return res.json({ ok: false, msg: "El alumno ya está registrado" });
-    }
+    if (existe.rows.length > 0)
+      return res.json({ ok: false, msg: "La matrícula ya existe" });
 
-    // Registrar alumno nuevo con rol "alumno"
+    // Registrar alumno
     await pool.query(
-      `INSERT INTO alumnos(nombre, matricula, telefono, lat_inicial, lng_inicial, rol)
-       VALUES('Sin Nombre', $1, null, null, null, 'alumno')`,
+      `INSERT INTO alumnos(nombre, matricula, telefono, lat_inicial, lng_inicial, en_alerta)
+       VALUES('Sin Nombre', $1, null, null, null, false)`,
       [matricula]
     );
 
-    // LINK a la página de activación del alumno
-    // (cuando tengas la página alumno.html esto ya funcionará directo)
-    const linkAlumno = `https://proyecto-integradora-10a.onrender.com/alumno.html?matricula=${matricula}`;
-
-    // Enviar correo con Resend
+    // Enviar correo con enlace
     await resend.emails.send({
       from: "Campus Watch <onboarding@resend.dev>",
       to: correo,
       subject: "Invitación a Campus Watch",
       html: `
         <h2>Bienvenido a Campus Watch</h2>
-        <p>Has sido invitado a activar tu ubicación y usar el botón de pánico dentro del campus.</p>
-        
-        <p>Da clic en este enlace para ingresar:</p>
-
-        <a href="${linkAlumno}"
-           style="color:white; background:#2563eb; padding:12px 18px;
-           border-radius:6px; text-decoration:none; display:inline-block;">
-          Entrar como Alumno
+        <p>Activa tu cuenta en el siguiente enlace:</p>
+        <a href="https://proyecto-integradora-10a.onrender.com/alumno.html?matricula=${matricula}"
+           style="background:#007bff;color:white;padding:10px 20px;border-radius:5px;">
+           Entrar como alumno
         </a>
-
-        <p style="margin-top:20px;">Si no reconoces este mensaje, ignóralo.</p>
       `
     });
 
@@ -102,22 +110,25 @@ export const invitarAlumno = async (req, res) => {
   }
 };
 
-// Obtener alumno por matrícula
-export const getAlumnoByMatricula = async (req, res) => {
+// ========================================
+// DELETE: Eliminar alumno
+// ========================================
+export const eliminarAlumno = async (req, res) => {
   try {
-    const { matricula } = req.params;
+    const { id } = req.params;
+
     const result = await pool.query(
-      "SELECT id, nombre, matricula, telefono, lat_actual, lng_actual, en_alerta FROM alumnos WHERE matricula = $1",
-      [matricula]
+      "DELETE FROM alumnos WHERE id = $1",
+      [id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ ok: false, msg: "Alumno no encontrado" });
-    }
+    if (result.rowCount === 0)
+      return res.status(404).json({ error: "Alumno no encontrado" });
 
-    res.json({ ok: true, alumno: result.rows[0] });
+    res.json({ ok: true, msg: "Alumno eliminado" });
+
   } catch (err) {
-    console.error("Error getAlumnoByMatricula:", err);
-    res.status(500).json({ ok: false, msg: "Error del servidor" });
+    console.error(err);
+    res.status(500).json({ error: "Error eliminando alumno" });
   }
 };
