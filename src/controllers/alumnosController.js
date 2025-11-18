@@ -1,134 +1,145 @@
-import pool from "../db.js";
+import db from "../config/db.js";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ========================================
-// GET: Todos los alumnos
-// ========================================
+// =============================
+//       GET ALUMNOS
+// =============================
 export const getAlumnos = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM alumnos ORDER BY id ASC");
-    res.json(result.rows);
+    const [rows] = await db.query("SELECT * FROM alumnos");
+    res.json(rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error obteniendo alumnos" });
+    console.error("Error al obtener alumnos:", err);
+    res.status(500).json({ message: "Error interno" });
   }
 };
 
-// ========================================
-// GET: Alumno por matrícula
-// ========================================
+// =============================
+//   GET POR MATRICULA
+// =============================
 export const getAlumnoPorMatricula = async (req, res) => {
-  try {
-    const { matricula } = req.params;
+  const { matricula } = req.params;
 
-    const result = await pool.query(
-      "SELECT * FROM alumnos WHERE matricula = $1",
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM alumnos WHERE matricula = ?",
       [matricula]
     );
 
-    if (result.rows.length === 0)
-      return res.status(404).json({ error: "Alumno no encontrado" });
+    if (rows.length === 0)
+      return res.status(404).json({ message: "Alumno no encontrado" });
 
-    res.json(result.rows[0]);
+    res.json(rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error del servidor" });
+    console.error("Error:", err);
+    res.status(500).json({ message: "Error interno" });
   }
 };
 
-// ========================================
-// PUT: Activar / desactivar alerta
-// ========================================
+// =============================
+//   ALERTA ON/OFF
+// =============================
 export const setAlerta = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { en_alerta } = req.body;
+  const { id } = req.params;
+  const { en_alerta } = req.body;
 
-    const result = await pool.query(
-      "UPDATE alumnos SET en_alerta = $1 WHERE id = $2 RETURNING *",
+  try {
+    await db.query(
+      "UPDATE alumnos SET en_alerta = ? WHERE id = ?",
       [en_alerta, id]
     );
 
-    if (result.rowCount === 0)
-      return res.status(404).json({ error: "Alumno no encontrado" });
-
-    res.json(result.rows[0]);
+    res.json({ ok: true, message: "Alerta actualizada" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error del servidor" });
+    console.error("Error en alerta:", err);
+    res.status(500).json({ message: "Error interno" });
   }
 };
 
-// ========================================
-// POST: Enviar invitación por correo
-// ========================================
+// =============================
+//   INVITAR ALUMNO + EMAIL
+// =============================
 export const invitarAlumno = async (req, res) => {
+  const { nombre, email, matricula } = req.body;
+
+  if (!email || !matricula)
+    return res.status(400).json({
+      ok: false,
+      message: "Email y matrícula obligatorios"
+    });
+
   try {
-    const { correo, matricula } = req.body;
-
-    if (!correo || !matricula)
-      return res.status(400).json({ ok: false, msg: "Faltan datos" });
-
-    // Verificar si ya existe
-    const existe = await pool.query(
-      "SELECT * FROM alumnos WHERE matricula = $1",
-      [matricula]
+    // Guardar alumno si no existe
+    await db.query(
+      `INSERT INTO alumnos (nombre, email, matricula, lat_inicial, lng_inicial)
+       VALUES (?, ?, ?, NULL, NULL)`,
+      [nombre || "Alumno", email, matricula]
     );
 
-    if (existe.rows.length > 0)
-      return res.json({ ok: false, msg: "La matrícula ya existe" });
-
-    // Registrar alumno
-    await pool.query(
-      `INSERT INTO alumnos(nombre, matricula, telefono, lat_inicial, lng_inicial, en_alerta)
-       VALUES('Sin Nombre', $1, null, null, null, false)`,
-      [matricula]
-    );
-
-    // Enviar correo con enlace
-    await resend.emails.send({
-      from: "Campus Watch <onboarding@resend.dev>",
-      to: correo,
+    // ✉ Enviar correo con Resend
+    const { error } = await resend.emails.send({
+      from: "Campus Watch <onboarding@resend.dev>",  // ESTE SI FUNCIONA EN RENDER
+      to: email,
       subject: "Invitación a Campus Watch",
       html: `
         <h2>Bienvenido a Campus Watch</h2>
-        <p>Activa tu cuenta en el siguiente enlace:</p>
-        <a href="https://proyecto-integradora-10a.onrender.com/alumno.html?matricula=${matricula}"
-           style="background:#007bff;color:white;padding:10px 20px;border-radius:5px;">
-           Entrar como alumno
-        </a>
-      `
+        <p>Has sido invitado a registrarte.</p>
+        <p>Tu matrícula: <strong>${matricula}</strong></p>
+        <p>Ingresa a la app y permite tu ubicación.</p>
+      `,
     });
 
-    res.json({ ok: true, msg: "Invitación enviada correctamente" });
+    if (error) {
+      console.error("Error enviando correo:", error);
+      return res.status(500).json({
+        ok: false,
+        message: "No se pudo enviar el correo"
+      });
+    }
+
+    res.json({ ok: true, message: "Invitación enviada" });
 
   } catch (err) {
-    console.error("Error enviando correo:", err);
-    res.status(500).json({ ok: false, msg: "Error enviando correo" });
+    console.error("Error en invitación:", err);
+    res.status(500).json({ ok: false, message: "Error interno" });
   }
 };
 
-// ========================================
-// DELETE: Eliminar alumno
-// ========================================
-export const eliminarAlumno = async (req, res) => {
-  try {
-    const { id } = req.params;
+// =============================
+//   ACTUALIZAR UBICACION
+// =============================
+export const actualizarUbicacion = async (req, res) => {
+  const { matricula, lat, lng } = req.body;
 
-    const result = await pool.query(
-      "DELETE FROM alumnos WHERE id = $1",
-      [id]
+  if (!matricula || !lat || !lng)
+    return res.status(400).json({ message: "Datos incompletos" });
+
+  try {
+    await db.query(
+      "UPDATE alumnos SET lat_actual = ?, lng_actual = ? WHERE matricula = ?",
+      [lat, lng, matricula]
     );
 
-    if (result.rowCount === 0)
-      return res.status(404).json({ error: "Alumno no encontrado" });
-
-    res.json({ ok: true, msg: "Alumno eliminado" });
-
+    res.json({ ok: true, message: "Ubicación actualizada" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error eliminando alumno" });
+    console.error("Error ubicación:", err);
+    res.status(500).json({ ok: false });
+  }
+};
+
+// =============================
+//   ELIMINAR ALUMNO
+// =============================
+export const eliminarAlumno = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("DELETE FROM alumnos WHERE id = ?", [id]);
+    res.json({ ok: true, message: "Alumno eliminado" });
+  } catch (err) {
+    console.error("Error eliminando:", err);
+    res.status(500).json({ ok: false });
   }
 };
