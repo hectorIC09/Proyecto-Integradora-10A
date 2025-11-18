@@ -72,7 +72,7 @@ export const invitarAlumno = async (req, res) => {
     // Enviar correo con Resend
     await resend.emails.send({
       from: "Campus Watch <onboarding@resend.dev>",
-      to: correo,
+      to: "hecttor.contrer09@gmail.com",
       subject: "Invitación a Campus Watch",
       html: `
         <h2>Bienvenido a Campus Watch</h2>
