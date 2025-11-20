@@ -28,10 +28,10 @@ import { soloAdmin } from "../server.js";
 const router = express.Router();
 
 // Registrar alumno desde el dashboard
-router.post("/create", crearAlumno);
+router.post("/create", soloAdmin,crearAlumno);
 
 // Obtener TODOS los alumnos (para el dashboard)
-router.get("/", obtenerAlumnos);
+router.get("/", soloAdmin, obtenerAlumnos);
 
 // Alumno envía su ubicación
 router.post("/ubicacion", actualizarUbicacion);
