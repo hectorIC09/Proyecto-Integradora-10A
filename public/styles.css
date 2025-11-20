@@ -1,46 +1,101 @@
-
-/* ============================
-   🌙 1) VARIABLES & RESET
-=============================== */
+/* --- 1. Variables Globales y Reset --- */
 :root {
-  --bg-dark: #0F172A;
-  --bg-light: #1E293B;
-  --primary: #38BDF8;
-  --primary-dark: #0EA5E9;
-  --text-light: #F8FAFC;
-  --text-muted: #94A3B8;
-  --border-color: #334155;
+  /* Paleta "Tech & Security" (Dark Mode) */
+  --bg-dark: #0F172A;     /* Un azul-gris muy oscuro (Fondo) */
+  --bg-light: #1E293B;    /* Un azul-gris más claro (Tarjetas/Nav) */
+  --primary: #38BDF8;    /* Un cyan/azul eléctrico (Acento) */
+  --primary-dark: #0EA5E9; /* Un acento más oscuro para hover */
+  --text-light: #F8FAFC;  /* Texto principal (casi blanco) */
+  --text-muted: #94A3B8;  /* Texto secundario (grisáceo) */
+  --border-color: #334155; /* Borde sutil */
+  
+  /* Tipografía */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Extras */
   --border-radius: 12px;
-  --shadow: 0 10px 30px -15px rgba(0,0,0,0.3);
+  --shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
 }
 
+/* Reset Básico */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
+/* --- ESTILO ORIGINAL DEL BODY (NO SE ROMPERÁ) --- */
 body {
   font-family: var(--font-family);
-  background-color: white; /* Importante para mantener login y landing claros */
-  color: #111;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
   line-height: 1.6;
 }
 
-/* ======================================
-   2) Header general (INDEX + LOGIN + DASH)
-========================================= */
+/* --- 2. Clases Utilitarias (Contenedor y Botones) --- */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--bg-dark); /* Texto oscuro para contraste */
+  border-color: var(--primary);
+}
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-secondary:hover {
+  background-color: var(--primary);
+  color: var(--bg-dark);
+  transform: translateY(-2px);
+}
+
+.btn-large {
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+}
+
+
+/* --- 3. Header y Navegación --- */
 .main-header {
   background-color: var(--bg-light);
   border-bottom: 1px solid var(--border-color);
   padding: 1.25rem 0;
+  
+  /* Efecto "sticky" para que se quede fijo */
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  
+  /* Sombra sutil para despegarlo del contenido */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .main-header .container {
@@ -55,64 +110,173 @@ body {
   color: var(--text-light);
   text-decoration: none;
 }
+.logo:hover {
+  color: var(--primary);
+}
 
 .nav-links {
-  display: flex;
-  gap: 1.5rem;
   list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Espacio entre links */
 }
 
 .nav-links a {
-  color: var(--text-muted);
   text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.nav-links a:hover {
+  color: var(--text-light);
+}
+
+.nav-links a.btn {
+  /* Asegura que el botón en el nav no tenga márgenes raros */
+  margin-left: 1rem;
+}
+
+
+/* --- 4. Hero Section --- */
+.hero {
+  padding: 7rem 1rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem; /* Más grande e impactante */
+  font-weight: 800;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: var(--primary);
+}
+
+.hero .subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+}
+
+/* --- 5. Secciones Generales y Features --- */
+section {
+  padding: 5rem 0;
+}
+
+section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.grid {
+  display: grid;
+  /* Columnas responsivas automáticas */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2); /* Sombra de color --primary */
+}
+
+.feature-icon {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  /* Hacemos los iconos un poco más gruesos */
+  stroke-width: 1.5;
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  color: var(--text-light);
+  margin-bottom: 0.75rem;
+}
+
+.card p {
+  color: var(--text-muted);
+}
+
+/* --- 6. Sección de Contacto --- */
+#contacto .contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  margin: 3rem auto 0;
+}
+
+.contact-item {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.contact-item strong {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.contact-item p {
+  font-size: 1.1rem;
+  color: var(--primary);
   font-weight: 500;
 }
 
-.nav-links a:hover { color: var(--text-light); }
 
-/* ============================================
-   3) BOTONES GENERALES (NO SE ROMPE NADA)
-=============================================== */
-.btn {
-  padding: .8rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 700;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: 0.3s ease;
+/* --- 7. Footer --- */
+.main-footer {
+  background-color: var(--bg-light);
+  padding: 2.5rem 0;
+  margin-top: 5rem;
+  border-top: 1px solid var(--border-color);
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  color: var(--bg-dark);
+.main-footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; 
+  gap: 1rem;
 }
 
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
+.main-footer small {
+  color: var(--text-muted);
 }
 
-.btn-secondary {
-  background: transparent;
-  color: var(--primary);
-  border-color: var(--primary);
-}
-
-.btn-secondary:hover {
-  background: var(--primary);
-  color: var(--bg-dark);
-}
-
-/* ================================================
-   🔵 LOGIN — TOTALMENTE RESTAURADO
-=================================================== */
+/* --- 8. Estilos de Login --- */
 body.login-page {
-  background: var(--bg-dark);
   display: grid;
   place-items: center;
-  padding: 2rem;
   min-height: 100vh;
+  padding: 2rem 1rem;
 }
 
 .form-container {
@@ -120,135 +284,414 @@ body.login-page {
   max-width: 450px;
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 2.5rem;
-  color: var(--text-light);
-}
-
-.form-group label { color: var(--text-muted); }
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: .9rem 1rem;
-  background: var(--bg-dark);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-light);
-  margin-top: 5px;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.3);
-}
-
-/* ================================================
-   🟢 INDEX — RESTAURADO COMPLETO
-=================================================== */
-.hero {
-  padding: 7rem 1rem;
-  text-align: center;
-  color: white;
-}
-
-.hero h1 { font-size: 3.5rem; }
-
-.highlight { color: var(--primary); }
-
-.section-subtitle { color: var(--text-muted); }
-
-/* Cards del index */
-.card {
-  background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 2rem;
-  color: var(--text-light);
+  padding: 2.5rem 2rem 2rem;
   box-shadow: var(--shadow);
 }
 
-/* ================================================
-   🌙 DASHBOARD MODO OSCURO — AISLADO
-   SOLO SE ACTIVA SI EL BODY TIENE:
-      <body class="dashboard-page">
-=================================================== */
-
-body.dashboard-page {
-  background-color: var(--bg-dark);
+.form-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* Ocultar formularios inactivos */
+.form {
+  display: none;
+}
+.form.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo para los inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  background-color: var(--bg-dark); /* Fondo más oscuro */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); /* Sombra de foco */
+}
+
+.btn.full-width {
+  width: 100%;
+  padding: 1rem;
+}
+
+.toggle-text {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+}
+.toggle-text a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+.toggle-text a:hover {
+  text-decoration: underline;
+}
+
+.form-message {
+  text-align: center;
+  color: #F87171; /* Un color de error */
+  margin-top: 1rem;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 2rem;
+}
+.back-link a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.back-link a:hover {
+  color: var(--text-light);
+}
+
+
+/* --- 9. Estilos de Dashboard (TUS ESTILOS ORIGINALES) --- */
+
+/* Ajuste para que el contenido no quede debajo del header sticky */
+.dashboard-content {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Para móviles */
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Grid para las stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  position: relative;
+  padding: 1.5rem;
+}
+.stat-card h3 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+.stat-card p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Indicador de color para stats */
+.stat-indicator {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.stat-indicator.positive { background-color: #4ADE80; /* Verde */ }
+.stat-indicator.negative { background-color: #F87171; /* Rojo */ }
+.stat-indicator.warning { background-color: #FACC15; /* Amarillo */ }
+
+
+/* Panel principal (para la tabla) */
+.main-content-panel {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.main-content-panel h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: left; /* Sobreescribe el 'center' general */
+}
+
+/* Estilos de Tabla Tech */
+.table-container {
+  overflow-x: auto; /* Responsive para tablas */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+
+table thead {
+  background-color: var(--bg-dark); /* Un poco más oscuro */
+}
+
+table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-light);
+  vertical-align: middle;
+}
+
+table tbody tr {
+  transition: background-color 0.2s ease;
+}
+table tbody tr:hover {
+  background-color: #2a3a52; /* Un hover sutil */
+}
+
+/* Puntos de estado */
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.status-dot.connected { background-color: #4ADE80; /* Verde */ }
+.status-dot.alert { background-color: #F87171; /* Rojo */ }
+.status-dot.warning { background-color: #FACC15; /* Amarillo */ }
+.status-dot.disconnected { background-color: #64748B; /* Gris */ }
+
+/* Botones dentro de la tabla */
+.btn-table {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+.btn-table:hover {
+  text-decoration: underline;
+}
+.btn-table.alert {
+  color: #F87171;
+  font-weight: 700;
+}
+
+/* --- FIN DE TUS ESTILOS ORIGINALES --- */
+
+
+/* ==========================================================================
+   DASHBOARD PRO — SOLO PARA <body class="dashboard-page">
+   Visual estilo Apple "Find My", moderno, tech, elegante
+========================================================================== */
+
+/* ---------- Layout global ---------- */
+body.dashboard-page {
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-dark);
+}
+
+.dashboard-page .main-layout {
+  display: flex;
+  height: calc(100vh - 80px);
+  width: 100%;
   overflow: hidden;
 }
 
-body.dashboard-page .dashboard-container {
-  display: flex;
-  height: calc(100vh - 73px);
-}
-
-body.dashboard-page .map-wrapper {
-  flex: 6;
-  height: 100%;
-  background: var(--bg-dark);
-}
-
-body.dashboard-page #map {
-  width: 100%;
-  height: 100%;
-}
-
-body.dashboard-page .panels-wrapper {
-  flex: 4;
-  background: var(--bg-dark);
-  padding: 2rem;
+/* ---------- Panel izquierdo ---------- */
+.dashboard-page .panel-left {
+  width: 35%;
+  min-width: 380px;
+  background: #0f172a;
+  border-right: 1px solid #1e293b;
+  padding: 24px;
   overflow-y: auto;
-  border-left: 1px solid var(--border-color);
+  box-shadow: inset -4px 0 10px rgba(0,0,0,0.35);
 }
 
-body.dashboard-page .panel {
-  background-color: var(--bg-light);
-  padding: 1.5rem;
-  border-radius: var(--border-radius);
-  margin-bottom: 2rem;
-  border: 1px solid var(--border-color);
+.dashboard-page .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
 }
 
-body.dashboard-page .dashboard-header h1 {
+.dashboard-page .panel-header h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
   color: var(--text-light);
 }
 
-/* Tabla dashboard */
-body.dashboard-page table {
+/* ---------- Tarjeta interna ---------- */
+.dashboard-page .card {
+  background: #1e293b;
+  border: 1px solid #2a3a52;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+.dashboard-page .card h2 {
+  margin-bottom: 18px;
+  color: var(--text-light);
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-bottom: 1px solid #2f3e55;
+  padding-bottom: 10px;
+}
+
+/* ---------- Tabla moderna ---------- */
+.dashboard-page table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.dashboard-page thead {
+  background: #111827;
+}
+
+.dashboard-page th {
+  padding: 14px 10px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dashboard-page td {
+  padding: 16px 10px;
+  border-bottom: 1px solid #2a3a52;
   color: var(--text-light);
 }
 
-body.dashboard-page table td,
-body.dashboard-page table th {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
+.dashboard-page tbody tr:hover {
+  background: rgba(56, 189, 248, 0.08);
 }
 
-/* MAPBOX DARK FIX */
+/* ---------- Panel derecho (MAPA) ---------- */
+.dashboard-page .panel-right {
+  width: 65%;
+  position: relative;
+}
+
+.dashboard-page .map-wrapper {
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+}
+
+/* MAPBOX tamaño */
+.dashboard-page #map {
+  width: 100%;
+  height: 100%;
+  border-left: 1px solid #1e293b;
+}
+
+/* ---------- Estilos MAPBOX UI ---------- */
 .mapboxgl-canvas {
-  background: var(--bg-dark) !important;
+  background: #0f172a !important;
 }
 
-/* Marcadores */
-.marker-alert {
-  width: 22px;
-  height: 22px;
-  background: #ff4d4d;
-  border-radius: 50%;
-  border: 2px solid white;
+/* botones de zoom */
+.mapboxgl-ctrl-group {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
 }
 
+.mapboxgl-ctrl-group button {
+  color: var(--text-light) !important;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background: var(--primary) !important;
+  color: #0f172a !important;
+}
+
+/* popups */
+.mapboxgl-popup-content {
+  background: #1e293b !important;
+  color: white !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  padding: 14px 16px !important;
+}
+
+/* ---------- Marcadores ---------- */
 .marker-normal {
   width: 22px;
   height: 22px;
-  background: #38bdf8;
+  background: var(--primary);
   border-radius: 50%;
   border: 2px solid white;
+  box-shadow: 0 0 12px rgba(56,189,248,0.8);
+}
+
+.marker-alert {
+  width: 22px;
+  height: 22px;
+  background: #f87171;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 15px rgba(248,113,113,0.9);
+}
+
+/* ---------- Scrollbar elegante ---------- */
+.dashboard-page .panel-left::-webkit-scrollbar {
+  width: 10px;
+}
+.dashboard-page .panel-left::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 20px;
+}
+.dashboard-page .panel-left::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
