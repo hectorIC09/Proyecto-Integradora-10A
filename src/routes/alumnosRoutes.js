@@ -1,21 +1,27 @@
 import express from "express";
 import {
-  obtenerAlumnos,
-  crearInvitacion,
-  registrarDatosAlumno,
-  actualizarUbicacion,
-  eliminarAlumno,
-  toggleAlerta
+  getAlumnos,
+  getAlumnoPorMatricula,
+  setAlerta,
+  invitarAlumno,
+  eliminarAlumno
 } from "../controllers/alumnosController.js";
 
 const router = express.Router();
 
-// Rutas API
-router.get("/alumnos", obtenerAlumnos);               // Para llenar la tabla y mapa del admin
-router.post("/alumnos/invitar", crearInvitacion);     // Paso 1: Admin crea hueco con email
-router.post("/alumnos/registro", registrarDatosAlumno); // Paso 2: Alumno llena sus datos
-router.post("/alumnos/ubicacion", actualizarUbicacion); // Paso 3: Alumno envía GPS
-router.delete("/alumnos/:id", eliminarAlumno);        // Admin borra alumno
-router.put("/alumnos/alerta/:id", toggleAlerta);      // Admin activa/desactiva alerta
+// Obtener todos los alumnos
+router.get("/alumnos", getAlumnos);
+
+// Obtener alumno por matrícula
+router.get("/alumnos/matricula/:matricula", getAlumnoPorMatricula);
+
+// Activar / desactivar alerta
+router.put("/alumnos/alerta/:id", setAlerta);
+
+// Invitar alumno (envía correo)
+router.post("/alumnos/invitar", invitarAlumno);
+
+// Eliminar alumno
+router.delete("/alumnos/:id", eliminarAlumno);
 
 export default router;
