@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("./serviceWorker.js") 
+        .register("./serviceWorker.js")
         .then((reg) => console.log("Service Worker OK:", reg.scope))
         .catch((err) => console.error("SW error:", err));
     });
@@ -21,10 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm && regForm) {
     console.log("Página de login detectada.");
 
+    // LOGIN
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.querySelector("#email").value;
-      const password = document.querySelector("#password").value;
+      const email = email.value;
+      const password = password.value;
       const msg = document.querySelector("#msg");
 
       try {
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Registro
+    // REGISTRO
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = rname.value;
@@ -69,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // TOGGLE LOGIN / REGISTER
     document.querySelector("#show-register").addEventListener("click", (e) => {
       e.preventDefault();
       loginForm.classList.remove("active");
@@ -92,7 +94,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Dashboard detectado.");
 
     /* ---- MAPA ---- */
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
+    mapboxgl.accessToken =
+      "pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg";
 
     let map = new mapboxgl.Map({
       container: "map",
@@ -100,11 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
       center: [-100.312, 25.667],
       zoom: 13,
       pitch: 45,
-      bearing: -20
+      bearing: -20,
     });
 
     map.addControl(new mapboxgl.NavigationControl());
-
     const marcadores = {};
 
     /* ---- CARGAR ALUMNOS ---- */
@@ -117,43 +119,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const lista = data.alumnos;
         const tableBody = document.getElementById("alumnosTableBody");
-
         tableBody.innerHTML = "";
 
-        lista.forEach(a => {
+        lista.forEach((a) => {
           const tr = document.createElement("tr");
 
           tr.innerHTML = `
             <td>${a.nombre}</td>
             <td>${a.matricula}</td>
-            <td>${a.en_alerta 
-                  ? "<span class='badge badge-alert'>⚠ ALERTA</span>"
-                  : "<span class='badge badge-safe'>✓ Seguro</span>"}
+            <td>${a.en_alerta
+              ? "<span class='badge badge-alert'>⚠ ALERTA</span>"
+              : "<span class='badge badge-safe'>✓ Seguro</span>"}
             </td>
           `;
 
           tableBody.appendChild(tr);
 
-          // Mapa
           if (a.lat && a.lng) {
             if (!marcadores[a.id]) {
               const el = document.createElement("div");
-              el.className = `marker ${a.en_alerta ? "marker-alert" : "marker-normal"}`;
+              el.className = `marker ${
+                a.en_alerta ? "marker-alert" : "marker-normal"
+              }`;
 
               marcadores[a.id] = new mapboxgl.Marker(el)
                 .setLngLat([a.lng, a.lat])
-                .setPopup(new mapboxgl.Popup().setHTML(`
+                .setPopup(
+                  new mapboxgl.Popup().setHTML(`
                   <strong>${a.nombre}</strong><br>
                   ${a.matricula}<br>
                   ${a.email}
-                `))
+                `)
+                )
                 .addTo(map);
             } else {
               marcadores[a.id].setLngLat([a.lng, a.lat]);
             }
           }
         });
-
       } catch (error) {
         console.error("Error cargando alumnos:", error);
       }
@@ -163,8 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(cargarAlumnos, 3000);
 
     /* ---- LOGOUT ---- */
-    const btnLogout = document.getElementById("btn-logout");
-    btnLogout.addEventListener("click", async () => {
+    document.getElementById("btn-logout").addEventListener("click", async () => {
       await fetch("/api/logout", { method: "POST" });
       window.location.href = "/";
     });
@@ -177,56 +179,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const abrirModal = document.getElementById("abrirModal");
     const cerrarModal = document.getElementById("cerrarModal");
 
-    abrirModal.onclick = () => modal.style.display = "flex";
-    cerrarModal.onclick = () => modal.style.display = "none";
+    abrirModal.onclick = () => (modal.style.display = "flex");
+    cerrarModal.onclick = () => (modal.style.display = "none");
 
     window.onclick = (e) => {
       if (e.target === modal) modal.style.display = "none";
     };
 
-    /* ---- FORM REGISTRAR ALUMNO ---- */
+    /* ===============================================================
+        FORM REGISTRAR ALUMNO (ÚNICO Y CORRECTO)
+    =============================================================== */
 
-    document.getElementById("formRegistrarAlumno").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    document
+      .getElementById("formRegistrarAlumno")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      const nombre = document.getElementById("alumnoNombre").value.trim();
-      const matricula = document.getElementById("alumnoMatricula").value.trim();
-      const email = document.getElementById("alumnoCorreo").value.trim();
-      const msg = document.getElementById("msgRegistrar");
+        const nombre = alumnoNombre.value.trim();
+        const matricula = alumnoMatricula.value.trim();
+        const email = alumnoCorreo.value.trim();
+        const msg = document.getElementById("msgRegistrar");
 
-      msg.textContent = "Procesando...";
-      msg.className = "form-message";
+        msg.textContent = "Procesando...";
+        msg.className = "form-message";
 
-      try {
-        const res = await fetch("/api/alumnos/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre, matricula, email })
-        });
+        try {
+          // 1. Guardar en BD
+          const res = await fetch("/api/alumnos/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre, matricula, email }),
+          });
 
-        const data = await res.json();
+          const data = await res.json();
 
-        if (!data.ok) {
-          msg.textContent = data.msg || "Error al registrar alumno.";
+          if (!data.ok) {
+            msg.textContent = data.msg || "Error al registrar alumno.";
+            msg.classList.add("err");
+            return;
+          }
+
+          // 2. Enviar correo con MailJS
+          await emailjs.send("service_tqq2bv2", "template_oqgl00e", {
+            alumno_nombre: nombre,
+            alumno_matricula: matricula,
+            alumno_correo: email,
+            link_ubicacion: `https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`,
+          });
+
+          msg.textContent = "Alumno registrado y correo enviado ✔";
+          msg.classList.add("ok");
+
+          cargarAlumnos();
+
+          setTimeout(() => {
+            modal.style.display = "none";
+            msg.textContent = "";
+          }, 1500);
+        } catch (err) {
+          msg.textContent = "Error en el servidor.";
           msg.classList.add("err");
-          return;
         }
-
-        msg.textContent = "Alumno registrado y correo enviado ✔";
-        msg.classList.add("ok");
-
-        cargarAlumnos();
-
-        setTimeout(() => {
-          modal.style.display = "none";
-          msg.textContent = "";
-        }, 1500);
-
-      } catch (err) {
-        msg.textContent = "Error en el servidor.";
-        msg.classList.add("err");
-      }
-    });
-
-  } // Fin dashboard
+      });
+  }
 });
