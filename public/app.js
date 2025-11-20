@@ -24,8 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // LOGIN
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = email.value;
-      const password = password.value;
+
+      const email = document.querySelector("#email").value.trim();
+      const password = document.querySelector("#password").value.trim();
       const msg = document.querySelector("#msg");
 
       try {
@@ -36,8 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const d = await res.json();
-        if (d.ok) window.location.href = "/dashboard.html";
-        else msg.textContent = d.message || "Credenciales incorrectas.";
+        if (d.ok) {
+          window.location.href = "/dashboard";
+        } else {
+          msg.textContent = d.message || "Credenciales incorrectas.";
+        }
+
       } catch {
         msg.textContent = "Error de conexión.";
       }
@@ -46,9 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // REGISTRO
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = rname.value;
-      const email = remail.value;
-      const password = rpassword.value;
+
+      const name = rname.value.trim();
+      const email = remail.value.trim();
+      const password = rpassword.value.trim();
       const msgReg = document.querySelector("#msg-reg");
 
       try {
@@ -59,12 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const d = await res.json();
+
         if (d.ok) {
           msgReg.textContent = "";
           loginForm.classList.add("active");
           regForm.classList.remove("active");
           document.querySelector("#msg").textContent = "Cuenta creada. Inicia sesión.";
-        } else msgReg.textContent = d.message;
+        } else {
+          msgReg.textContent = d.message;
+        }
+
       } catch {
         msgReg.textContent = "Error en el servidor.";
       }
@@ -236,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modal.style.display = "none";
             msg.textContent = "";
           }, 1500);
+
         } catch (err) {
           msg.textContent = "Error en el servidor.";
           msg.classList.add("err");
