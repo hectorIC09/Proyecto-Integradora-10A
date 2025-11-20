@@ -247,7 +247,7 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
   msg.textContent = "Procesando...";
 
   // Puedes activar esto cuando tengas tu ruta lista
-  /*
+  
   const res = await fetch("/api/alumnos/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -259,11 +259,13 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
     msg.textContent = "Error: " + data.msg;
     return;
   }
-  */
 
   msg.textContent = "Alumno registrado (simulado)";
   msg.style.color = "lightgreen";
 });
+
+setInterval(cargarAlumnos, 5000);
+cargarAlumnos();
 
 
 }); 
