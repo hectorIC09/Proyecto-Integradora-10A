@@ -24,24 +24,34 @@
   <nav class="container">
     <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
     <ul class="nav-links">
-      <li><a href="#alumnos">Alumnos</a></li>
-      <li><a href="#mapa">Mapa en Vivo</a></li>
+      <li><a href="#alumnos-panel">Alumnos</a></li>
+      <li><a href="#map">Mapa en Vivo</a></li>
       <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
     </ul>
   </nav>
 </header>
 
-<main class="main-layout">
+<!-- CONTENEDOR PRINCIPAL (Izquierda tabla | Derecha mapa) -->
+<div class="dashboard-container">
 
-  <!-- PANEL IZQUIERDO (tabla) -->
-  <section class="panel-left">
-    <div class="panel-header">
+  <!-- PANEL DERECHO (MAPA estilo Apple "Encontrar") -->
+  <div class="map-wrapper">
+    <div id="map"></div>
+  </div>
+
+  <!-- PANEL IZQUIERDO (Alumnos + botones) -->
+  <div class="panels-wrapper">
+    
+    <!-- Header dentro del panel -->
+    <div class="dashboard-header">
       <h1 id="welcome">Bienvenido</h1>
       <a href="/registrar-alumno.html" class="btn btn-primary">+ Registrar Alumno</a>
     </div>
 
-    <div class="card">
+    <!-- Panel de alumnos -->
+    <div class="panel" id="alumnos-panel">
       <h2>Alumnos</h2>
+
       <div class="table-container">
         <table class="tabla">
           <thead>
@@ -57,16 +67,10 @@
         </table>
       </div>
     </div>
-  </section>
 
-  <!-- PANEL DERECHO (mapa estilo "Encontrar") -->
-  <section class="panel-right">
-    <div class="map-wrapper">
-      <div id="map"></div>
-    </div>
-  </section>
+  </div>
 
-</main>
+</div>
 
 <script src="app.js"></script>
 </body>

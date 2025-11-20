@@ -113,7 +113,7 @@ if (isDashboard) {
 
     map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/light-v11",
+      style: "mapbox://styles/mapbox/dark-v11",
       center: [-100.312, 25.667],
       zoom: 13,
       pitch: 45,

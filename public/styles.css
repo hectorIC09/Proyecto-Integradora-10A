@@ -1,34 +1,30 @@
 /* --- 1. Variables Globales y Reset --- */
 :root {
   /* Paleta "Tech & Security" (Dark Mode) */
-  --bg-dark: #0F172A;     /* Un azul-gris muy oscuro (Fondo) */
-  --bg-light: #1E293B;    /* Un azul-gris más claro (Tarjetas/Nav) */
-  --primary: #38BDF8;    /* Un cyan/azul eléctrico (Acento) */
-  --primary-dark: #0EA5E9; /* Un acento más oscuro para hover */
-  --text-light: #F8FAFC;  /* Texto principal (casi blanco) */
-  --text-muted: #94A3B8;  /* Texto secundario (grisáceo) */
-  --border-color: #334155; /* Borde sutil */
+  --bg-dark: #0F172A;     
+  --bg-light: #1E293B;    
+  --primary: #38BDF8;    
+  --primary-dark: #0EA5E9; 
+  --text-light: #F8FAFC;  
+  --text-muted: #94A3B8;  
+  --border-color: #334155; 
   
-  /* Tipografía */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   
-  /* Extras */
   --border-radius: 12px;
   --shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
 }
 
-/* Reset Básico */
+/* Reset básico */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-/* --- ESTILO ORIGINAL DEL BODY (NO SE ROMPERÁ) --- */
+/* Body general */
 body {
   font-family: var(--font-family);
   background-color: var(--bg-dark);
@@ -36,7 +32,7 @@ body {
   line-height: 1.6;
 }
 
-/* --- 2. Clases Utilitarias (Contenedor y Botones) --- */
+/* --- 2. Contenedores y Botones --- */
 .container {
   max-width: 1140px;
   margin: 0 auto;
@@ -57,7 +53,7 @@ body {
 
 .btn-primary {
   background-color: var(--primary);
-  color: var(--bg-dark); /* Texto oscuro para contraste */
+  color: var(--bg-dark);
   border-color: var(--primary);
 }
 .btn-primary:hover {
@@ -66,36 +62,15 @@ body {
   transform: translateY(-2px);
 }
 
-.btn-secondary {
-  background-color: transparent;
-  color: var(--primary);
-  border-color: var(--primary);
-}
-.btn-secondary:hover {
-  background-color: var(--primary);
-  color: var(--bg-dark);
-  transform: translateY(-2px);
-}
-
-.btn-large {
-  font-size: 1.1rem;
-  padding: 1rem 2rem;
-}
-
-
-/* --- 3. Header y Navegación --- */
+/* --- 3. Header --- */
 .main-header {
   background-color: var(--bg-light);
   border-bottom: 1px solid var(--border-color);
   padding: 1.25rem 0;
-  
-  /* Efecto "sticky" para que se quede fijo */
   position: sticky;
   top: 0;
   z-index: 1000;
-  
-  /* Sombra sutil para despegarlo del contenido */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .main-header .container {
@@ -110,51 +85,29 @@ body {
   color: var(--text-light);
   text-decoration: none;
 }
-.logo:hover {
-  color: var(--primary);
-}
+.logo:hover { color: var(--primary); }
 
 .nav-links {
   list-style: none;
   display: flex;
-  align-items: center;
-  gap: 1.5rem; /* Espacio entre links */
+  gap: 1.5rem;
 }
-
 .nav-links a {
   text-decoration: none;
   color: var(--text-muted);
-  font-weight: 500;
-  transition: color 0.2s ease;
 }
-.nav-links a:hover {
-  color: var(--text-light);
-}
-
-.nav-links a.btn {
-  /* Asegura que el botón en el nav no tenga márgenes raros */
-  margin-left: 1rem;
-}
-
+.nav-links a:hover { color: var(--text-light); }
 
 /* --- 4. Hero Section --- */
 .hero {
   padding: 7rem 1rem;
   text-align: center;
 }
-
 .hero h1 {
-  font-size: 3.5rem; /* Más grande e impactante */
+  font-size: 3.5rem;
   font-weight: 800;
-  color: var(--text-light);
   margin-bottom: 1.5rem;
-  line-height: 1.2;
 }
-
-.highlight {
-  color: var(--primary);
-}
-
 .hero .subtitle {
   font-size: 1.25rem;
   color: var(--text-muted);
@@ -162,29 +115,17 @@ body {
   margin: 0 auto 2.5rem;
 }
 
-/* --- 5. Secciones Generales y Features --- */
-section {
-  padding: 5rem 0;
-}
-
+/* --- 5. Sections / Cards --- */
+section { padding: 5rem 0; }
 section h2 {
   font-size: 2.5rem;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 1rem;
-}
-
-.section-subtitle {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 3rem;
 }
 
 .grid {
   display: grid;
-  /* Columnas responsivas automáticas */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
   gap: 2rem;
 }
 
@@ -193,37 +134,18 @@ section h2 {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 2.5rem 2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-
 .card:hover {
   transform: translateY(-8px);
   border-color: var(--primary);
-  box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2); /* Sombra de color --primary */
 }
 
-.feature-icon {
-  color: var(--primary);
-  margin-bottom: 1.5rem;
-  /* Hacemos los iconos un poco más gruesos */
-  stroke-width: 1.5;
-}
-
-.card h3 {
-  font-size: 1.5rem;
-  color: var(--text-light);
-  margin-bottom: 0.75rem;
-}
-
-.card p {
-  color: var(--text-muted);
-}
-
-/* --- 6. Sección de Contacto --- */
+/* --- 6. Contacto --- */
 #contacto .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
   gap: 2rem;
   max-width: 800px;
   margin: 3rem auto 0;
@@ -233,23 +155,9 @@ section h2 {
   background-color: var(--bg-light);
   border-radius: var(--border-radius);
   padding: 2rem;
-  text-align: center;
   border: 1px solid var(--border-color);
+  text-align: center;
 }
-
-.contact-item strong {
-  font-size: 1.1rem;
-  color: var(--text-light);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.contact-item p {
-  font-size: 1.1rem;
-  color: var(--primary);
-  font-weight: 500;
-}
-
 
 /* --- 7. Footer --- */
 .main-footer {
@@ -259,19 +167,7 @@ section h2 {
   border-top: 1px solid var(--border-color);
 }
 
-.main-footer .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap; 
-  gap: 1rem;
-}
-
-.main-footer small {
-  color: var(--text-muted);
-}
-
-/* --- 8. Estilos de Login --- */
+/* --- 8. Login Page --- */
 body.login-page {
   display: grid;
   place-items: center;
@@ -284,429 +180,122 @@ body.login-page {
   max-width: 450px;
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
+  padding: 2rem;
   border-radius: var(--border-radius);
-  padding: 2.5rem 2rem 2rem;
-  box-shadow: var(--shadow);
 }
 
-.form-container h2 {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-light);
-  margin-bottom: 2rem;
-}
-
-/* Ocultar formularios inactivos */
-.form {
-  display: none;
-}
-.form.active {
-  display: block;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
-/* Estilo para los inputs */
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  display: block;
-  width: 100%;
-  padding: 0.9rem 1rem;
-  font-size: 1rem;
-  background-color: var(--bg-dark); /* Fondo más oscuro */
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-light);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); /* Sombra de foco */
-}
-
-.btn.full-width {
-  width: 100%;
-  padding: 1rem;
-}
-
-.toggle-text {
-  text-align: center;
-  color: var(--text-muted);
-  margin-top: 1.5rem;
-}
-.toggle-text a {
-  color: var(--primary);
-  font-weight: 500;
-  text-decoration: none;
-}
-.toggle-text a:hover {
-  text-decoration: underline;
-}
-
-.form-message {
-  text-align: center;
-  color: #F87171; /* Un color de error */
-  margin-top: 1rem;
-}
-
-.back-link {
-  text-align: center;
-  margin-top: 2rem;
-}
-.back-link a {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-.back-link a:hover {
-  color: var(--text-light);
-}
-
-
-/* --- 9. Estilos de Dashboard (TUS ESTILOS ORIGINALES) --- */
-
-/* Ajuste para que el contenido no quede debajo del header sticky */
+/* --- 9. Dashboard ORIGINAL (tablas, stats) --- */
 .dashboard-content {
   padding-top: 4rem;
   padding-bottom: 4rem;
 }
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap; /* Para móviles */
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-.dashboard-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-/* Grid para las stats */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.stat-card {
-  position: relative;
-  padding: 1.5rem;
-}
-.stat-card h3 {
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-}
-.stat-card p {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-/* Indicador de color para stats */
-.stat-indicator {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-.stat-indicator.positive { background-color: #4ADE80; /* Verde */ }
-.stat-indicator.negative { background-color: #F87171; /* Rojo */ }
-.stat-indicator.warning { background-color: #FACC15; /* Amarillo */ }
-
-
-/* Panel principal (para la tabla) */
 .main-content-panel {
   background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 2.5rem 2rem;
-  box-shadow: var(--shadow);
+  padding: 2rem;
 }
 
-.main-content-panel h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  text-align: left; /* Sobreescribe el 'center' general */
-}
+/* ------------------------------ */
+/* 10. LAYOUT FINAL DEL DASHBOARD */
+/* ------------------------------ */
 
-/* Estilos de Tabla Tech */
-.table-container {
-  overflow-x: auto; /* Responsive para tablas */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  white-space: nowrap; /* Evita que el texto se parta */
-}
-
-table thead {
-  background-color: var(--bg-dark); /* Un poco más oscuro */
-}
-
-table th {
-  padding: 1rem 1.25rem;
-  text-align: left;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-table td {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-light);
-  vertical-align: middle;
-}
-
-table tbody tr {
-  transition: background-color 0.2s ease;
-}
-table tbody tr:hover {
-  background-color: #2a3a52; /* Un hover sutil */
-}
-
-/* Puntos de estado */
-.status-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-.status-dot.connected { background-color: #4ADE80; /* Verde */ }
-.status-dot.alert { background-color: #F87171; /* Rojo */ }
-.status-dot.warning { background-color: #FACC15; /* Amarillo */ }
-.status-dot.disconnected { background-color: #64748B; /* Gris */ }
-
-/* Botones dentro de la tabla */
-.btn-table {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--primary);
-  text-decoration: none;
-  padding: 0.25rem 0;
-}
-.btn-table:hover {
-  text-decoration: underline;
-}
-.btn-table.alert {
-  color: #F87171;
-  font-weight: 700;
-}
-
-/* --- FIN DE TUS ESTILOS ORIGINALES --- */
-
-
-/* ==========================================================================
-   --- 10. NUEVOS ESTILOS (ARREGLO PARA INDEX.HTML) ---
-   Ahora estos estilos SOLO se aplican si el body
-   tiene la clase ".dashboard-page"
-========================================================================== 
-*/
-
-/* 1. Resetear el body para el layout de mapa */
 body.dashboard-page {
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Evita el scroll en la página principal */
+  overflow: hidden;
 }
 
-/* 2. Contenedor principal del dashboard (mapa + paneles) */
+/* Contenedor principal (mapa + panel) */
 .dashboard-page .dashboard-container {
   display: flex;
-  /* Altura = 100% de la ventana MENOS la altura del header (aprox 73px) */
-  height: calc(100vh - 73px); 
+  height: calc(100vh - 73px); /* quita header */
   width: 100%;
 }
 
-/* 3. Columna del Mapa (Izquierda) */
+/* --- MAPA IZQUIERDA --- */
 .dashboard-page .map-wrapper {
-  flex: 6; /* Ocupa 60% del espacio */
+  flex: 6;
   height: 100%;
-  position: relative;
-  background-color: var(--bg-dark); /* Color de fondo mientras carga */
+  background: var(--bg-dark);
 }
-
-/* El mapa debe llenar su contenedor */
 .dashboard-page #map {
   width: 100%;
   height: 100%;
 }
 
-/* 4. Columna de Paneles (Derecha) */
+/* --- PANEL DERECHA --- */
 .dashboard-page .panels-wrapper {
-  flex: 4; /* Ocupa 40% del espacio */
+  flex: 4;
   height: 100%;
-  overflow-y: auto; /* Permite scroll SÓLO en esta columna */
+  overflow-y: auto;
   padding: 1.5rem 2rem;
-  background-color: var(--bg-dark); /* Tu fondo oscuro */
+  background-color: var(--bg-dark);
   border-left: 1px solid var(--border-color);
 }
 
-/* 5. Estilos de los paneles (re-usando tu .card) */
-/* Usamos .panel en lugar de .card para no afectar 
-  tus .card de la página principal 
-*/
 .dashboard-page .panel {
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   box-shadow: var(--shadow);
-  /* Sobreescribir 'section' padding */
-  padding: 1.5rem; 
 }
 
 .dashboard-page .panel h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  text-align: left; /* Sobreescribe el 'center' general */
-}
-
-/*
-  Arreglar el .dashboard-header que está DENTRO
-  de .panels-wrapper
-*/
-.dashboard-page .panels-wrapper .dashboard-header {
   margin-bottom: 1rem;
-  /* Quitar el padding-top de .dashboard-content */
-  padding-top: 0; 
-}
-.dashboard-page .panels-wrapper .dashboard-header h1 {
-  font-size: 2rem; /* Un poco más chico */
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* 6. Estilos de los items en las listas */
+/* --- LISTAS DENTRO DEL PANEL --- */
+.student-list-item,
 .alert-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-radius: 8px;
-  background: rgba(248, 113, 113, 0.1); /* Fondo rojo transparente */
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  margin-bottom: 10px;
-}
-.alert-list-item strong {
-  color: #F87171; /* Rojo claro */
 }
 
 .student-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 1rem 0;
   border-bottom: 1px solid var(--border-color);
 }
 .student-list-item:last-child {
   border-bottom: none;
 }
-.student-list-item small {
-  color: var(--text-muted);
-  font-size: 0.9em;
+
+.alert-list-item {
+  padding: 1rem;
+  border-radius: 10px;
+  background: rgba(248,113,113,0.12);
+  border: 1px solid rgba(248,113,113,0.3);
+  margin-bottom: 12px;
 }
 
-/* 7. Nuevos botones de Alerta (rojo) y Seguro (verde) */
+/* Botones */
 .btn-alert {
-  background-color: #F87171;
-  color: var(--text-light);
+  background: #F87171;
+  color: white;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
   border: none;
-  padding: 0.5rem 0.8rem;
-  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
 }
-.btn-alert:hover {
-  background-color: #EF4444;
-}
-
-
 .btn-safe {
-  background-color: #4ADE80;
+  background: #4ADE80;
   color: var(--bg-dark);
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
   border: none;
-  padding: 0.5rem 0.8rem;
-  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-}
-.btn-safe:hover {
-  background-color: #22C55E;
 }
 
+/* --- 11. MAPBOX (CUSTOM) --- */
+.mapboxgl-canvas { background-color: var(--bg-dark); }
 
-/* ==========================================================================
-   --- ESTILOS PARA MAPBOX ---
-   Reemplaza TODO lo que era de Leaflet
-========================================================================== */
-
-/* Contenedor del mapa */
-#map {
-  height: 100%;
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Para que el fondo del mapa combine con tu UI oscuro */
-.mapboxgl-canvas {
-  outline: none !important;
-  background-color: var(--bg-dark);
-}
-
-/* Control de zoom (botones + / - ) */
-.mapboxgl-ctrl-zoom-in,
-.mapboxgl-ctrl-zoom-out {
-  background-color: var(--bg-light) !important;
-  color: var(--text-light) !important;
-  border-radius: 6px !important;
-  border: 1px solid var(--border-color) !important;
-  width: 32px !important;
-  height: 32px !important;
-  font-size: 16px !important;
-}
-.mapboxgl-ctrl-zoom-in:hover,
-.mapboxgl-ctrl-zoom-out:hover {
-  background-color: var(--primary-dark) !important;
-  color: var(--bg-dark) !important;
-}
-
-/* Barra de navegación (rotate, zoom, etc) */
 .mapboxgl-ctrl-group {
   background-color: var(--bg-light) !important;
   border: 1px solid var(--border-color) !important;
@@ -714,166 +303,20 @@ body.dashboard-page {
   box-shadow: var(--shadow) !important;
 }
 
-/* Popups */
-.mapboxgl-popup {
-  max-width: 280px !important;
-  font-family: var(--font-family) !important;
-}
-
-.mapboxgl-popup-content {
-  background-color: var(--bg-light) !important;
-  color: var(--text-light) !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--border-color) !important;
-  padding: 1rem 1.2rem !important;
-  box-shadow: var(--shadow) !important;
-}
-
-.mapboxgl-popup-close-button {
-  color: var(--text-muted) !important;
-}
-.mapboxgl-popup-close-button:hover {
-  color: var(--primary) !important;
-}
-
-/* Flecha del popup */
-.mapboxgl-popup-tip {
-  border-top-color: var(--bg-light) !important;
-}
-
-/* 🔴 Marcador de alerta (rojo) */
 .marker-alert {
   width: 28px;
   height: 28px;
   background-color: #F87171;
-  border: 2px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(248,113,113,0.8);
 }
 
-/* 🔵 Marcador normal (azul) */
 .marker-normal {
   width: 28px;
   height: 28px;
   background-color: var(--primary);
-  border: 2px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
-}
-
-/* Fix para evitar artefactos/“cuadros” */
-.mapboxgl-tile {
-  image-rendering: auto !important;
-  background: none !important;
-}
-.mapboxgl-canvas {
-  transform: translateZ(0) !important;
-}
-
-/* Asegurar que en el dashboard el contenedor se vea bien */
-.dashboard-page #map {
-  height: 100%;
-  width: 100%;
-}
-
-#invitar.panel {
-  background: #1b1b1d;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  margin-bottom: 20px;
-}
-
-#invitar h2 {
-  margin-bottom: 1rem;
-  color: #3fa7ff;
-}
-
-#invitar .form-group {
-  margin-bottom: 1rem;
-}
-
-#invitar input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: #2a2a2b;
-  color: white;
-}
-
-#invitar input:focus {
-  outline: 2px solid #3fa7ff;
-}
-
-#invite-msg {
-  padding: 10px;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-#invite-msg.ok {
-  background: #163d21;
-  color: #7dff9c;
-}
-
-#invite-msg.err {
-  background: #3d1616;
-  color: #ff7d7d;
-}
-
-/* Layout general */
-.main-layout {
-  display: flex;
-  height: calc(100vh - 70px);
-  overflow: hidden;
-}
-
-/* Panel izquierdo */
-.panel-left {
-  width: 35%;
-  min-width: 350px;
-  padding: 20px;
-  overflow-y: auto;
-  background: #f7f9fc;
-  border-right: 1px solid #e5e7eb;
-}
-
-/* Panel derecho (mapa tipo Apple) */
-.panel-right {
-  width: 65%;
-  position: relative;
-}
-
-.map-wrapper {
-  width: 100%;
-  height: 100%;
-}
-
-#map {
-  width: 100%;
-  height: 100%;
-}
-
-/* Marcadores */
-.marker {
-  width: 20px;
-  height: 20px;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.45);
-}
-
-.marker-normal {
-  background: #3fa7ff;
-}
-
-.marker-alert {
-  background: #ff4d4d;
-}
-
-/* Tabla */
-.table-container {
-  max-height: 70vh;
-  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(56,189,248,0.8);
 }
