@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  //                     ***** MODO ALUMNO  *****
+  //                     *****  MODO ALUMNO  *****
   // ===================================================================
 
   const btnSoyAlumno = document.getElementById("soy-alumno-btn");
@@ -181,36 +181,31 @@ document.addEventListener("DOMContentLoaded", () => {
       const msgAlumno = document.getElementById("msg-alumno");
 
       try {
-        // Nota: Asegúrate de que este endpoint exista en tu nuevo controlador o usa el de login nuevo
-        const res = await fetch(`/api/alumnos/login`, {
-             method: 'POST',
-             headers: {'Content-Type': 'application/json'},
-             body: JSON.stringify({ matricula })
-        });
+        const res = await fetch(`/api/alumnos/matricula/${matricula}`);
         const d = await res.json();
 
-        if (!res.ok || !d.ok) {
-          msgAlumno.textContent = d.msg || "Matrícula no encontrada.";
+        if (!res.ok || !d) {
+          msgAlumno.textContent = "Matrícula no encontrada.";
           return;
         }
 
-        // Guardar sesión alumno
-        localStorage.setItem("alumno", JSON.stringify(d.alumno));
-        window.location.href = "/dashboard-alumno.html"; // Redirige al nuevo dashboard
+        // Guardar matrícula para usarla en alumno.html
+        localStorage.setItem("matriculaAlumno", matricula);
+
+        window.location.href = "/alumno.html";
 
       } catch (err) {
         msgAlumno.textContent = "Error de conexión con el servidor.";
-        console.error(err);
       }
     });
   }
 
   // ===================================================================
-  //                     ***** FIN MODO ALUMNO  *****
+  //                     *****  FIN MODO ALUMNO  *****
   // ===================================================================
 
 
-  // --- LÓGICA DE LOGIN / REGISTRO (ADMIN) ---
+  // --- LÓGICA DE LOGIN / REGISTRO ---
   const regForm2 = document.querySelector("#register-form");
 
   if (loginForm && regForm2) {
@@ -332,8 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // -----------------------------
     //     ***** MAPBOX *****
     // -----------------------------
-    // Reemplaza con tu Token Real
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yY29udHJlcmFzIiwiYSI6ImNtM254Y3RzZzA4bXQya3B4Z2o0aW80czYifQ.zKyjGjaMkyj07O-COHqT4A';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
 
     let map = null;
     const marcadores = {};
@@ -345,145 +339,74 @@ document.addEventListener("DOMContentLoaded", () => {
       map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/dark-v11",
-        center: [-100.3161, 25.6866], // Coordenadas default (Mty)
-        zoom: 12
+        center: [-100.510669, 25.692447],
+        zoom: 15
       });
 
       map.addControl(new mapboxgl.NavigationControl());
     }
 
-    // --- LÓGICA NUEVA: INVITAR ALUMNO CON EMAILJS ---
-    const inviteForm = document.getElementById('invite-form');
-    const inviteMsg = document.getElementById('invite-msg');
-    const btnEnviarInvite = document.getElementById('btnEnviarInvite');
-
-    if (inviteForm) {
-        inviteForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('invite-email').value;
-            
-            inviteMsg.style.display = 'block';
-            inviteMsg.innerText = "Procesando...";
-            inviteMsg.style.color = "blue";
-            btnEnviarInvite.disabled = true;
-
-            try {
-                // 1. Guardar en BD (Backend)
-                const res = await fetch('/api/alumnos/invitar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-
-                if (!data.ok) throw new Error(data.msg);
-
-                // 2. Enviar Correo (Frontend - EmailJS)
-                const linkRegistro = `${window.location.origin}/registro.html?email=${email}`;
-                
-                const templateParams = {
-                    to_email: email,
-                    link_registro: linkRegistro,
-                    // Si tu template usa otras variables, agrégalas aquí
-                };
-
-                // REEMPLAZA CON TUS DATOS DE EMAILJS
-                await emailjs.send("service_vxuchkc", "template_oqgl00e", templateParams);
-
-                inviteMsg.innerText = "✅ Invitación enviada con éxito.";
-                inviteMsg.style.color = "green";
-                inviteForm.reset();
-
-            } catch (error) {
-                console.error(error);
-                inviteMsg.innerText = "❌ Error: " + error.message;
-                inviteMsg.style.color = "red";
-            } finally {
-                btnEnviarInvite.disabled = false;
-            }
-        });
-    }
-
     async function actualizarDatos() {
       try {
-        const res = await fetch('/api/alumnos'); // Trae solo alumnos con ubicación válida
+        const res = await fetch('/api/alumnos');
         const alumnos = await res.json();
 
         const listaAlertas = document.getElementById('alertas-lista');
         const listaAlumnos = document.getElementById('alumnos-lista');
         const msgNoAlertas = document.getElementById('no-alertas-msg');
 
-        // Limpiar listas
-        if (listaAlertas) listaAlertas.innerHTML = "";
-        if (listaAlumnos) listaAlumnos.innerHTML = "";
-        
+        listaAlertas.innerHTML = "";
+        listaAlumnos.innerHTML = "";
         let hayAlertas = false;
-
-        if (!alumnos || alumnos.length === 0) {
-             if(listaAlumnos) listaAlumnos.innerHTML = "<p>No hay alumnos activos en el mapa.</p>";
-             return;
-        }
 
         alumnos.forEach(alumno => {
           const {
             id,
             nombre,
             matricula,
-            lat,
-            lng,
-            en_alerta
+            lat_actual,
+            lng_actual,
+            en_alerta,
+            lat_inicial,
+            lng_inicial
           } = alumno;
 
-          // Renderizar Alertas
-          if (en_alerta && listaAlertas) {
+          if (en_alerta) {
             hayAlertas = true;
             const item = document.createElement("div");
             item.className = "alert-list-item";
             item.innerHTML = `
               <div>
-                <strong>${nombre || 'Sin Nombre'}</strong>
-                <br><small>${matricula || '---'}</small>
+                <strong>${nombre}</strong>
+                <br><small>${matricula}</small>
               </div>
               <button class="btn btn-safe" data-id="${id}">Marcar Seguro</button>
             `;
             listaAlertas.appendChild(item);
           }
 
-          // Renderizar Lista de Alumnos (Solo mostrar básicos)
-          if (listaAlumnos) {
-            const itemAlumno = document.createElement("div");
-            itemAlumno.className = "student-list-item";
-            // Un borde de color para indicar si tiene GPS activo
-            const estadoColor = (lat && lng) ? "green" : "gray"; 
-            
-            itemAlumno.innerHTML = `
-                <div style="border-left: 4px solid ${estadoColor}; padding-left: 10px;">
-                <strong>${nombre || 'Registrado (Sin datos)'}</strong>
-                <br><small>${matricula || alumno.email}</small>
-                </div>
-                ${
-                    en_alerta
-                    ? `<button class="btn btn-safe" data-id="${id}">Seguro</button>`
-                    : `<button class="btn btn-alert" data-id="${id}">Alerta</button>`
-                }
-            `;
-            listaAlumnos.appendChild(itemAlumno);
-          }
+          const itemAlumno = document.createElement("div");
+          itemAlumno.className = "student-list-item";
+          itemAlumno.innerHTML = `
+            <div>
+              <strong>${nombre}</strong>
+              <br><small>${matricula}</small>
+            </div>
+            ${
+              en_alerta
+              ? `<button class="btn btn-safe" data-id="${id}">Marcar Seguro</button>`
+              : `<button class="btn btn-alert" data-id="${id}">Simular Alerta</button>`
+            }
+          `;
+          listaAlumnos.appendChild(itemAlumno);
 
-          // Actualizar Mapa
           if (!map) return;
 
-          // Aseguramos que las coordenadas sean números válidos
-          const latNum = parseFloat(lat);
-          const lngNum = parseFloat(lng);
-
-          if (isNaN(latNum) || isNaN(lngNum)) return;
+          const lat = parseFloat(lat_actual || lat_inicial);
+          const lng = parseFloat(lng_actual || lng_inicial);
 
           if (marcadores[id]) {
-            marcadores[id].setLngLat([lngNum, latNum]);
-            // Actualizar color si entra en alerta
-             const el = marcadores[id].getElement();
-             el.style.background = en_alerta ? "#ff4d4d" : "#3fa7ff";
+            marcadores[id].setLngLat([lng, lat]);
           } else {
             const el = document.createElement("div");
             el.className = en_alerta ? "marker-alert" : "marker-normal";
@@ -492,10 +415,9 @@ document.addEventListener("DOMContentLoaded", () => {
             el.style.borderRadius = "50%";
             el.style.background = en_alerta ? "#ff4d4d" : "#3fa7ff";
             el.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
-            el.style.cursor = "pointer";
 
             const marker = new mapboxgl.Marker(el)
-              .setLngLat([lngNum, latNum])
+              .setLngLat([lng, lat])
               .setPopup(
                 new mapboxgl.Popup().setHTML(`
                   <strong>${nombre}</strong><br>
@@ -509,53 +431,36 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
 
-        if (!hayAlertas && msgNoAlertas && listaAlertas) {
-            listaAlertas.appendChild(msgNoAlertas);
-            msgNoAlertas.style.display = "block";
-            msgNoAlertas.textContent = "No hay alertas activas.";
-        } else if (msgNoAlertas) {
-            msgNoAlertas.style.display = "none";
+        if (!hayAlertas) {
+          msgNoAlertas.textContent = "No hay alertas activas.";
+          listaAlertas.appendChild(msgNoAlertas);
         }
 
       } catch (err) {
-        console.error("Error actualizando datos:", err);
+        console.error("Error:", err);
       }
     }
 
-    // Manejo de botones en los paneles (Alertas / Seguro)
     async function manejarClicPaneles(e) {
       const target = e.target;
       const id = target.dataset.id;
 
       if (!id) return;
 
-      // Si clickean "Simular Alerta" (o Alerta), activamos la alerta
-      // Si clickean "Marcar Seguro" (o Seguro), desactivamos la alerta
-      let nuevoEstado = false;
-      if (target.classList.contains("btn-alert")) nuevoEstado = true;
-      else if (target.classList.contains("btn-safe")) nuevoEstado = false;
-      else return; // Click en otro lado
+      const nuevoEstado = target.classList.contains("btn-alert");
 
-      // Llamada a la API (asegúrate que tu backend tenga PUT /api/alumnos/alerta/:id)
-      // Nota: En la reestructuración quizás usamos solo 'en_alerta' en la tabla
-      try {
-          // Aquí asumimos que tienes un endpoint para esto. 
-          // Si no, habría que crearlo en alumnosRoutes/Controller.
-          /* Si no existe el endpoint específico, se puede simular o crear.
-             Asumiré que existe o que solo actualiza la UI por ahora si no tienes el endpoint.
-          */
-          console.log(`Cambiando alerta usuario ${id} a ${nuevoEstado}`);
-          // await fetch(...) 
-      } catch(err) {
-          console.error(err);
-      }
+      await fetch(`/api/alumnos/alerta/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ en_alerta: nuevoEstado })
+      });
 
       actualizarDatos();
     }
 
     iniciarMapa();
     actualizarDatos();
-    setInterval(actualizarDatos, 3000); // Polling cada 3 segundos
+    setInterval(actualizarDatos, 3000);
 
     const panelWrapper = document.querySelector(".panels-wrapper");
     if (panelWrapper) {
