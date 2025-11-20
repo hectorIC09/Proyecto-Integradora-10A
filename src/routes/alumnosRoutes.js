@@ -23,21 +23,20 @@ import {
   obtenerAlumnosPorAdmin 
 } from "../controllers/alumnosController.js";
 
-import { soloAdmin } from "../server.js";
 
 const router = express.Router();
 
 // Registrar alumno desde el dashboard
-router.post("/create", soloAdmin,crearAlumno);
+router.post("/create", crearAlumno);
 
 // Obtener TODOS los alumnos (para el dashboard)
-router.get("/", soloAdmin, obtenerAlumnos);
+router.get("/", obtenerAlumnos);
 
 // Alumno envía su ubicación
 router.post("/ubicacion", actualizarUbicacion);
 
 // Alumnos creados por ESTE admin
-router.get("/mis-alumnos", soloAdmin, obtenerAlumnosPorAdmin);
+router.get("/mis-alumnos", obtenerAlumnosPorAdmin);
 
 export default router;
 
