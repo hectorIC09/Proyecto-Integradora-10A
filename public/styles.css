@@ -527,6 +527,359 @@ table tbody tr:hover {
 
 
 /* ==========================================================================
+   --- 10. NUEVOS ESTILOS (ARREGLO PARA INDEX.HTML) ---
+   Ahora estos estilos SOLO se aplican si el body
+   tiene la clase ".dashboard-page"
+========================================================================== 
+*/
+
+/* 1. Resetear el body para el layout de mapa */
+body.dashboard-page {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Evita el scroll en la página principal */
+}
+
+/* 2. Contenedor principal del dashboard (mapa + paneles) */
+.dashboard-page .dashboard-container {
+  display: flex;
+  /* Altura = 100% de la ventana MENOS la altura del header (aprox 73px) */
+  height: calc(100vh - 73px); 
+  width: 100%;
+}
+
+/* 3. Columna del Mapa (Izquierda) */
+.dashboard-page .map-wrapper {
+  flex: 6; /* Ocupa 60% del espacio */
+  height: 100%;
+  position: relative;
+  background-color: var(--bg-dark); /* Color de fondo mientras carga */
+}
+
+/* El mapa debe llenar su contenedor */
+.dashboard-page #map {
+  width: 100%;
+  height: 100%;
+}
+
+/* 4. Columna de Paneles (Derecha) */
+.dashboard-page .panels-wrapper {
+  flex: 4; /* Ocupa 40% del espacio */
+  height: 100%;
+  overflow-y: auto; /* Permite scroll SÓLO en esta columna */
+  padding: 1.5rem 2rem;
+  background-color: var(--bg-dark); /* Tu fondo oscuro */
+  border-left: 1px solid var(--border-color);
+}
+
+/* 5. Estilos de los paneles (re-usando tu .card) */
+/* Usamos .panel en lugar de .card para no afectar 
+  tus .card de la página principal 
+*/
+.dashboard-page .panel {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  /* Sobreescribir 'section' padding */
+  padding: 1.5rem; 
+}
+
+.dashboard-page .panel h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left; /* Sobreescribe el 'center' general */
+}
+
+/*
+  Arreglar el .dashboard-header que está DENTRO
+  de .panels-wrapper
+*/
+.dashboard-page .panels-wrapper .dashboard-header {
+  margin-bottom: 1rem;
+  /* Quitar el padding-top de .dashboard-content */
+  padding-top: 0; 
+}
+.dashboard-page .panels-wrapper .dashboard-header h1 {
+  font-size: 2rem; /* Un poco más chico */
+}
+
+/* 6. Estilos de los items en las listas */
+.alert-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.1); /* Fondo rojo transparente */
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  margin-bottom: 10px;
+}
+.alert-list-item strong {
+  color: #F87171; /* Rojo claro */
+}
+
+.student-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.student-list-item:last-child {
+  border-bottom: none;
+}
+.student-list-item small {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+/* 7. Nuevos botones de Alerta (rojo) y Seguro (verde) */
+.btn-alert {
+  background-color: #F87171;
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-alert:hover {
+  background-color: #EF4444;
+}
+
+
+.btn-safe {
+  background-color: #4ADE80;
+  color: var(--bg-dark);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-safe:hover {
+  background-color: #22C55E;
+}
+
+
+/* ==========================================================================
+   --- ESTILOS PARA MAPBOX ---
+   Reemplaza TODO lo que era de Leaflet
+========================================================================== */
+
+/* Contenedor del mapa */
+#map {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Para que el fondo del mapa combine con tu UI oscuro */
+.mapboxgl-canvas {
+  outline: none !important;
+  background-color: var(--bg-dark);
+}
+
+/* Control de zoom (botones + / - ) */
+.mapboxgl-ctrl-zoom-in,
+.mapboxgl-ctrl-zoom-out {
+  background-color: var(--bg-light) !important;
+  color: var(--text-light) !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border-color) !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 16px !important;
+}
+.mapboxgl-ctrl-zoom-in:hover,
+.mapboxgl-ctrl-zoom-out:hover {
+  background-color: var(--primary-dark) !important;
+  color: var(--bg-dark) !important;
+}
+
+/* Barra de navegación (rotate, zoom, etc) */
+.mapboxgl-ctrl-group {
+  background-color: var(--bg-light) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Popups */
+.mapboxgl-popup {
+  max-width: 280px !important;
+  font-family: var(--font-family) !important;
+}
+
+.mapboxgl-popup-content {
+  background-color: var(--bg-light) !important;
+  color: var(--text-light) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 1rem 1.2rem !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.mapboxgl-popup-close-button {
+  color: var(--text-muted) !important;
+}
+.mapboxgl-popup-close-button:hover {
+  color: var(--primary) !important;
+}
+
+/* Flecha del popup */
+.mapboxgl-popup-tip {
+  border-top-color: var(--bg-light) !important;
+}
+
+/* 🔴 Marcador de alerta (rojo) */
+.marker-alert {
+  width: 28px;
+  height: 28px;
+  background-color: #F87171;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+}
+
+/* 🔵 Marcador normal (azul) */
+.marker-normal {
+  width: 28px;
+  height: 28px;
+  background-color: var(--primary);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+/* Fix para evitar artefactos/“cuadros” */
+.mapboxgl-tile {
+  image-rendering: auto !important;
+  background: none !important;
+}
+.mapboxgl-canvas {
+  transform: translateZ(0) !important;
+}
+
+/* Asegurar que en el dashboard el contenedor se vea bien */
+.dashboard-page #map {
+  height: 100%;
+  width: 100%;
+}
+
+#invitar.panel {
+  background: #1b1b1d;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
+}
+
+#invitar h2 {
+  margin-bottom: 1rem;
+  color: #3fa7ff;
+}
+
+#invitar .form-group {
+  margin-bottom: 1rem;
+}
+
+#invitar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #2a2a2b;
+  color: white;
+}
+
+#invitar input:focus {
+  outline: 2px solid #3fa7ff;
+}
+
+#invite-msg {
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+#invite-msg.ok {
+  background: #163d21;
+  color: #7dff9c;
+}
+
+#invite-msg.err {
+  background: #3d1616;
+  color: #ff7d7d;
+}
+
+/* Layout general */
+.main-layout {
+  display: flex;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+}
+
+/* Panel izquierdo */
+.panel-left {
+  width: 35%;
+  min-width: 350px;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f7f9fc;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* Panel derecho (mapa tipo Apple) */
+.panel-right {
+  width: 65%;
+  position: relative;
+}
+
+.map-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Marcadores */
+.marker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.45);
+}
+
+.marker-normal {
+  background: #3fa7ff;
+}
+
+.marker-alert {
+  background: #ff4d4d;
+}
+
+/* Tabla */
+.table-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+
+/* ==========================================================================
    DASHBOARD PRO — SOLO PARA <body class="dashboard-page">
    Visual estilo Apple "Find My", moderno, tech, elegante
 ========================================================================== */
