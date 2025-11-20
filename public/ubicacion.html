@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Ubicación | Campus Watch</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .card {
+      max-width: 420px;
+      margin: auto;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #38bdf8;
+    }
+
+    #error {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #f87171;
+    }
+
+    .loading {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #a5f3fc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>Enviando ubicación…</h1>
+    <p>Por favor mantén esta ventana abierta.</p>
+    <p id="status">Esperando permisos…</p>
+    <p id="error"></p>
+  </div>
+
+  <script>
+    // --------------------------
+    // 1. Obtener matrícula de URL
+    // --------------------------
+    const params = new URLSearchParams(window.location.search);
+    const matricula = params.get("matricula");
+
+    if (!matricula) {
+      document.getElementById("error").textContent =
+        "Error: No se recibió la matrícula.";
+      throw new Error("No matricula");
+    }
+
+    const statusEl = document.getElementById("status");
+    const errorEl = document.getElementById("error");
+
+    // --------------------------
+    // 2. Función para enviar ubicación
+    // --------------------------
+    async function enviarUbicacion(lat, lng) {
+      try {
+        const res = await fetch(
+          "https://proyecto-integradora-10a.onrender.com/api/alumnos/ubicacion",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ matricula, lat, lng })
+          }
+        );
+
+        if (!res.ok) throw new Error("Error del servidor");
+
+        statusEl.textContent = `Ubicación actualizada: ${lat.toFixed(
+          5
+        )}, ${lng.toFixed(5)}`;
+      } catch (err) {
+        errorEl.textContent = "No se pudo enviar la ubicación.";
+      }
+    }
+
+    // --------------------------
+    // 3. Obtener ubicación continuamente
+    // --------------------------
+    function iniciarGPS() {
+      if (!navigator.geolocation) {
+        errorEl.textContent = "Tu dispositivo no soporta geolocalización.";
+        return;
+      }
+
+      statusEl.textContent = "Esperando ubicación del dispositivo…";
+
+      navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          statusEl.textContent = "Ubicación obtenida. Enviando…";
+
+          enviarUbicacion(lat, lng);
+        },
+        (err) => {
+          errorEl.textContent = "Error obteniendo ubicación.";
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 8000,
+        }
+      );
+    }
+
+    iniciarGPS();
+  </script>
+</body>
+</html>

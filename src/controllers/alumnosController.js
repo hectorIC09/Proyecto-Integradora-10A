@@ -1,8 +1,7 @@
 import pool from "../config/db.js";
-import fetch from "node-fetch";
 
 // ===============================
-// 1. Registrar alumno
+// 1. Registrar alumno + enviar correo
 // ===============================
 export const crearAlumno = async (req, res) => {
     try {
@@ -11,13 +10,14 @@ export const crearAlumno = async (req, res) => {
         if (!nombre || !matricula || !email)
             return res.json({ ok: false, msg: "Faltan datos" });
 
+        // Guardar en BD
         const result = await pool.query(
             `INSERT INTO alumnos (nombre, matricula, email)
              VALUES ($1, $2, $3) RETURNING *`,
             [nombre, matricula, email]
         );
 
-        // === Enviar invitación usando tu MailJS ===
+        // === Enviar invitación con MailJS ===
         await fetch("https://api.emailjs.com/api/v1.0/email/send", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,7 +28,9 @@ export const crearAlumno = async (req, res) => {
                 template_params: {
                     alumno_nombre: nombre,
                     alumno_matricula: matricula,
-                    link_ubicacion: `https://TU-DOMINIO.com/ubicacion.html?matricula=${matricula}`
+
+                    // 🔥 Este es el link que se usará en tu template MailJS
+                    link: `https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`
                 }
             })
         });
@@ -40,8 +42,6 @@ export const crearAlumno = async (req, res) => {
         res.json({ ok: false, msg: "Error en el servidor" });
     }
 };
-
-
 
 // ===============================
 // 2. Alumno actualiza ubicación
@@ -65,14 +65,15 @@ export const actualizarUbicacion = async (req, res) => {
     }
 };
 
-
-
 // ===============================
 // 3. Obtener lista de alumnos
 // ===============================
 export const obtenerAlumnos = async (req, res) => {
     try {
-        const { rows } = await pool.query(`SELECT * FROM alumnos ORDER BY id DESC`);
+        const { rows } = await pool.query(
+            `SELECT * FROM alumnos ORDER BY id DESC`
+        );
+
         res.json({ ok: true, alumnos: rows });
 
     } catch (error) {

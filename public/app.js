@@ -1,34 +1,31 @@
-// Espera a que todo el HTML esté cargado
 document.addEventListener("DOMContentLoaded", () => {
-  
-  // --- LÓGICA DEL SERVICE WORKER (GLOBAL) ---
-  // Esto se ejecuta en todas las páginas
+
+  /* ===============================================================
+     SERVICE WORKER (GLOBAL)
+  =============================================================== */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
         .register("./serviceWorker.js") 
-        .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
-        .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
+        .then((reg) => console.log("Service Worker OK:", reg.scope))
+        .catch((err) => console.error("SW error:", err));
     });
   }
 
-  
-  // --- LÓGICA DE LOGIN / REGISTRO ---
-  // 🧠 Comprobamos si estamos en la página de login buscando los formularios
+  /* ===============================================================
+     LOGIN Y REGISTRO (solo en index)
+  =============================================================== */
   const loginForm = document.querySelector("#login-form");
   const regForm = document.querySelector("#register-form");
 
-  // Si loginForm existe, ejecutamos todo el código de login/registro
   if (loginForm && regForm) {
-    const formTitle = document.querySelector("#form-title");
-    console.log("Estoy en la página de Login.");
+    console.log("Página de login detectada.");
 
-    // --- LOGIN ---
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.querySelector("#email").value;
       const password = document.querySelector("#password").value;
-      const msg = document.querySelector("#msg"); // Mensaje de error/éxito
+      const msg = document.querySelector("#msg");
 
       try {
         const res = await fetch("/api/login", {
@@ -36,26 +33,22 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password })
         });
+
         const d = await res.json();
-        
-        if (d.ok) {
-          // Éxito: Redirigir al dashboard
-          window.location.href = "/dashboard.html"; // Asegúrate que sea .html
-        } else {
-          msg.textContent = d.message || "Error: Revisa tus credenciales.";
-        }
-      } catch (err) {
-        msg.textContent = "Error de conexión con el servidor.";
+        if (d.ok) window.location.href = "/dashboard";
+        else msg.textContent = d.message || "Credenciales incorrectas.";
+      } catch {
+        msg.textContent = "Error de conexión.";
       }
     });
 
-    // --- REGISTRO ---
+    // Registro
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = document.querySelector("#rname").value;
-      const email = document.querySelector("#remail").value;
-      const password = document.querySelector("#rpassword").value;
-      const msgReg = document.querySelector("#msg-reg"); // Mensaje de registro
+      const name = rname.value;
+      const email = remail.value;
+      const password = rpassword.value;
+      const msgReg = document.querySelector("#msg-reg");
 
       try {
         const res = await fetch("/api/register", {
@@ -63,55 +56,45 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password })
         });
+
         const d = await res.json();
-        
         if (d.ok) {
-          // Éxito: regresar al login y mostrar mensaje
-          regForm.classList.remove("active");
+          msgReg.textContent = "";
           loginForm.classList.add("active");
-          formTitle.textContent = "Iniciar Sesión";
-          document.querySelector("#msg").textContent = d.message || "¡Registro exitoso! Inicia sesión.";
-        } else {
-          msgReg.textContent = d.message || "Error al registrar la cuenta.";
-        }
-      } catch (err) {
-        msgReg.textContent = "Error de conexión con el servidor.";
+          regForm.classList.remove("active");
+          document.querySelector("#msg").textContent = "Cuenta creada. Inicia sesión.";
+        } else msgReg.textContent = d.message;
+      } catch {
+        msgReg.textContent = "Error en el servidor.";
       }
     });
 
-    // --- TOGGLE ENTRE LOGIN Y REGISTRO ---
     document.querySelector("#show-register").addEventListener("click", (e) => {
       e.preventDefault();
       loginForm.classList.remove("active");
       regForm.classList.add("active");
-      formTitle.textContent = "Crear Cuenta"; // Título actualizado
     });
 
     document.querySelector("#show-login").addEventListener("click", (e) => {
       e.preventDefault();
       regForm.classList.remove("active");
       loginForm.classList.add("active");
-      formTitle.textContent = "Iniciar Sesión"; // Título actualizado
     });
-  } // <-- Fin del bloque "if (loginForm)"
+  }
 
+  /* ===============================================================
+      DASHBOARD
+  =============================================================== */
 
-  // --- LÓGICA DEL DASHBOARD ---
   const isDashboard = document.body.classList.contains("dashboard-page");
 
-if (isDashboard) {
-  console.log("Dashboard detectado.");
+  if (isDashboard) {
+    console.log("Dashboard detectado.");
 
-  // Token de Mapbox
-  mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
+    /* ---- MAPA ---- */
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
 
-  let map = null;
-  const marcadores = {};
-
-  function iniciarMapa() {
-    if (map) return;
-
-    map = new mapboxgl.Map({
+    let map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/dark-v11",
       center: [-100.312, 25.667],
@@ -121,151 +104,129 @@ if (isDashboard) {
     });
 
     map.addControl(new mapboxgl.NavigationControl());
-  }
 
-  async function cargarAlumnos() {
-    try {
-      const res = await fetch("/api/alumnos");
-      const alumnos = await res.json();
+    const marcadores = {};
 
-      const tableBody = document.getElementById("alumnosTableBody");
-      tableBody.innerHTML = "";
+    /* ---- CARGAR ALUMNOS ---- */
+    async function cargarAlumnos() {
+      try {
+        const res = await fetch("/api/alumnos");
+        const data = await res.json();
 
-      alumnos.forEach(a => {
-        const tr = document.createElement("tr");
+        if (!data.ok) return;
 
-        tr.innerHTML = `
-          <td>${a.nombre || "Sin nombre"}</td>
-          <td>${a.matricula || "---"}</td>
-          <td>${a.en_alerta ? "<span class='badge badge-alert'>⚠ ALERTA</span>" : "<span class='badge badge-safe'>✓ Seguro</span>"}</td>
-        `;
+        const lista = data.alumnos;
+        const tableBody = document.getElementById("alumnosTableBody");
 
-        tableBody.appendChild(tr);
+        tableBody.innerHTML = "";
 
-        // MAPA: actualizar marcador
-        if (a.lat && a.lng) {
-          if (!marcadores[a.id]) {
-            // Crear marcador
-            const el = document.createElement("div");
-            el.className = `marker ${a.en_alerta ? "marker-alert" : "marker-normal"}`;
+        lista.forEach(a => {
+          const tr = document.createElement("tr");
 
-            marcadores[a.id] = new mapboxgl.Marker(el)
-              .setLngLat([a.lng, a.lat])
-              .setPopup(
-                new mapboxgl.Popup().setHTML(`
+          tr.innerHTML = `
+            <td>${a.nombre}</td>
+            <td>${a.matricula}</td>
+            <td>${a.en_alerta 
+                  ? "<span class='badge badge-alert'>⚠ ALERTA</span>"
+                  : "<span class='badge badge-safe'>✓ Seguro</span>"}
+            </td>
+          `;
+
+          tableBody.appendChild(tr);
+
+          // Mapa
+          if (a.lat && a.lng) {
+            if (!marcadores[a.id]) {
+              const el = document.createElement("div");
+              el.className = `marker ${a.en_alerta ? "marker-alert" : "marker-normal"}`;
+
+              marcadores[a.id] = new mapboxgl.Marker(el)
+                .setLngLat([a.lng, a.lat])
+                .setPopup(new mapboxgl.Popup().setHTML(`
                   <strong>${a.nombre}</strong><br>
                   ${a.matricula}<br>
-                  <small>${a.email}</small>
-                `)
-              )
-              .addTo(map);
-          } else {
-            // Mover marcador
-            marcadores[a.id].setLngLat([a.lng, a.lat]);
+                  ${a.email}
+                `))
+                .addTo(map);
+            } else {
+              marcadores[a.id].setLngLat([a.lng, a.lat]);
+            }
           }
-        }
-      });
+        });
 
-    } catch (error) {
-      console.error("Error cargando alumnos:", error);
-    }
-  }
-
-  iniciarMapa();
-  cargarAlumnos();
-  setInterval(cargarAlumnos, 3000);
-}
-
-  // 🧠 Comprobamos si estamos en el dashboard buscando el botón de logout
-  const btnLogout = document.getElementById('btn-logout');
-  
-  if (btnLogout) {
-    console.log("Estoy en la página de Dashboard.");
-
-    // 1. Función para cargar datos del usuario
-    async function loadUser() {
-      try {
-        const res = await fetch("/api/me");
-        if (res.ok) {
-          const d = await res.json();
-          if (d.ok) {
-            document.querySelector("#welcome").textContent = `Bienvenido, ${d.user.name}`;
-          }
-        } else {
-          // Si la API falla (no logueado), lo echamos al login
-          window.location.href = "/login.html";
-        }
-      } catch (err) {
-        console.error("Error cargando usuario:", err);
-        window.location.href = "/login.html"; // Error de red, lo echamos
+      } catch (error) {
+        console.error("Error cargando alumnos:", error);
       }
     }
 
-    // 2. Lógica del botón de Logout
+    cargarAlumnos();
+    setInterval(cargarAlumnos, 3000);
+
+    /* ---- LOGOUT ---- */
+    const btnLogout = document.getElementById("btn-logout");
     btnLogout.addEventListener("click", async () => {
+      await fetch("/api/logout", { method: "POST" });
+      window.location.href = "/";
+    });
+
+    /* ===============================================================
+        MODAL REGISTRO ALUMNO
+    =============================================================== */
+
+    const modal = document.getElementById("modalRegistrar");
+    const abrirModal = document.getElementById("abrirModal");
+    const cerrarModal = document.getElementById("cerrarModal");
+
+    abrirModal.onclick = () => modal.style.display = "flex";
+    cerrarModal.onclick = () => modal.style.display = "none";
+
+    window.onclick = (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    };
+
+    /* ---- FORM REGISTRAR ALUMNO ---- */
+
+    document.getElementById("formRegistrarAlumno").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById("alumnoNombre").value.trim();
+      const matricula = document.getElementById("alumnoMatricula").value.trim();
+      const email = document.getElementById("alumnoCorreo").value.trim();
+      const msg = document.getElementById("msgRegistrar");
+
+      msg.textContent = "Procesando...";
+      msg.className = "form-message";
+
       try {
-        const res = await fetch("/api/logout", { method: "POST" });
-        const d = await res.json();
-        if (d.ok) window.location.href = "/"; // Lo mandamos al index
+        const res = await fetch("/api/alumnos/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, matricula, email })
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          msg.textContent = data.msg || "Error al registrar alumno.";
+          msg.classList.add("err");
+          return;
+        }
+
+        msg.textContent = "Alumno registrado y correo enviado ✔";
+        msg.classList.add("ok");
+
+        cargarAlumnos();
+
+        setTimeout(() => {
+          modal.style.display = "none";
+          msg.textContent = "";
+        }, 1500);
+
       } catch (err) {
-        console.error("Error al cerrar sesión:", err);
+        msg.textContent = "Error en el servidor.";
+        msg.classList.add("err");
       }
     });
 
-    // 3. Ejecutar la carga del usuario al entrar al dashboard
-    loadUser();
-  } 
-
-  // ===== MODAL =====
-const modal = document.getElementById("modalRegistrar");
-const abrirModal = document.getElementById("abrirModal");
-const cerrarModal = document.getElementById("cerrarModal");
-
-abrirModal.addEventListener("click", () => {
-  modal.style.display = "flex";
+  } // Fin dashboard
 });
-
-cerrarModal.addEventListener("click", () => {
-  modal.style.display = "none";
-});
-
-// Cerrar al hacer clic afuera
-window.addEventListener("click", (e) => {
-  if (e.target === modal) modal.style.display = "none";
-});
-
-
-// ===== REGISTRAR ALUMNO =====
-document.getElementById("formRegistrarAlumno").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const nombre = alumnoNombre.value.trim();
-  const matricula = alumnoMatricula.value.trim();
-  const email = alumnoCorreo.value.trim();
-
-  const msg = document.getElementById("msgRegistrar");
-  msg.textContent = "Procesando...";
-
-  // Puedes activar esto cuando tengas tu ruta lista
-  
-  const res = await fetch("/api/alumnos/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nombre, matricula, email })
-  });
-
-  const data = await res.json();
-  if (!data.ok) {
-    msg.textContent = "Error: " + data.msg;
-    return;
-  }
-
-  msg.textContent = "Alumno registrado (simulado)";
-  msg.style.color = "lightgreen";
-});
-
-setInterval(cargarAlumnos, 5000);
-cargarAlumnos();
-
-
-}); 
