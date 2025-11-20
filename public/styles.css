@@ -1,21 +1,20 @@
-/* --- 1. Variables Globales y Reset --- */
+
+/* ============================
+   🌙 1) VARIABLES & RESET
+=============================== */
 :root {
-  /* Paleta "Tech & Security" (Dark Mode) */
-  --bg-dark: #0F172A;     
-  --bg-light: #1E293B;    
-  --primary: #38BDF8;    
-  --primary-dark: #0EA5E9; 
-  --text-light: #F8FAFC;  
-  --text-muted: #94A3B8;  
-  --border-color: #334155; 
-  
+  --bg-dark: #0F172A;
+  --bg-light: #1E293B;
+  --primary: #38BDF8;
+  --primary-dark: #0EA5E9;
+  --text-light: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-color: #334155;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  
   --border-radius: 12px;
-  --shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+  --shadow: 0 10px 30px -15px rgba(0,0,0,0.3);
 }
 
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -24,45 +23,16 @@
 
 html { scroll-behavior: smooth; }
 
-/* Body general */
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-dark);
-  color: var(--text-light);
+  background-color: white; /* Importante para mantener login y landing claros */
+  color: #111;
   line-height: 1.6;
 }
 
-/* --- 2. Contenedores y Botones --- */
-.container {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1rem;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: var(--bg-dark);
-  border-color: var(--primary);
-}
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-/* --- 3. Header --- */
+/* ======================================
+   2) Header general (INDEX + LOGIN + DASH)
+========================================= */
 .main-header {
   background-color: var(--bg-light);
   border-bottom: 1px solid var(--border-color);
@@ -85,94 +55,64 @@ body {
   color: var(--text-light);
   text-decoration: none;
 }
-.logo:hover { color: var(--primary); }
 
 .nav-links {
-  list-style: none;
   display: flex;
   gap: 1.5rem;
+  list-style: none;
 }
+
 .nav-links a {
-  text-decoration: none;
   color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
 }
+
 .nav-links a:hover { color: var(--text-light); }
 
-/* --- 4. Hero Section --- */
-.hero {
-  padding: 7rem 1rem;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-}
-.hero .subtitle {
-  font-size: 1.25rem;
-  color: var(--text-muted);
-  max-width: 700px;
-  margin: 0 auto 2.5rem;
-}
-
-/* --- 5. Sections / Cards --- */
-section { padding: 5rem 0; }
-section h2 {
-  font-size: 2.5rem;
+/* ============================================
+   3) BOTONES GENERALES (NO SE ROMPE NADA)
+=============================================== */
+.btn {
+  padding: .8rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
   font-weight: 700;
-  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s ease;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
-  gap: 2rem;
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--bg-dark);
 }
 
-.card {
-  background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 2.5rem 2rem;
-  transition: 0.3s;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
-.card:hover {
-  transform: translateY(-8px);
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary);
   border-color: var(--primary);
 }
 
-/* --- 6. Contacto --- */
-#contacto .contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
-  gap: 2rem;
-  max-width: 800px;
-  margin: 3rem auto 0;
+.btn-secondary:hover {
+  background: var(--primary);
+  color: var(--bg-dark);
 }
 
-.contact-item {
-  background-color: var(--bg-light);
-  border-radius: var(--border-radius);
-  padding: 2rem;
-  border: 1px solid var(--border-color);
-  text-align: center;
-}
-
-/* --- 7. Footer --- */
-.main-footer {
-  background-color: var(--bg-light);
-  padding: 2.5rem 0;
-  margin-top: 5rem;
-  border-top: 1px solid var(--border-color);
-}
-
-/* --- 8. Login Page --- */
+/* ================================================
+   🔵 LOGIN — TOTALMENTE RESTAURADO
+=================================================== */
 body.login-page {
+  background: var(--bg-dark);
   display: grid;
   place-items: center;
+  padding: 2rem;
   min-height: 100vh;
-  padding: 2rem 1rem;
 }
 
 .form-container {
@@ -180,143 +120,135 @@ body.login-page {
   max-width: 450px;
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
-  padding: 2rem;
-  border-radius: var(--border-radius);
+  border-radius: 16px;
+  padding: 2.5rem;
+  color: var(--text-light);
 }
 
-/* --- 9. Dashboard ORIGINAL (tablas, stats) --- */
-.dashboard-content {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+.form-group label { color: var(--text-muted); }
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: .9rem 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-light);
+  margin-top: 5px;
 }
 
-.main-content-panel {
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.3);
+}
+
+/* ================================================
+   🟢 INDEX — RESTAURADO COMPLETO
+=================================================== */
+.hero {
+  padding: 7rem 1rem;
+  text-align: center;
+  color: white;
+}
+
+.hero h1 { font-size: 3.5rem; }
+
+.highlight { color: var(--primary); }
+
+.section-subtitle { color: var(--text-muted); }
+
+/* Cards del index */
+.card {
   background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 2rem;
+  color: var(--text-light);
+  box-shadow: var(--shadow);
 }
 
-/* ------------------------------ */
-/* 10. LAYOUT FINAL DEL DASHBOARD */
-/* ------------------------------ */
+/* ================================================
+   🌙 DASHBOARD MODO OSCURO — AISLADO
+   SOLO SE ACTIVA SI EL BODY TIENE:
+      <body class="dashboard-page">
+=================================================== */
 
 body.dashboard-page {
-  height: 100vh;
-  width: 100vw;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
   overflow: hidden;
 }
 
-/* Contenedor principal (mapa + panel) */
-.dashboard-page .dashboard-container {
+body.dashboard-page .dashboard-container {
   display: flex;
-  height: calc(100vh - 73px); /* quita header */
-  width: 100%;
+  height: calc(100vh - 73px);
 }
 
-/* --- MAPA IZQUIERDA --- */
-.dashboard-page .map-wrapper {
+body.dashboard-page .map-wrapper {
   flex: 6;
   height: 100%;
   background: var(--bg-dark);
 }
-.dashboard-page #map {
+
+body.dashboard-page #map {
   width: 100%;
   height: 100%;
 }
 
-/* --- PANEL DERECHA --- */
-.dashboard-page .panels-wrapper {
+body.dashboard-page .panels-wrapper {
   flex: 4;
-  height: 100%;
+  background: var(--bg-dark);
+  padding: 2rem;
   overflow-y: auto;
-  padding: 1.5rem 2rem;
-  background-color: var(--bg-dark);
   border-left: 1px solid var(--border-color);
 }
 
-.dashboard-page .panel {
+body.dashboard-page .panel {
   background-color: var(--bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
 }
 
-.dashboard-page .panel h2 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid var(--border-color);
+body.dashboard-page .dashboard-header h1 {
+  color: var(--text-light);
 }
 
-/* --- LISTAS DENTRO DEL PANEL --- */
-.student-list-item,
-.alert-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Tabla dashboard */
+body.dashboard-page table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-light);
 }
 
-.student-list-item {
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border-color);
-}
-.student-list-item:last-child {
-  border-bottom: none;
-}
-
-.alert-list-item {
+body.dashboard-page table td,
+body.dashboard-page table th {
   padding: 1rem;
-  border-radius: 10px;
-  background: rgba(248,113,113,0.12);
-  border: 1px solid rgba(248,113,113,0.3);
-  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* Botones */
-.btn-alert {
-  background: #F87171;
-  color: white;
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-.btn-safe {
-  background: #4ADE80;
-  color: var(--bg-dark);
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+/* MAPBOX DARK FIX */
+.mapboxgl-canvas {
+  background: var(--bg-dark) !important;
 }
 
-/* --- 11. MAPBOX (CUSTOM) --- */
-.mapboxgl-canvas { background-color: var(--bg-dark); }
-
-.mapboxgl-ctrl-group {
-  background-color: var(--bg-light) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 8px !important;
-  box-shadow: var(--shadow) !important;
-}
-
+/* Marcadores */
 .marker-alert {
-  width: 28px;
-  height: 28px;
-  background-color: #F87171;
+  width: 22px;
+  height: 22px;
+  background: #ff4d4d;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 10px rgba(248,113,113,0.8);
 }
 
 .marker-normal {
-  width: 28px;
-  height: 28px;
-  background-color: var(--primary);
+  width: 22px;
+  height: 22px;
+  background: #38bdf8;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 10px rgba(56,189,248,0.8);
 }
