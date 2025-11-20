@@ -1,77 +1,109 @@
 import pool from "../db.js";
 
-// 1. GET: Para el Mapa del Admin
-export const getAlumnos = async (req, res) => {
+// 1. GET: Obtener lista para el Admin
+export const obtenerAlumnos = async (req, res) => {
   try {
-    // Solo traemos a los que ya tienen ubicación
-    const result = await pool.query("SELECT * FROM alumnos WHERE lat IS NOT NULL");
+    const result = await pool.query("SELECT * FROM alumnos ORDER BY id DESC");
     res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: "Error del servidor" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
-// 2. POST: Invitar (Solo guarda Email)
-export const invitarAlumno = async (req, res) => {
+// 2. POST: Crear Invitación (Solo Email)
+export const crearInvitacion = async (req, res) => {
   try {
     const { email } = req.body;
     
-    // Verificar si ya existe
-    const check = await pool.query("SELECT * FROM alumnos WHERE email = $1", [email]);
+    // Verificar duplicados
+    const check = await pool.query("SELECT id FROM alumnos WHERE email = $1", [email]);
     if (check.rows.length > 0) {
-      return res.status(400).json({ ok: false, msg: "Este correo ya fue invitado" });
+      return res.status(400).json({ ok: false, msg: "Este correo ya está registrado o invitado." });
     }
 
-    // Crear registro vacío solo con email
+    // Insertar solo el email
     await pool.query("INSERT INTO alumnos (email) VALUES ($1)", [email]);
     
-    res.json({ ok: true, msg: "Invitación creada. Enviando correo..." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ ok: false, msg: "Error de BD" });
+    res.json({ ok: true, msg: "Invitación creada en BD" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, msg: "Error al guardar en base de datos" });
   }
 };
 
-// 3. POST: El Alumno llena sus datos (Nombre y Matrícula)
-export const completarRegistro = async (req, res) => {
+// 3. POST: Alumno completa su registro (Nombre y Matrícula)
+export const registrarDatosAlumno = async (req, res) => {
   try {
     const { email, nombre, matricula } = req.body;
 
+    // Actualizamos el registro que tenga ese email
     const result = await pool.query(
-      "UPDATE alumnos SET nombre = $1, matricula = $2, registrado = TRUE WHERE email = $3 RETURNING *",
+      "UPDATE alumnos SET nombre = $1, matricula = $2 WHERE email = $3 RETURNING *",
       [nombre, matricula, email]
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ ok: false, msg: "Correo no encontrado en invitaciones" });
+      return res.status(404).json({ ok: false, msg: "No se encontró una invitación para este correo." });
     }
 
     res.json({ ok: true, alumno: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ ok: false, msg: "Error al registrar. ¿Quizás la matrícula ya existe?" });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: "Error al registrar. Verifica que la matrícula no esté duplicada." });
   }
 };
 
-// 4. POST: Guardar Ubicación
-export const guardarUbicacion = async (req, res) => {
+// 4. POST: Guardar Ubicación GPS (¡ESTA ES LA QUE FALTABA!)
+export const actualizarUbicacion = async (req, res) => {
   try {
-    const { matricula, lat, lng } = req.body;
+    const { id, lat, lng } = req.body; 
+    
     await pool.query(
-      "UPDATE alumnos SET lat = $1, lng = $2, ultima_actualizacion = CURRENT_TIMESTAMP WHERE matricula = $3",
-      [lat, lng, matricula]
+      "UPDATE alumnos SET lat = $1, lng = $2, ultima_ubicacion = CURRENT_TIMESTAMP WHERE id = $3",
+      [lat, lng, id]
     );
-    res.json({ ok: true, msg: "Ubicación actualizada" });
-  } catch (err) {
-    res.status(500).json({ ok: false, msg: "Error GPS" });
+    
+    res.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, msg: "Error guardando ubicación" });
   }
 };
 
 // 5. DELETE: Eliminar alumno
 export const eliminarAlumno = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await pool.query("DELETE FROM alumnos WHERE id = $1", [id]);
-        res.json({ ok: true });
-    } catch (e) { res.status(500).json({error: e.message}) }
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM alumnos WHERE id = $1", [id]);
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// 6. PUT: Toggle Alerta
+export const toggleAlerta = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { en_alerta } = req.body;
+    await pool.query("UPDATE alumnos SET en_alerta = $1 WHERE id = $2", [en_alerta, id]);
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// 7. POST: Login Alumno (Para que funcione tu app.js existente)
+export const loginAlumno = async (req, res) => {
+  try {
+    const { matricula } = req.body;
+    const result = await pool.query("SELECT * FROM alumnos WHERE matricula = $1", [matricula]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ ok: false, msg: "Matrícula no encontrada" });
+    }
+
+    res.json({ ok: true, alumno: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: "Error del servidor" });
+  }
 };
