@@ -97,6 +97,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // --- LÓGICA DEL DASHBOARD ---
+  const isDashboard = document.body.classList.contains("dashboard-page");
+
+if (isDashboard) {
+  console.log("Dashboard detectado.");
+
+  // Token de Mapbox
+  mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
+
+  let map = null;
+  const marcadores = {};
+
+  function iniciarMapa() {
+    if (map) return;
+
+    map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/light-v11",
+      center: [-100.312, 25.667],
+      zoom: 13,
+      pitch: 45,
+      bearing: -20
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+  }
+
+  async function cargarAlumnos() {
+    try {
+      const res = await fetch("/api/alumnos");
+      const alumnos = await res.json();
+
+      const tableBody = document.getElementById("alumnosTableBody");
+      tableBody.innerHTML = "";
+
+      alumnos.forEach(a => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${a.nombre || "Sin nombre"}</td>
+          <td>${a.matricula || "---"}</td>
+          <td>${a.en_alerta ? "<span class='badge badge-alert'>⚠ ALERTA</span>" : "<span class='badge badge-safe'>✓ Seguro</span>"}</td>
+        `;
+
+        tableBody.appendChild(tr);
+
+        // MAPA: actualizar marcador
+        if (a.lat && a.lng) {
+          if (!marcadores[a.id]) {
+            // Crear marcador
+            const el = document.createElement("div");
+            el.className = `marker ${a.en_alerta ? "marker-alert" : "marker-normal"}`;
+
+            marcadores[a.id] = new mapboxgl.Marker(el)
+              .setLngLat([a.lng, a.lat])
+              .setPopup(
+                new mapboxgl.Popup().setHTML(`
+                  <strong>${a.nombre}</strong><br>
+                  ${a.matricula}<br>
+                  <small>${a.email}</small>
+                `)
+              )
+              .addTo(map);
+          } else {
+            // Mover marcador
+            marcadores[a.id].setLngLat([a.lng, a.lat]);
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error("Error cargando alumnos:", error);
+    }
+  }
+
+  iniciarMapa();
+  cargarAlumnos();
+  setInterval(cargarAlumnos, 3000);
+}
+
   // 🧠 Comprobamos si estamos en el dashboard buscando el botón de logout
   const btnLogout = document.getElementById('btn-logout');
   
@@ -135,6 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 3. Ejecutar la carga del usuario al entrar al dashboard
     loadUser();
-  } // <-- Fin del bloque "if (btnLogout)"
+  } 
 
-}); // <-- Fin del DOMContentLoaded
+}); 

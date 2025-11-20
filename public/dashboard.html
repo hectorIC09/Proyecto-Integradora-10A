@@ -4,49 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Campus Watch</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
+  <!-- Mapbox -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 
+<body class="dashboard-page">
 
-<body>
-  <header class="main-header">
-    <nav class="container">
-      <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
-      <ul class="nav-links">
-        <li><a href="#alumnos">Alumnos</a></li>
-        <li><a href="#alertas">Alertas</a></li>
-        <li><a href="/mapa.html">Mapa en Vivo</a></li>
-        <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
-      </ul>
-    </nav>
-  </header>
+<header class="main-header">
+  <nav class="container">
+    <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
+    <ul class="nav-links">
+      <li><a href="#alumnos">Alumnos</a></li>
+      <li><a href="#mapa">Mapa en Vivo</a></li>
+      <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
+    </ul>
+  </nav>
+</header>
 
-  <main class="container dashboard-content">
-    <div class="dashboard-header">
+<main class="main-layout">
+
+  <!-- PANEL IZQUIERDO (tabla) -->
+  <section class="panel-left">
+    <div class="panel-header">
       <h1 id="welcome">Bienvenido</h1>
-      <a href="/registrar-alumno.html" role="button" class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-        Registrar Alumno
-      </a>
+      <a href="/registrar-alumno.html" class="btn btn-primary">+ Registrar Alumno</a>
     </div>
-    <section class="stats-grid">
-      </section>
-    <section id="alumnos" class="main-content-panel">
-      </section>
-  </main>
 
-  <script src="app.js"></script>
-  
-  </body>
+    <div class="card">
+      <h2>Alumnos</h2>
+      <div class="table-container">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Matrícula</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="alumnosTableBody">
+            <!-- Se llena con JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL DERECHO (mapa estilo "Encontrar") -->
+  <section class="panel-right">
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
 </html>
