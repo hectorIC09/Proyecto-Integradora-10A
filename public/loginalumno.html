@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Alumno</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; font-family: sans-serif; }
+        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 300px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Soy Alumno</h2>
+        <form id="loginForm">
+            <input type="text" id="matricula" placeholder="Ingresa tu Matrícula" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const matricula = document.getElementById('matricula').value;
+
+            const res = await fetch('/api/alumnos/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ matricula })
+            });
+
+            const data = await res.json();
+
+            if (data.ok) {
+                localStorage.setItem('alumno', JSON.stringify(data.alumno));
+                window.location.href = '/dashboard-alumno.html';
+            } else {
+                alert(data.msg || 'Error al ingresar');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -59,23 +59,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Campus Watch</title>
 
-  <!-- MAPBOX -->
+  <!-- MAPBOX (Movido al head) -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 
-  <!-- EMAILJS: Importante para enviar correos desde el navegador -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script type="text/javascript">
-     (function(){
-        // REEMPLAZA 'TU_PUBLIC_KEY' CON LA TUYA DE EMAILJS (Ej: "user_XyZ...")
-        emailjs.init("service_t0HprKapko61rkW7zpqq2bv2");
-     })();
-  </script>
-
-  <!-- Estilos -->
+  <!-- Tus fuentes y estilos -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 
 <body class="dashboard-page">
@@ -84,9 +74,8 @@
     <nav class="container">
       <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
       <ul class="nav-links">
-        <li><a href="#" id="nav-inicio">Inicio</a></li>
-        <li><a href="#" id="nav-alumnos">Alumnos</a></li>
-        <li><a href="#" id="nav-mapa">Mapa</a></li>
+        <li><a href="#alertas">Alertas</a></li>
+        <li><a href="#alumnos">Gestión</a></li>
         <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
       </ul>
     </nav>
@@ -94,62 +83,73 @@
 
   <main class="dashboard-container">
     
-    <!-- VISTA: MAPA (Oculta por defecto o visible según lógica JS) -->
-    <div id="view-mapa" class="panel-view" style="display:none;">
-        <div class="map-wrapper">
-            <div id="map" style="width: 100%; height: 500px; border-radius: 10px;"></div>
-        </div>
+    <div class="map-wrapper">
+      <div id="map"></div>
     </div>
 
-    <!-- VISTA: ALUMNOS -->
-    <div id="view-alumnos" class="panel-view">
-        <div class="dashboard-header">
-            <h1 id="welcome">Gestión de Alumnos</h1>
-            <button id="btnInvitar" class="btn btn-primary">+ Invitar Alumno</button>
-        </div>
-
-        <!-- Tabla de Alumnos -->
-        <div class="table-container">
-            <table class="tabla">
-            <thead>
-                <tr>
-                <th>Nombre</th>
-                <th>Matrícula</th>
-                <th>Correo</th>
-                <th>Estado</th>
-                <th>Ubicación</th>
-                <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="alumnosTableBody">
-                <!-- Se llena con JS -->
-            </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- MODAL: INVITAR ALUMNO -->
-    <div id="invitarModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>📧 Invitar Alumno</h2>
-            <p>Ingresa el correo institucional. El alumno recibirá un enlace para registrarse.</p>
-            
-            <form id="invitarForm">
-                <div class="form-group">
-                    <label for="correoInput">Correo del Alumno:</label>
-                    <input type="email" id="correoInput" required placeholder="ejemplo@escuela.edu">
-                </div>
-                <button type="submit" class="btn btn-primary full-width" id="btnEnviarInvitacion">Enviar Invitación</button>
-            </form>
-            
-            <p id="formStatus" style="margin-top: 15px; font-weight: bold; text-align: center;"></p>
-        </div>
-    </div>
-
-  </main> 
+    <div class="panels-wrapper">
       
+      <div class="dashboard-header">
+        <h1 id="welcome">Bienvenido</h1>
+        <!-- El botón de registrar ya no es un link, es parte de los paneles -->
+      </div>
+      
+      <!-- ========================================== -->
+      <!-- ============= NUEVO PANEL AQUÍ ============= -->
+      <!-- ========================================== -->
+      <section id="invitar" class="panel">
+        <h2>📧 Invitar Alumno</h2>
+        <form id="invite-form">
+          <div class="form-group">
+            <label for="invite-email">Correo del Alumno</label>
+            <input type="email" id="invite-email" required placeholder="ejemplo@alumno.edu">
+          </div>
+          <div class="form-group">
+            <label for="invite-matricula">Matrícula</label>
+            <input type="text" id="invite-matricula" required placeholder="A00123456">
+          </div>
+          <button type="submit" class="btn btn-primary full-width">Enviar Solicitud</button>
+        </form>
+        <!-- Mensaje de éxito/error para el formulario -->
+        <div class="form-message" id="invite-msg" style="display: none; margin-top: 1rem;"></div>
+      </section>
+      <!-- ========================================== -->
+
+      <section id="alertas" class="panel">
+        <h2>🚨 Alertas Activas</h2>
+        <div id="alertas-lista">
+          <p id="no-alertas-msg">Cargando alertas...</p>
+        </div>
+      </section>
+
+      <section id="alumnos" class="panel">
+        <h2>👨‍🎓 Gestión de Alumnos</h2>
+        <div id="alumnos-lista">
+          <p>Cargando alumnos...</p>
+        </div>
+      </section>
+
+    </div> 
+  </main> 
+     
   <!-- Tu JS principal -->
   <script src="app.js"></script>
+
+  <table class="tabla">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Matrícula</th>
+      <th>Alerta</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody id="alumnosTabla"></tbody>
+</table>
+
+<script src="dashboard.js"></script>
+
+
 </body>
 </html>
