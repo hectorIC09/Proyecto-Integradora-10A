@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ---- CARGAR ALUMNOS ---- */
     async function cargarAlumnos() {
       try {
-        const res = await fetch("/api/alumnos");
+        const res = await fetch("/api/alumnos/mis-alumnos");
         const data = await res.json();
 
         if (!data.ok) return;
