@@ -53,10 +53,6 @@ import dotenv from "dotenv";
 import session from "express-session";
 import authRoutes from "./routes/authRoutes.js";
 
-// --- 1. LÍNEA NUEVA ---
-// Importamos las nuevas rutas de alumnos (asegúrate de incluir .js)
-import alumnosRoutes from "./routes/alumnosRoutes.js"; 
-
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -86,10 +82,6 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // Rutas API
 app.use("/api", authRoutes); // <- Esta es tu ruta de autenticación existente
 
-
-// --- 2. LÍNEA NUEVA ---
-// Le decimos a Express que también use las rutas de alumnos bajo el prefijo /api
-app.use("/api", alumnosRoutes); 
 
 // Datos de usuario logueado
 app.get("/api/me", (req, res) => {
