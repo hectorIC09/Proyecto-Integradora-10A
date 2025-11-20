@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 1. Configuración de Mapbox (Token público)
 // REEMPLAZA CON TU TOKEN SI ES DIFERENTE
-mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
 
 document.addEventListener("DOMContentLoaded", () => {
 
