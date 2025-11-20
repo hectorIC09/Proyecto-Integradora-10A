@@ -1,4 +1,5 @@
-import pool from "../config/db.js";
+import pool from "../db.js";
+
 
 // ===============================
 // 1. Registrar alumno + enviar correo
