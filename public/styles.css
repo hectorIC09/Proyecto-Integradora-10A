@@ -1048,3 +1048,42 @@ body.dashboard-page {
 .dashboard-page .panel-left::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
+/* ===== MODAL PARA REGISTRAR ALUMNO ===== */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: var(--bg-light);
+  padding: 2rem;
+  border-radius: 14px;
+  width: 420px;
+  box-shadow: var(--shadow);
+  position: relative;
+  border: 1px solid var(--border-color);
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+.close:hover { color: var(--primary); }

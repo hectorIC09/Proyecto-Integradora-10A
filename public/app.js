@@ -216,4 +216,54 @@ if (isDashboard) {
     loadUser();
   } 
 
+  // ===== MODAL =====
+const modal = document.getElementById("modalRegistrar");
+const abrirModal = document.getElementById("abrirModal");
+const cerrarModal = document.getElementById("cerrarModal");
+
+abrirModal.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+cerrarModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Cerrar al hacer clic afuera
+window.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});
+
+
+// ===== REGISTRAR ALUMNO =====
+document.getElementById("formRegistrarAlumno").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nombre = alumnoNombre.value.trim();
+  const matricula = alumnoMatricula.value.trim();
+  const email = alumnoCorreo.value.trim();
+
+  const msg = document.getElementById("msgRegistrar");
+  msg.textContent = "Procesando...";
+
+  // Puedes activar esto cuando tengas tu ruta lista
+  /*
+  const res = await fetch("/api/alumnos/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre, matricula, email })
+  });
+
+  const data = await res.json();
+  if (!data.ok) {
+    msg.textContent = "Error: " + data.msg;
+    return;
+  }
+  */
+
+  msg.textContent = "Alumno registrado (simulado)";
+  msg.style.color = "lightgreen";
+});
+
+
 }); 

@@ -34,21 +34,21 @@
 <!-- CONTENEDOR PRINCIPAL (Izquierda tabla | Derecha mapa) -->
 <div class="dashboard-container">
 
-  <!-- PANEL DERECHO (MAPA estilo Apple "Encontrar") -->
+  <!-- PANEL DERECHO (MAPA estilo Apple) -->
   <div class="map-wrapper">
     <div id="map"></div>
   </div>
 
-  <!-- PANEL IZQUIERDO (Alumnos + botones) -->
+  <!-- PANEL IZQUIERDO -->
   <div class="panels-wrapper">
     
-    <!-- Header dentro del panel -->
     <div class="dashboard-header">
       <h1 id="welcome">Bienvenido</h1>
-      <a href="/registrar-alumno.html" class="btn btn-primary">+ Registrar Alumno</a>
+
+      <!-- ⚡ MODIFICADO: botón ahora abre modal -->
+      <button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
     </div>
 
-    <!-- Panel de alumnos -->
     <div class="panel" id="alumnos-panel">
       <h2>Alumnos</h2>
 
@@ -70,6 +70,39 @@
 
   </div>
 
+</div>
+
+
+<!-- ⭐⭐⭐⭐⭐ MODAL PARA REGISTRAR ALUMNO ─ LO NUEVO ⭐⭐⭐⭐⭐ -->
+<div id="modalRegistrar" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span id="cerrarModal" class="close">&times;</span>
+
+    <h2>Registrar Alumno</h2>
+
+    <form id="formRegistrarAlumno">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="alumnoNombre" required>
+      </div>
+
+      <div class="form-group">
+        <label>Matrícula</label>
+        <input type="text" id="alumnoMatricula" required>
+      </div>
+
+      <div class="form-group">
+        <label>Correo institucional</label>
+        <input type="email" id="alumnoCorreo" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary full-width">
+        Registrar y Enviar Invitación
+      </button>
+
+      <p id="msgRegistrar" class="form-message"></p>
+    </form>
+  </div>
 </div>
 
 <script src="app.js"></script>
