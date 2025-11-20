@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Alumno</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; background: #f4f4f4; }
+        .form-container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Completa tus datos</h2>
+        <p>Correo: <span id="emailDisplay" style="font-weight:bold;"></span></p>
+        <form id="registroForm">
+            <input type="text" id="nombre" placeholder="Nombre Completo" required>
+            <input type="text" id="matricula" placeholder="Matrícula" required>
+            <button type="submit">Guardar y Continuar</button>
+        </form>
+    </div>
+
+    <script>
+        // 1. Obtener el email de la URL
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email');
+
+        if (!email) {
+            alert("Enlace inválido. Falta el correo.");
+            window.location.href = "/"; // Regresar al inicio si no hay email
+        } else {
+            document.getElementById('emailDisplay').innerText = email;
+        }
+
+        // 2. Enviar formulario
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const matricula = document.getElementById('matricula').value;
+
+            const res = await fetch('/api/alumnos/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, nombre, matricula })
+            });
+
+            const data = await res.json();
+
+            if (data.ok) {
+                // Guardamos sesión localmente para el dashboard
+                localStorage.setItem('alumno', JSON.stringify(data.alumno));
+                // Mandamos al dashboard
+                window.location.href = '/dashboard-alumno.html';
+            } else {
+                alert("Error: " + data.msg);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,172 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Watch – Estudiante</title>
-
-  <!-- MAPBOX (Opcional) -->
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.1/mapbox-gl.js"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.1/mapbox-gl.css" rel="stylesheet" />
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0d1117;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      font-size: 28px;
-      margin: 0;
-      color: #57a6ff;
-    }
-
-    .card {
-      background: #161b22;
-      width: 100%;
-      max-width: 420px;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
-      margin-bottom: 20px;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-size: 18px;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    #status-ok {
-      background: #1d9a50;
-      display: none;
-    }
-
-    #status-alerta {
-      background: #b30000;
-      display: none;
-    }
-
-    .panico-btn {
-      width: 100%;
-      padding: 25px;
-      border: none;
-      border-radius: 12px;
-      font-size: 22px;
-      font-weight: bold;
-      background: #d60000;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .cancel-btn {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      background: #1d7de6;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    #map {
-      width: 100%;
-      height: 260px;
-      border-radius: 12px;
-      margin-top: 10px;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Alumno</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body style="text-align:center; padding-top: 50px; font-family: sans-serif;">
 
-  <div class="header">
-    <h1>Campus Watch – Estudiante</h1>
-    <p id="welcome"></p>
-  </div>
+    <h1>Bienvenido <span id="nombreAlumno"></span></h1>
+    <p>Matrícula: <strong id="matriculaAlumno"></strong></p>
+    
+    <div style="margin-top: 30px;">
+        <button id="btnGPS" style="background: #28a745; color: white; padding: 15px 30px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer;">
+            📍 ACTIVAR UBICACIÓN
+        </button>
+        <p id="status" style="margin-top: 15px; color: #666;"></p>
+    </div>
 
-  <div class="card">
-    <h2>Estado de Seguridad</h2>
+    <script>
+        // 1. Recuperar sesión o parámetros de URL (si viene del correo)
+        const params = new URLSearchParams(window.location.search);
+        let session = JSON.parse(localStorage.getItem('alumno'));
+        
+        // Si viene del correo (?matricula=XYZ), creamos una sesión temporal
+        if (!session && params.get('matricula')) {
+            session = { matricula: params.get('matricula'), nombre: 'Alumno' };
+            localStorage.setItem('alumno', JSON.stringify(session));
+        }
 
-    <div id="status-ok" class="status">Todo está bien ✔️</div>
-    <div id="status-alerta" class="status">🚨 ALERTA ACTIVADA 🚨</div>
+        if (!session) {
+            window.location.href = '/login-alumno.html';
+        }
 
-    <button class="panico-btn" id="btnPanico">
-      🚨 BOTÓN DE PÁNICO
-    </button>
+        document.getElementById('nombreAlumno').innerText = session.nombre;
+        document.getElementById('matriculaAlumno').innerText = session.matricula;
 
-    <button class="cancel-btn" id="btnCancelar">
-      Cancelar alerta
-    </button>
+        // 2. Lógica de Geolocalización
+        const btn = document.getElementById('btnGPS');
+        const status = document.getElementById('status');
 
-    <div id="map"></div>
-  </div>
+        btn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                status.innerText = "Tu navegador no soporta GPS.";
+                return;
+            }
 
-<script>
-  const p = new URLSearchParams(window.location.search);
-  const matricula = p.get("matricula");
-  let alumnoId = null;
+            status.innerText = "📍 Obteniendo ubicación...";
 
-  document.getElementById("welcome").textContent = "Matrícula: " + matricula;
+            // Usamos watchPosition para enviar la ubicación continuamente si se mueve
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                status.innerText = "📡 Enviando datos...";
 
-  async function cargarAlumno() {
-    try {
-      const res = await fetch(`/api/alumnos/matricula/${matricula}`);
-      const data = await res.json();
+                try {
+                    const res = await fetch('/api/alumnos/ubicacion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            matricula: session.matricula, 
+                            lat: latitude, 
+                            lng: longitude 
+                        })
+                    });
 
-      alumnoId = data.id;
-
-      if (data.en_alerta) {
-        document.getElementById("status-alerta").style.display = "block";
-      } else {
-        document.getElementById("status-ok").style.display = "block";
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error cargando alumno");
-    }
-  }
-
-  cargarAlumno();
-
-  document.getElementById("btnPanico").onclick = async () => {
-    await fetch(`/api/alumnos/alerta/${alumnoId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ en_alerta: true })
-    });
-
-    document.getElementById("status-ok").style.display = "none";
-    document.getElementById("status-alerta").style.display = "block";
-  };
-
-  document.getElementById("btnCancelar").onclick = async () => {
-    await fetch(`/api/alumnos/alerta/${alumnoId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ en_alerta: false })
-    });
-
-    document.getElementById("status-alerta").style.display = "none";
-    document.getElementById("status-ok").style.display = "block";
-  };
-</script>
-
+                    if (res.ok) {
+                        status.innerText = `✅ Ubicación enviada: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+                        status.style.color = "green";
+                    } else {
+                        status.innerText = "❌ Error al guardar en el servidor";
+                    }
+                } catch (e) {
+                    console.error(e);
+                    status.innerText = "❌ Error de conexión";
+                }
+            }, (err) => {
+                status.innerText = "❌ Acceso a ubicación denegado. Por favor permite el acceso.";
+                status.style.color = "red";
+            }, { enableHighAccuracy: true });
+        });
+    </script>
 </body>
 </html>
