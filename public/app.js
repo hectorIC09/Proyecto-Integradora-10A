@@ -141,330 +141,255 @@ document.addEventListener("DOMContentLoaded", () => {
 */
 //-----------------------------------------------------------------------------------//
 
+// 1. Configuración de Mapbox (Token público)
+mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yY29udHJlcmFzIiwiYSI6ImNtM254Y3RzZzA4bXQya3B4Z2o0aW80czYifQ.zKyjGjaMkyj07O-COHqT4A';
 
-// Espera a que todo el HTML esté cargado
-document.addEventListener("DOMContentLoaded", () => {
-  // --- LÓGICA DEL SERVICE WORKER (GLOBAL) ---
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("./serviceWorker.js")
-        .then((reg) => console.log("✅ Service Worker registrado:", reg.scope))
-        .catch((err) => console.error("❌ Error al registrar Service Worker:", err));
-    });
-  }
+document.addEventListener("DOMContentLoaded", async () => {
+    
+    // --- REFERENCIAS DOM ---
+    const alumnosTableBody = document.getElementById("alumnosTableBody");
+    const btnLogout = document.getElementById("btn-logout");
+    
+    // Navegación
+    const navAlumnos = document.getElementById("nav-alumnos");
+    const navMapa = document.getElementById("nav-mapa");
+    const viewAlumnos = document.getElementById("view-alumnos");
+    const viewMapa = document.getElementById("view-mapa");
+    const navInicio = document.getElementById("nav-inicio");
 
-  // ===================================================================
-  //                     *****  MODO ALUMNO  *****
-  // ===================================================================
+    // Modal
+    const modal = document.getElementById("invitarModal");
+    const btnInvitar = document.getElementById("btnInvitar");
+    const spanClose = document.getElementsByClassName("close")[0];
+    const invitarForm = document.getElementById("invitarForm");
+    const formStatus = document.getElementById("formStatus");
 
-  const btnSoyAlumno = document.getElementById("soy-alumno-btn");
-  const loginForm = document.querySelector("#login-form");
-  const regForm = document.querySelector("#register-form");
-  const alumnoForm = document.getElementById("alumno-form");
+    // Variables Mapa
+    let map;
+    let markers = [];
 
-  if (btnSoyAlumno && loginForm && alumnoForm) {
-    btnSoyAlumno.addEventListener("click", () => {
-      loginForm.classList.remove("active");
-      regForm?.classList.remove("active");
-      alumnoForm.classList.add("active");
-      document.getElementById("form-title").textContent = "Acceso Alumno";
-    });
-  }
+    // --- INICIALIZACIÓN ---
+    console.log("App iniciada. Cargando alumnos...");
+    cargarAlumnos();
 
-  // ===== Login alumno por matrícula =====
-  if (alumnoForm) {
-    alumnoForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const matricula = document.getElementById("matricula-alumno").value.trim();
-      const msgAlumno = document.getElementById("msg-alumno");
-
-      try {
-        const res = await fetch(`/api/alumnos/matricula/${matricula}`);
-        const d = await res.json();
-
-        if (!res.ok || !d) {
-          msgAlumno.textContent = "Matrícula no encontrada.";
-          return;
+    // --- FUNCIONES DE NAVEGACIÓN ---
+    function mostrarVista(vista) {
+        // Ocultar todas
+        viewAlumnos.style.display = "none";
+        viewMapa.style.display = "none";
+        
+        // Mostrar la seleccionada
+        if(vista === 'alumnos') viewAlumnos.style.display = "block";
+        if(vista === 'mapa') {
+            viewMapa.style.display = "block";
+            setTimeout(() => {
+                if (!map) initMap();
+                else map.resize();
+                actualizarMarcadores();
+            }, 100); // Pequeño delay para asegurar que el div sea visible
         }
-
-        // Guardar matrícula para usarla en alumno.html
-        localStorage.setItem("matriculaAlumno", matricula);
-
-        window.location.href = "/alumno.html";
-
-      } catch (err) {
-        msgAlumno.textContent = "Error de conexión con el servidor.";
-      }
-    });
-  }
-
-  // ===================================================================
-  //                     *****  FIN MODO ALUMNO  *****
-  // ===================================================================
-
-
-  // --- LÓGICA DE LOGIN / REGISTRO ---
-  const regForm2 = document.querySelector("#register-form");
-
-  if (loginForm && regForm2) {
-    const formTitle = document.querySelector("#form-title");
-    console.log("Estoy en la página de Login.");
-
-    // --- LOGIN ---
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.querySelector("#email").value;
-      const password = document.querySelector("#password").value;
-      const msg = document.querySelector("#msg");
-
-      try {
-        const res = await fetch("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-        const d = await res.json();
-
-        if (d.ok) {
-          window.location.href = "/dashboard.html";
-        } else {
-          msg.textContent = d.message || "Error: Revisa tus credenciales.";
-        }
-      } catch (err) {
-        msg.textContent = "Error de conexión con el servidor.";
-      }
-    });
-
-    // --- REGISTRO ---
-    regForm2.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.querySelector("#rname").value;
-      const email = document.querySelector("#remail").value;
-      const password = document.querySelector("#rpassword").value;
-      const msgReg = document.querySelector("#msg-reg");
-
-      try {
-        const res = await fetch("/api/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password })
-        });
-        const d = await res.json();
-
-        if (d.ok) {
-          regForm2.classList.remove("active");
-          loginForm.classList.add("active");
-          formTitle.textContent = "Iniciar Sesión";
-          document.querySelector("#msg").textContent = d.message || "¡Registro exitoso! Inicia sesión.";
-        } else {
-          msgReg.textContent = d.message || "Error al registrar la cuenta.";
-        }
-      } catch (err) {
-        msgReg.textContent = "Error de conexión con el servidor.";
-      }
-    });
-
-    // --- TOGGLE ENTRE LOGIN Y REGISTRO ---
-    document.querySelector("#show-register").addEventListener("click", (e) => {
-      e.preventDefault();
-      loginForm.classList.remove("active");
-      regForm2.classList.add("active");
-      formTitle.textContent = "Crear Cuenta";
-    });
-
-    document.querySelector("#show-login").addEventListener("click", (e) => {
-      e.preventDefault();
-      regForm2.classList.remove("active");
-      loginForm.classList.add("active");
-      formTitle.textContent = "Iniciar Sesión";
-    });
-  }
-
-  // ===================================================================
-  //                  ***** LÓGICA DEL DASHBOARD *****
-  // ===================================================================
-
-  const isDashboard = document.body.classList.contains('dashboard-page');
-
-  if (isDashboard) {
-    console.log("Estoy en la página de Dashboard.");
-
-    const btnLogout = document.getElementById('btn-logout');
-
-    async function loadUser() {
-      try {
-        const res = await fetch("/api/me");
-        if (res.ok) {
-          const d = await res.json();
-          if (d.ok) {
-            document.querySelector("#welcome").textContent = `Bienvenido, ${d.user.name}`;
-          }
-        } else {
-          window.location.href = "/login.html";
-        }
-      } catch (err) {
-        console.error("Error cargando usuario:", err);
-        window.location.href = "/login.html";
-      }
     }
 
-    if (btnLogout) {
-      btnLogout.addEventListener("click", async () => {
+    navAlumnos.addEventListener("click", (e) => { e.preventDefault(); mostrarVista('alumnos'); });
+    navInicio.addEventListener("click", (e) => { e.preventDefault(); mostrarVista('alumnos'); });
+    navMapa.addEventListener("click", (e) => { e.preventDefault(); mostrarVista('mapa'); });
+
+    // --- GESTIÓN DE ALUMNOS (TABLA) ---
+    async function cargarAlumnos() {
         try {
-          const res = await fetch("/api/logout", { method: "POST" });
-          const d = await res.json();
-          if (d.ok) window.location.href = "/";
-        } catch (err) {
-          console.error("Error al cerrar sesión:", err);
+            const res = await fetch("/api/alumnos");
+            const alumnos = await res.json();
+            renderTabla(alumnos);
+        } catch (error) {
+            console.error("Error cargando alumnos:", error);
+            alumnosTableBody.innerHTML = "<tr><td colspan='6'>Error al cargar datos.</td></tr>";
         }
-      });
     }
 
-    loadUser();
+    function renderTabla(alumnos) {
+        alumnosTableBody.innerHTML = "";
+        
+        if(alumnos.length === 0) {
+            alumnosTableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No hay alumnos registrados.</td></tr>";
+            return;
+        }
 
-    // -----------------------------
-    //     ***** MAPBOX *****
-    // -----------------------------
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVjdG9yaWMwOSIsImEiOiJjbWkwaW5kM20wdm90MmtvcWVzNzRqODM5In0.iJMjm-vk0gHrO297w6F1Hg';
+        alumnos.forEach((alumno) => {
+            const tr = document.createElement("tr");
+            
+            const nombre = alumno.nombre || "<i>(Pendiente de registro)</i>";
+            const matricula = alumno.matricula || "---";
+            const estado = alumno.registrado 
+                            ? (alumno.lat ? "<span style='color:green'>● Activo</span>" : "<span style='color:orange'>● Sin GPS</span>") 
+                            : "<span style='color:gray'>○ Invitado</span>";
+            
+            const ubicacion = (alumno.lat && alumno.lng) 
+                              ? `<a href="#" onclick="verEnMapa(${alumno.lat}, ${alumno.lng})">${alumno.lat.toFixed(4)}, ${alumno.lng.toFixed(4)}</a>`
+                              : "No disponible";
 
-    let map = null;
-    const marcadores = {};
-
-    function iniciarMapa() {
-      const mapDiv = document.getElementById("map");
-      if (!mapDiv) return;
-
-      map = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/dark-v11",
-        center: [-100.510669, 25.692447],
-        zoom: 15
-      });
-
-      map.addControl(new mapboxgl.NavigationControl());
-    }
-
-    async function actualizarDatos() {
-      try {
-        const res = await fetch('/api/alumnos');
-        const alumnos = await res.json();
-
-        const listaAlertas = document.getElementById('alertas-lista');
-        const listaAlumnos = document.getElementById('alumnos-lista');
-        const msgNoAlertas = document.getElementById('no-alertas-msg');
-
-        listaAlertas.innerHTML = "";
-        listaAlumnos.innerHTML = "";
-        let hayAlertas = false;
-
-        alumnos.forEach(alumno => {
-          const {
-            id,
-            nombre,
-            matricula,
-            lat_actual,
-            lng_actual,
-            en_alerta,
-            lat_inicial,
-            lng_inicial
-          } = alumno;
-
-          if (en_alerta) {
-            hayAlertas = true;
-            const item = document.createElement("div");
-            item.className = "alert-list-item";
-            item.innerHTML = `
-              <div>
-                <strong>${nombre}</strong>
-                <br><small>${matricula}</small>
-              </div>
-              <button class="btn btn-safe" data-id="${id}">Marcar Seguro</button>
+            tr.innerHTML = `
+                <td>${nombre}</td>
+                <td>${matricula}</td>
+                <td>${alumno.email}</td>
+                <td>${estado}</td>
+                <td>${ubicacion}</td>
+                <td>
+                    <button class="btn-icon btn-delete" data-id="${alumno.id}" title="Eliminar">
+                        <i class="fas fa-trash"></i> 🗑️
+                    </button>
+                </td>
             `;
-            listaAlertas.appendChild(item);
-          }
-
-          const itemAlumno = document.createElement("div");
-          itemAlumno.className = "student-list-item";
-          itemAlumno.innerHTML = `
-            <div>
-              <strong>${nombre}</strong>
-              <br><small>${matricula}</small>
-            </div>
-            ${
-              en_alerta
-              ? `<button class="btn btn-safe" data-id="${id}">Marcar Seguro</button>`
-              : `<button class="btn btn-alert" data-id="${id}">Simular Alerta</button>`
-            }
-          `;
-          listaAlumnos.appendChild(itemAlumno);
-
-          if (!map) return;
-
-          const lat = parseFloat(lat_actual || lat_inicial);
-          const lng = parseFloat(lng_actual || lng_inicial);
-
-          if (marcadores[id]) {
-            marcadores[id].setLngLat([lng, lat]);
-          } else {
-            const el = document.createElement("div");
-            el.className = en_alerta ? "marker-alert" : "marker-normal";
-            el.style.width = "22px";
-            el.style.height = "22px";
-            el.style.borderRadius = "50%";
-            el.style.background = en_alerta ? "#ff4d4d" : "#3fa7ff";
-            el.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
-
-            const marker = new mapboxgl.Marker(el)
-              .setLngLat([lng, lat])
-              .setPopup(
-                new mapboxgl.Popup().setHTML(`
-                  <strong>${nombre}</strong><br>
-                  Matrícula: ${matricula}<br>
-                  ${en_alerta ? "<span style='color:#ff4d4d;font-weight:bold'>⚠ ALERTA</span>" : ""}
-                `)
-              )
-              .addTo(map);
-
-            marcadores[id] = marker;
-          }
+            alumnosTableBody.appendChild(tr);
         });
 
-        if (!hayAlertas) {
-          msgNoAlertas.textContent = "No hay alertas activas.";
-          listaAlertas.appendChild(msgNoAlertas);
+        // Asignar eventos a botones de eliminar
+        document.querySelectorAll(".btn-delete").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                if(!confirm("¿Estás seguro de eliminar este alumno?")) return;
+                const id = e.target.closest("button").dataset.id;
+                
+                try {
+                    await fetch(`/api/alumnos/${id}`, { method: "DELETE" });
+                    cargarAlumnos(); // Recargar tabla
+                } catch(err) {
+                    alert("Error al eliminar");
+                }
+            });
+        });
+    }
+
+    // Función global para ir al mapa desde la tabla
+    window.verEnMapa = (lat, lng) => {
+        mostrarVista('mapa');
+        setTimeout(() => {
+            map.flyTo({ center: [lng, lat], zoom: 15 });
+        }, 500);
+    };
+
+    // --- LÓGICA DE INVITACIÓN (MODAL + EMAILJS) ---
+    
+    // Abrir Modal
+    btnInvitar.onclick = () => {
+        modal.style.display = "block";
+        invitarForm.reset();
+        formStatus.innerText = "";
+    };
+
+    // Cerrar Modal
+    spanClose.onclick = () => modal.style.display = "none";
+    window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; };
+
+    invitarForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById("correoInput").value;
+        const btnSubmit = document.getElementById("btnEnviarInvitacion");
+        
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Guardando...";
+        formStatus.innerText = "";
+
+        try {
+            // 1. Guardar en Base de Datos primero
+            const res = await fetch("/api/alumnos/invitar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.msg || "Error al guardar en BD");
+            }
+
+            // 2. Enviar correo con EmailJS
+            btnSubmit.innerText = "Enviando correo...";
+            
+            // Este link lleva al alumno a completar sus datos
+            const linkRegistro = `${window.location.origin}/registro.html?email=${email}`;
+
+            const templateParams = {
+                to_email: email,
+                link_registro: linkRegistro,
+                // Agrega aquí otras variables si tu template las pide (ej: to_name)
+            };
+
+            // REEMPLAZA CON TUS DATOS DE EMAILJS
+            await emailjs.send("service_tqq2bv2", "service_tqq2bv2", templateParams);
+
+            // Todo salió bien
+            alert(`✅ Invitación enviada a ${email}`);
+            modal.style.display = "none";
+            cargarAlumnos(); // Actualizar lista
+
+        } catch (error) {
+            console.error(error);
+            formStatus.innerText = "❌ Error: " + error.message;
+            formStatus.style.color = "red";
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Enviar Invitación";
         }
+    });
 
-      } catch (err) {
-        console.error("Error:", err);
-      }
+
+    // --- MAPA (MAPBOX) ---
+    function initMap() {
+        if (map) return; // Evitar reinicializar
+
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-100.3161, 25.6866], // Mty
+            zoom: 10
+        });
+
+        map.addControl(new mapboxgl.NavigationControl());
     }
 
-    async function manejarClicPaneles(e) {
-      const target = e.target;
-      const id = target.dataset.id;
+    async function actualizarMarcadores() {
+        // Borrar marcadores viejos
+        markers.forEach(m => m.remove());
+        markers = [];
 
-      if (!id) return;
+        try {
+            const res = await fetch("/api/alumnos");
+            const alumnos = await res.json();
 
-      const nuevoEstado = target.classList.contains("btn-alert");
+            alumnos.forEach(alumno => {
+                if (alumno.lat && alumno.lng) {
+                    // Crear Popup
+                    const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+                        `<strong>${alumno.nombre || 'Alumno'}</strong><br>
+                         ${alumno.matricula || 'Sin matrícula'}<br>
+                         <small>Última act: ${new Date(alumno.ultima_actualizacion).toLocaleTimeString()}</small>`
+                    );
 
-      await fetch(`/api/alumnos/alerta/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ en_alerta: nuevoEstado })
-      });
+                    // Crear Marcador Rojo
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.style.backgroundColor = 'red';
+                    el.style.width = '20px';
+                    el.style.height = '20px';
+                    el.style.borderRadius = '50%';
+                    el.style.cursor = 'pointer';
 
-      actualizarDatos();
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat([parseFloat(alumno.lng), parseFloat(alumno.lat)])
+                        .setPopup(popup)
+                        .addTo(map);
+                    
+                    markers.push(marker);
+                }
+            });
+        } catch(e) { console.error("Error actualizando mapa", e); }
     }
 
-    iniciarMapa();
-    actualizarDatos();
-    setInterval(actualizarDatos, 3000);
-
-    const panelWrapper = document.querySelector(".panels-wrapper");
-    if (panelWrapper) {
-      panelWrapper.addEventListener("click", manejarClicPaneles);
-    }
-  }
+    // --- LOGOUT ---
+    btnLogout.addEventListener("click", () => {
+        // Limpiar sesión local si la usas
+        // localStorage.removeItem('user'); 
+        window.location.href = "/index.html";
+    });
 });
