@@ -21,47 +21,50 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm && regForm) {
     console.log("Página de login detectada.");
 
-    // LOGIN
+    /* ---------------- LOGIN ---------------- */
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const email = document.querySelector("#email").value.trim();
-      const password = document.querySelector("#password").value.trim();
+      const emailInput = document.querySelector("#email").value.trim();
+      const passwordInput = document.querySelector("#password").value.trim();
       const msg = document.querySelector("#msg");
 
       try {
         const res = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email: emailInput, password: passwordInput })
         });
 
         const d = await res.json();
         if (d.ok) {
-          window.location.href = "/dashboard";
+          window.location.href = "/dashboard.html";
         } else {
           msg.textContent = d.message || "Credenciales incorrectas.";
         }
-
       } catch {
         msg.textContent = "Error de conexión.";
       }
     });
 
-    // REGISTRO
+    /* ---------------- REGISTRO ---------------- */
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = rname.value.trim();
-      const email = remail.value.trim();
-      const password = rpassword.value.trim();
+      const nameInput = rname.value.trim();
+      const emailInput = remail.value.trim();
+      const passwordInput = rpassword.value.trim();
       const msgReg = document.querySelector("#msg-reg");
 
       try {
         const res = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password })
+          body: JSON.stringify({
+            name: nameInput,
+            email: emailInput,
+            password: passwordInput
+          })
         });
 
         const d = await res.json();
@@ -74,13 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           msgReg.textContent = d.message;
         }
-
       } catch {
         msgReg.textContent = "Error en el servidor.";
       }
     });
 
-    // TOGGLE LOGIN / REGISTER
+    /* ----- TOGGLE LOGIN/REGISTER ------ */
     document.querySelector("#show-register").addEventListener("click", (e) => {
       e.preventDefault();
       loginForm.classList.remove("active");
@@ -117,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     map.addControl(new mapboxgl.NavigationControl());
+
     const marcadores = {};
 
     /* ---- CARGAR ALUMNOS ---- */
@@ -145,21 +148,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
           tableBody.appendChild(tr);
 
+          // Mapa: crear marcador o actualizarlo
           if (a.lat && a.lng) {
             if (!marcadores[a.id]) {
               const el = document.createElement("div");
-              el.className = `marker ${
-                a.en_alerta ? "marker-alert" : "marker-normal"
-              }`;
+              el.className = `marker ${a.en_alerta ? "marker-alert" : "marker-normal"}`;
 
               marcadores[a.id] = new mapboxgl.Marker(el)
                 .setLngLat([a.lng, a.lat])
                 .setPopup(
                   new mapboxgl.Popup().setHTML(`
-                  <strong>${a.nombre}</strong><br>
-                  ${a.matricula}<br>
-                  ${a.email}
-                `)
+                    <strong>${a.nombre}</strong><br>
+                    ${a.matricula}<br>
+                    ${a.email}
+                  `)
                 )
                 .addTo(map);
             } else {
@@ -181,10 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "/";
     });
 
-    /* ===============================================================
-        MODAL REGISTRO ALUMNO
-    =============================================================== */
-
+    /* ---- MODAL ---- */
     const modal = document.getElementById("modalRegistrar");
     const abrirModal = document.getElementById("abrirModal");
     const cerrarModal = document.getElementById("cerrarModal");
@@ -196,61 +195,56 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === modal) modal.style.display = "none";
     };
 
-    /* ===============================================================
-        FORM REGISTRAR ALUMNO (ÚNICO Y CORRECTO)
-    =============================================================== */
+    /* ---- REGISTRAR ALUMNO ---- */
+    document.getElementById("formRegistrarAlumno").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    document
-      .getElementById("formRegistrarAlumno")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
+      const nombre = alumnoNombre.value.trim();
+      const matricula = alumnoMatricula.value.trim();
+      const email = alumnoCorreo.value.trim();
+      const msg = document.getElementById("msgRegistrar");
 
-        const nombre = alumnoNombre.value.trim();
-        const matricula = alumnoMatricula.value.trim();
-        const email = alumnoCorreo.value.trim();
-        const msg = document.getElementById("msgRegistrar");
+      msg.textContent = "Procesando...";
+      msg.className = "form-message";
 
-        msg.textContent = "Procesando...";
-        msg.className = "form-message";
+      try {
+        // Guardar en BD
+        const res = await fetch("/api/alumnos/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, matricula, email }),
+        });
 
-        try {
-          // 1. Guardar en BD
-          const res = await fetch("/api/alumnos/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nombre, matricula, email }),
-          });
+        const data = await res.json();
 
-          const data = await res.json();
-
-          if (!data.ok) {
-            msg.textContent = data.msg || "Error al registrar alumno.";
-            msg.classList.add("err");
-            return;
-          }
-
-          // 2. Enviar correo con MailJS
-          await emailjs.send("service_tqq2bv2", "template_oqgl00e", {
-            alumno_nombre: nombre,
-            alumno_matricula: matricula,
-            alumno_correo: email,
-            link_ubicacion: `https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`,
-          });
-
-          msg.textContent = "Alumno registrado y correo enviado ✔";
-          msg.classList.add("ok");
-
-          cargarAlumnos();
-
-          setTimeout(() => {
-            modal.style.display = "none";
-            msg.textContent = "";
-          }, 1500);
-
-        } catch (err) {
-          msg.textContent = "Error en el servidor.";
+        if (!data.ok) {
+          msg.textContent = data.msg || "Error al registrar alumno.";
           msg.classList.add("err");
+          return;
         }
-      });
+
+        // Mandar correo
+        await emailjs.send("service_tqq2bv2", "template_oqgl00e", {
+          alumno_nombre: nombre,
+          alumno_matricula: matricula,
+          alumno_correo: email,
+          link_ubicacion: `https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`,
+        });
+
+        msg.textContent = "Alumno registrado y correo enviado ✔";
+        msg.classList.add("ok");
+
+        cargarAlumnos();
+
+        setTimeout(() => {
+          modal.style.display = "none";
+          msg.textContent = "";
+        }, 1500);
+
+      } catch (err) {
+        msg.textContent = "Error en el servidor.";
+        msg.classList.add("err");
+      }
+    });
   }
 });
