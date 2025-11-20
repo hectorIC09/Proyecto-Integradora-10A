@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const d = await res.json();
-        if (d.ok) window.location.href = "/dashboard";
+        if (d.ok) window.location.href = "/dashboard.html";
         else msg.textContent = d.message || "Credenciales incorrectas.";
       } catch {
         msg.textContent = "Error de conexión.";
