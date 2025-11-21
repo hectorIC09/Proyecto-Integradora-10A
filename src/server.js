@@ -49,8 +49,7 @@ app.get("/api/me", (req, res) => {
 app.use("/api", authRoutes);
 
 // Alumnos (protegida)
-
-app.use("/api/alumnos", soloAdmin, alumnosRoutes);
+app.use("/api/alumnos", alumnosRoutes);
 
 // ==============================
 //   🔵 2. ARCHIVOS PÚBLICOS
