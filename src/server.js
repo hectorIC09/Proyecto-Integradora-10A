@@ -49,7 +49,7 @@ app.get("/api/me", (req, res) => {
 app.use("/api", authRoutes);
 
 // Alumnos (protegida)
-app.use("/api/alumnos/ubicacion", alumnosRoutes); // pública
+
 app.use("/api/alumnos", soloAdmin, alumnosRoutes);
 
 // ==============================
