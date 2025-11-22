@@ -35,7 +35,31 @@
     }
 
     #btnUbicacion { background: #3b82f6; color: white; }
-    #btnPanico { background: #ef4444; color: white; }
+
+    .panic-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.panic-btn {
+  width: 140px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.panic-btn:active {
+  transform: scale(0.95);
+}
+
+.panic-alert {
+  filter: drop-shadow(0 0 12px red);
+}
+
+#panicStatus {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
   </style>
 </head>
 
@@ -47,7 +71,10 @@
     <h2 id="alumnoNombre">Cargando...</h2>
 
     <button id="btnUbicacion">Activar Ubicación</button>
-    <button id="btnPanico">🚨 Botón de Pánico</button>
+    <div class="panic-container">
+  <img id="panicBtn" src="/public/images/rojo.png" class="panic-btn">
+  <p id="panicStatus">Estado: Normal</p>
+</div>
   </div>
 
 <script>
@@ -62,23 +89,60 @@ async function cargarAlumno() {
   }
 
   const alumno = data.alumno;
-  document.getElementById("alumnoNombre").textContent =
-    alumno.nombre + " (" + alumno.matricula + ")";
 
-  // Link para ubicación
+  // Mostrar nombre
+  document.getElementById("alumnoNombre").textContent =
+    `${alumno.nombre} (${alumno.matricula})`;
+
+  // Botón para enviar ubicación continuamente (ubicacion.html)
   document.getElementById("btnUbicacion").onclick = () => {
     window.open(`/ubicacion.html?matricula=${alumno.matricula}`, "_blank");
   };
 
-  // Botón de pánico
-  document.getElementById("btnPanico").onclick = async () => {
-    await fetch("/api/alumnos/panico", { method: "POST" });
-    alert("🚨 Alerta enviada. El personal de seguridad ha sido notificado.");
+  // BOTÓN DE PÁNICO (activar/desactivar)
+  let alertaActiva = alumno.en_alerta === true;
+
+  const panicBtn = document.getElementById("btnPanico");
+  const panicText = document.getElementById("panicText");
+
+  function refrescarUI() {
+    if (alertaActiva) {
+      panicBtn.classList.add("panic-active");
+      panicText.textContent = "Estado: 🚨 EN ALERTA";
+    } else {
+      panicBtn.classList.remove("panic-active");
+      panicText.textContent = "Estado: Normal";
+    }
+  }
+
+  refrescarUI();
+
+  // Al presionar el botón
+  panicBtn.onclick = async () => {
+    alertaActiva = !alertaActiva; // alternar
+
+    refrescarUI();
+
+    await fetch("/api/alumnos/alerta", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        matricula: alumno.matricula,
+        alerta: alertaActiva
+      })
+    });
+
+    if (alertaActiva) {
+      alert("🚨 Botón de pánico ACTIVADO. El personal ya fue notificado.");
+    } else {
+      alert("✔ Botón de pánico desactivado.");
+    }
   };
 }
 
 cargarAlumno();
 </script>
+
 
 </body>
 </html>
