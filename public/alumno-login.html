@@ -74,24 +74,38 @@
 
 <script>
 document.getElementById("loginBtn").onclick = async () => {
-  const email = email.value.trim();
-  const matricula = matricula.value.trim();
+
+  // ✔ OBTENER VALORES DEL INPUT DE FORMA SEGURA
+  const emailValue = document.getElementById("email").value.trim();
+  const matriculaValue = document.getElementById("matricula").value.trim();
   const msg = document.getElementById("msg");
 
-  const res = await fetch("/api/alumnos/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, matricula })
-  });
+  if (!emailValue || !matriculaValue) {
+    msg.textContent = "Completa ambos campos.";
+    return;
+  }
 
-  const data = await res.json();
-  if (!data.ok) {
-    msg.textContent = data.msg;
-  } else {
-    window.location.href = "/alumno-dashboard.html";
+  try {
+    const res = await fetch("/api/alumnos/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailValue, matricula: matriculaValue })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      msg.textContent = data.msg || "Datos incorrectos.";
+    } else {
+      window.location.href = "/alumno-dashboard.html";
+    }
+
+  } catch (err) {
+    msg.textContent = "Error de conexión con el servidor.";
   }
 };
 </script>
+
 
 </body>
 </html>
