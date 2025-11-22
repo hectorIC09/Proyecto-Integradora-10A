@@ -94,33 +94,32 @@ async function cargarAlumno() {
   document.getElementById("alumnoNombre").textContent =
     `${alumno.nombre} (${alumno.matricula})`;
 
-  // Botón para enviar ubicación continuamente (ubicacion.html)
+  // Botón para enviar ubicación
   document.getElementById("btnUbicacion").onclick = () => {
     window.open(`/ubicacion.html?matricula=${alumno.matricula}`, "_blank");
   };
 
-  // BOTÓN DE PÁNICO (activar/desactivar)
+  // BOTÓN DE PÁNICO
   let alertaActiva = alumno.en_alerta === true;
 
-  const panicBtn = document.getElementById("btnPanico");
-  const panicText = document.getElementById("panicText");
+  const panicBtn = document.getElementById("panicBtn");      // ✅ CORRECTO
+  const panicText = document.getElementById("panicStatus");  // ✅ CORRECTO
 
   function refrescarUI() {
     if (alertaActiva) {
-      panicBtn.classList.add("panic-active");
+      panicBtn.classList.add("panic-alert");
       panicText.textContent = "Estado: 🚨 EN ALERTA";
     } else {
-      panicBtn.classList.remove("panic-active");
+      panicBtn.classList.remove("panic-alert");
       panicText.textContent = "Estado: Normal";
     }
   }
 
   refrescarUI();
 
-  // Al presionar el botón
+  // Alternar estado al hacer clic
   panicBtn.onclick = async () => {
-    alertaActiva = !alertaActiva; // alternar
-
+    alertaActiva = !alertaActiva;
     refrescarUI();
 
     await fetch("/api/alumnos/alerta", {
@@ -133,7 +132,7 @@ async function cargarAlumno() {
     });
 
     if (alertaActiva) {
-      alert("🚨 Botón de pánico ACTIVADO. El personal ya fue notificado.");
+      alert("🚨 Botón de pánico ACTIVADO.");
     } else {
       alert("✔ Botón de pánico desactivado.");
     }
@@ -142,6 +141,7 @@ async function cargarAlumno() {
 
 cargarAlumno();
 </script>
+
 
 
 </body>
