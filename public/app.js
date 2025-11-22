@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/dark-v11",
-      center: [-100.312, 25.667],
+      center: [–100.5114, 25.6906],
       zoom: 13,
       pitch: 45,
       bearing: -20,
