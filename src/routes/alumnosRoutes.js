@@ -23,7 +23,7 @@ import {
   obtenerAlumnosPorAdmin,
   loginAlumno,
   alumnoActual,
-  activarPanico
+  toggleAlerta
 } from "../controllers/alumnosController.js";
 import { soloAdmin } from "../server.js";
 
