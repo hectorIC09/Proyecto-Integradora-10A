@@ -12,8 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     emailjs.init("0HprKapko61rkW7zp"); 
-  </script><!-- Element SDK -->
-  <script src="/_sdk/element_sdk.js"></script>
+  </script>
   <style>
     * {
       margin: 0;
@@ -297,6 +296,45 @@
       padding: 14px 16px !important;
     }
 
+    /* Marcadores del mapa */
+    .marker-normal {
+      width: 22px;
+      height: 22px;
+      background: #38bdf8;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .marker-normal:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 1);
+    }
+
+    .marker-alert {
+      width: 22px;
+      height: 22px;
+      background: #f87171;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 0 15px rgba(248, 113, 113, 0.9);
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(248, 113, 113, 0.9);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgba(248, 113, 113, 1);
+      }
+    }
+
     /* Modal mejorado */
     .modal {
       position: fixed;
@@ -546,25 +584,26 @@
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body class="dashboard-page">
   <header class="main-header">
-   <nav class="container"><a href="/dashboard.html" class="logo"><strong id="app-title">Campus Watch</strong></a>
+   <nav class="container"><a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
     <ul class="nav-links">
      <li><a href="#alumnos-panel">Alumnos</a></li>
      <li><a href="#map">Mapa en Vivo</a></li>
-     <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
+     <li><button class="btn btn-secondary">Cerrar sesión</button></li>
     </ul>
    </nav>
   </header><!-- CONTENEDOR PRINCIPAL -->
   <div class="dashboard-container"><!-- PANEL IZQUIERDO -->
    <div class="panels-wrapper">
     <div class="dashboard-header">
-     <h1 id="welcome">Bienvenido</h1><button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
+     <h1>Bienvenido</h1><button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
     </div>
     <div class="panel" id="alumnos-panel">
-     <h2 id="students-heading">Alumnos</h2>
+     <h2>Alumnos</h2>
      <div class="table-container">
       <table class="tabla">
        <thead>
@@ -586,182 +625,18 @@
   </div><!-- MODAL -->
   <div id="modalRegistrar" class="modal" style="display:none;">
    <div class="modal-content"><span id="cerrarModal" class="close">×</span>
-    <h2 id="modal-title">Registrar Alumno</h2>
+    <h2>Registrar Alumno</h2>
     <form id="formRegistrarAlumno">
      <div class="form-group"><label>Nombre</label> <input type="text" id="alumnoNombre" required>
      </div>
      <div class="form-group"><label>Matrícula</label> <input type="text" id="alumnoMatricula" required>
      </div>
      <div class="form-group"><label>Correo institucional</label> <input type="email" id="alumnoCorreo" required>
-     </div><button type="submit" class="btn btn-primary full-width" id="submit-button"> Registrar y Enviar Invitación </button>
+     </div><button type="submit" class="btn btn-primary full-width"> Registrar y Enviar Invitación </button>
      <p id="msgRegistrar" class="form-message"></p>
     </form>
    </div>
   </div>
   <script src="app.js"></script>
-  <script>
-  // Element SDK Configuration
-  const defaultConfig = {
-    app_title: "Campus Watch",
-    welcome_text: "Bienvenido",
-    register_button_text: "+ Registrar Alumno",
-    logout_button_text: "Cerrar sesión",
-    students_heading: "Alumnos",
-    modal_title: "Registrar Alumno",
-    submit_button_text: "Registrar y Enviar Invitación",
-    primary_color: "#38bdf8",
-    secondary_color: "#0ea5e9",
-    text_color: "#e2e8f0",
-    background_color: "#0a0f1e",
-    accent_color: "#1e293b"
-  };
-
-  async function onConfigChange(config) {
-    const appTitle = config.app_title || defaultConfig.app_title;
-    const welcomeText = config.welcome_text || defaultConfig.welcome_text;
-    const registerButtonText = config.register_button_text || defaultConfig.register_button_text;
-    const logoutButtonText = config.logout_button_text || defaultConfig.logout_button_text;
-    const studentsHeading = config.students_heading || defaultConfig.students_heading;
-    const modalTitle = config.modal_title || defaultConfig.modal_title;
-    const submitButtonText = config.submit_button_text || defaultConfig.submit_button_text;
-
-    const primaryColor = config.primary_color || defaultConfig.primary_color;
-    const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
-    const textColor = config.text_color || defaultConfig.text_color;
-    const backgroundColor = config.background_color || defaultConfig.background_color;
-    const accentColor = config.accent_color || defaultConfig.accent_color;
-
-    document.getElementById('app-title').textContent = appTitle;
-    document.getElementById('welcome').textContent = welcomeText;
-    document.getElementById('abrirModal').textContent = registerButtonText;
-    document.getElementById('btn-logout').textContent = logoutButtonText;
-    document.getElementById('students-heading').textContent = studentsHeading;
-    document.getElementById('modal-title').textContent = modalTitle;
-    document.getElementById('submit-button').textContent = submitButtonText;
-
-    document.body.style.background = backgroundColor;
-    
-    const style = document.createElement('style');
-    style.textContent = `
-      .logo, .dashboard-header h1 {
-        background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .btn-primary {
-        background: ${primaryColor};
-        box-shadow: 0 4px 15px ${primaryColor}4d;
-        color: #0f172a;
-      }
-      .btn-primary:hover {
-        background: ${secondaryColor};
-        box-shadow: 0 6px 20px ${primaryColor}66;
-      }
-      .btn-secondary {
-        background: ${primaryColor}1a;
-        color: ${primaryColor};
-        border: 1px solid ${primaryColor}33;
-      }
-      .btn-secondary:hover {
-        background: ${primaryColor}33;
-        border-color: ${primaryColor}4d;
-      }
-      .tabla tbody tr:hover {
-        background: ${primaryColor}14;
-      }
-      .form-group input:focus {
-        border-color: ${primaryColor};
-        box-shadow: 0 0 0 3px ${primaryColor}1a;
-      }
-      .nav-links a:hover {
-        color: ${primaryColor};
-      }
-      .close:hover {
-        color: ${primaryColor};
-      }
-      .panels-wrapper::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);
-      }
-      .mapboxgl-ctrl-group button:hover {
-        background: ${primaryColor} !important;
-        color: #0f172a !important;
-      }
-      body {
-        background: ${backgroundColor};
-      }
-      .panels-wrapper {
-        background: ${accentColor};
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  function mapToCapabilities(config) {
-    return {
-      recolorables: [
-        {
-          get: () => config.primary_color || defaultConfig.primary_color,
-          set: (value) => {
-            config.primary_color = value;
-            window.elementSdk.setConfig({ primary_color: value });
-          }
-        },
-        {
-          get: () => config.secondary_color || defaultConfig.secondary_color,
-          set: (value) => {
-            config.secondary_color = value;
-            window.elementSdk.setConfig({ secondary_color: value });
-          }
-        },
-        {
-          get: () => config.text_color || defaultConfig.text_color,
-          set: (value) => {
-            config.text_color = value;
-            window.elementSdk.setConfig({ text_color: value });
-          }
-        },
-        {
-          get: () => config.background_color || defaultConfig.background_color,
-          set: (value) => {
-            config.background_color = value;
-            window.elementSdk.setConfig({ background_color: value });
-          }
-        },
-        {
-          get: () => config.accent_color || defaultConfig.accent_color,
-          set: (value) => {
-            config.accent_color = value;
-            window.elementSdk.setConfig({ accent_color: value });
-          }
-        }
-      ],
-      borderables: [],
-      fontEditable: undefined,
-      fontSizeable: undefined
-    };
-  }
-
-  function mapToEditPanelValues(config) {
-    return new Map([
-      ["app_title", config.app_title || defaultConfig.app_title],
-      ["welcome_text", config.welcome_text || defaultConfig.welcome_text],
-      ["register_button_text", config.register_button_text || defaultConfig.register_button_text],
-      ["logout_button_text", config.logout_button_text || defaultConfig.logout_button_text],
-      ["students_heading", config.students_heading || defaultConfig.students_heading],
-      ["modal_title", config.modal_title || defaultConfig.modal_title],
-      ["submit_button_text", config.submit_button_text || defaultConfig.submit_button_text]
-    ]);
-  }
-
-  if (window.elementSdk) {
-    window.elementSdk.init({
-      defaultConfig,
-      onConfigChange,
-      mapToCapabilities,
-      mapToEditPanelValues
-    });
-  }
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2b036234bc8c3d',t:'MTc2Mzg0MTYyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2b1453c24c8c3d',t:'MTc2Mzg0MjMyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
