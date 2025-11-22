@@ -46,7 +46,8 @@ router.get("/mis-alumnos",soloAdmin, obtenerAlumnosPorAdmin);
 
 router.post("/login", loginAlumno);
 router.get("/me", alumnoActual);
-router.post("/panico", activarPanico);
+router.post("/alerta", toggleAlerta);
+
 
 export default router;
 

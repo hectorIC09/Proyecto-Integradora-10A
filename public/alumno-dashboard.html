@@ -102,8 +102,8 @@ async function cargarAlumno() {
   // BOTÓN DE PÁNICO
   let alertaActiva = alumno.en_alerta === true;
 
-  const panicBtn = document.getElementById("panicBtn");      // ✅ CORRECTO
-  const panicText = document.getElementById("panicStatus");  // ✅ CORRECTO
+  const panicBtn = document.getElementById("panicBtn");
+  const panicText = document.getElementById("panicStatus");
 
   function refrescarUI() {
     if (alertaActiva) {
@@ -122,7 +122,7 @@ async function cargarAlumno() {
     alertaActiva = !alertaActiva;
     refrescarUI();
 
-    await fetch("/api/alumnos/panico", {
+    await fetch("/api/alumnos/alerta", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -192,14 +192,17 @@ export const alumnoActual = (req, res) => {
 // =======================================
 // Botón de pánico
 // =======================================
-export const activarPanico = async (req, res) => {
+export const toggleAlerta = async (req, res) => {
+    const { alerta } = req.body; // true o false
+
     if (!req.session.alumno)
         return res.json({ ok: false });
 
     await pool.query(
-        "UPDATE alumnos SET en_alerta=true WHERE matricula=$1",
-        [req.session.alumno.matricula]
+        "UPDATE alumnos SET en_alerta=$1 WHERE matricula=$2",
+        [alerta, req.session.alumno.matricula]
     );
 
     res.json({ ok: true });
 };
+
