@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alumno_nombre: nombre,
           alumno_matricula: matricula,
           alumno_correo: email,
-          link_ubicacion: `https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`,
+          link_ubicacion: /*`https://proyecto-integradora-10a.onrender.com/ubicacion.html?matricula=${matricula}`*/'https://proyecto-integradora-10a.onrender.com/alumno-login.html',
         });
 
         msg.textContent = "Alumno registrado y correo enviado ✔";
