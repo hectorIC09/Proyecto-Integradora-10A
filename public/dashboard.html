@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"><!-- Mapbox -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script><!-- EmailJS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     emailjs.init("0HprKapko61rkW7zp"); 
@@ -131,7 +131,7 @@
     /* Dashboard Container - Layout Responsivo */
     .dashboard-container {
       display: grid;
-      grid-template-columns: 1fr 1.5fr;
+      grid-template-columns: 1.5fr 1fr;
       gap: 2rem;
       max-width: 1400px;
       margin: 2rem auto;
@@ -296,7 +296,7 @@
       padding: 14px 16px !important;
     }
 
-    /* Marcadores del mapa */
+    /* Marcadores del mapa - SIN transform para evitar el "despegue" */
     .marker-normal {
       width: 24px;
       height: 24px;
@@ -305,36 +305,29 @@
       border: 3px solid white;
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: absolute;
-      transform: translate(-50%, -50%);
+      transition: box-shadow 0.2s ease;
     }
 
     .marker-normal:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 18px rgba(56, 189, 248, 1);
-   }
+      box-shadow: 0 0 20px rgba(56, 189, 248, 1);
+    }
 
-
-   .marker-alert {
-   width: 24px;
-   height: 24px;
-   background: #f87171;
-   border-radius: 50%;
-   border: 3px solid white;
-   box-shadow: 0 0 15px rgba(248, 113, 113, 0.9);
-   cursor: pointer;
-   animation: pulseAlert 2s infinite;
-   }
-
+    .marker-alert {
+      width: 24px;
+      height: 24px;
+      background: #f87171;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 15px rgba(248, 113, 113, 0.9);
+      cursor: pointer;
+      animation: pulseAlert 2s infinite;
+    }
 
     @keyframes pulseAlert {
       0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
         box-shadow: 0 0 15px rgba(248, 113, 113, 0.9);
       }
       50% {
-        transform: translate(-50%, -50%) scale(1.1);
         box-shadow: 0 0 25px rgba(248, 113, 113, 1);
       }
     }
@@ -595,14 +588,17 @@
     <ul class="nav-links">
      <li><a href="#alumnos-panel">Alumnos</a></li>
      <li><a href="#map">Mapa en Vivo</a></li>
-     <li><button class="btn btn-secondary">Cerrar sesión</button></li>
+     <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
     </ul>
    </nav>
-  </header><!-- CONTENEDOR PRINCIPAL -->
-  <div class="dashboard-container"><!-- PANEL IZQUIERDO -->
+  </header><!-- CONTENEDOR PRINCIPAL (Izquierda tabla | Derecha mapa) -->
+  <div class="dashboard-container"><!-- PANEL DERECHO (MAPA estilo Apple) -->
+   <div class="map-wrapper">
+    <div id="map"></div>
+   </div><!-- PANEL IZQUIERDO -->
    <div class="panels-wrapper">
     <div class="dashboard-header">
-     <h1>Bienvenido</h1><button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
+     <h1 id="welcome">Bienvenido</h1><!-- ⚡ MODIFICADO: botón ahora abre modal --> <button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
     </div>
     <div class="panel" id="alumnos-panel">
      <h2>Alumnos</h2>
@@ -620,11 +616,8 @@
       </table>
      </div>
     </div>
-   </div><!-- PANEL DERECHO (MAPA) -->
-   <div class="map-wrapper">
-    <div id="map"></div>
    </div>
-  </div><!-- MODAL -->
+  </div>
   <div id="modalRegistrar" class="modal" style="display:none;">
    <div class="modal-content"><span id="cerrarModal" class="close">×</span>
     <h2>Registrar Alumno</h2>
@@ -640,5 +633,5 @@
    </div>
   </div>
   <script src="app.js"></script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2b1c8754e78c3d',t:'MTc2Mzg0MjY1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2b543953078c3d',t:'MTc2Mzg0NDkzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
