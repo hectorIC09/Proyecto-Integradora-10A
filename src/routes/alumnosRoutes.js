@@ -20,7 +20,10 @@ import {
   crearAlumno, 
   actualizarUbicacion, 
   obtenerAlumnos, 
-  obtenerAlumnosPorAdmin 
+  obtenerAlumnosPorAdmin,
+  loginAlumno,
+  alumnoActual,
+  activarPanico
 } from "../controllers/alumnosController.js";
 import { soloAdmin } from "../server.js";
 
@@ -38,6 +41,12 @@ router.post("/ubicacion", actualizarUbicacion);
 
 // Alumnos creados por ESTE admin
 router.get("/mis-alumnos",soloAdmin, obtenerAlumnosPorAdmin);
+
+//////////////////////////////////////////
+
+router.post("/login", loginAlumno);
+router.get("/me", alumnoActual);
+router.post("/panico", activarPanico);
 
 export default router;
 

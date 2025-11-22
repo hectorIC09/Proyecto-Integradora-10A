@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Alumno | Campus Watch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #0f172a;
+      font-family: 'Inter', sans-serif;
+      color: white;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 40px;
+      width: 340px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: #334155;
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #msg {
+      margin-top: 12px;
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Ingreso de Alumno</h2>
+
+    <input type="email" id="email" placeholder="Correo institucional">
+    <input type="text" id="matricula" placeholder="Matrícula">
+
+    <button id="loginBtn">Ingresar</button>
+
+    <div id="msg"></div>
+  </div>
+
+<script>
+document.getElementById("loginBtn").onclick = async () => {
+  const email = email.value.trim();
+  const matricula = matricula.value.trim();
+  const msg = document.getElementById("msg");
+
+  const res = await fetch("/api/alumnos/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, matricula })
+  });
+
+  const data = await res.json();
+  if (!data.ok) {
+    msg.textContent = data.msg;
+  } else {
+    window.location.href = "/alumno-dashboard.html";
+  }
+};
+</script>
+
+</body>
+</html>

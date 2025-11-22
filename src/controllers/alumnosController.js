@@ -157,3 +157,49 @@ export const obtenerAlumnosPorAdmin = async (req, res) => {
         res.json({ ok: false, msg: "Error al obtener alumnos del admin" });
     }
 };
+///////////////////////////////////////////////////////////////////////////
+
+// =======================================
+// Login del Alumno
+// =======================================
+export const loginAlumno = async (req, res) => {
+    const { email, matricula } = req.body;
+
+    const { rows } = await pool.query(
+        "SELECT * FROM alumnos WHERE email=$1 AND matricula=$2",
+        [email, matricula]
+    );
+
+    if (rows.length === 0)
+        return res.json({ ok: false, msg: "Datos incorrectos" });
+
+    req.session.alumno = rows[0];
+
+    res.json({ ok: true });
+};
+
+
+// =======================================
+// Obtener datos del alumno logueado
+// =======================================
+export const alumnoActual = (req, res) => {
+    if (!req.session.alumno)
+        return res.json({ ok: false });
+
+    res.json({ ok: true, alumno: req.session.alumno });
+};
+
+// =======================================
+// Botón de pánico
+// =======================================
+export const activarPanico = async (req, res) => {
+    if (!req.session.alumno)
+        return res.json({ ok: false });
+
+    await pool.query(
+        "UPDATE alumnos SET en_alerta=true WHERE matricula=$1",
+        [req.session.alumno.matricula]
+    );
+
+    res.json({ ok: true });
+};
