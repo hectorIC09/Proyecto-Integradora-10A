@@ -166,6 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 .addTo(map);
             } else {
               marcadores[a.id].setLngLat([a.lng, a.lat]);
+              const el = marcadores[a.id].getElement();
+                 el.className = a.en_alerta ? "marker-alert" : "marker-normal";
             }
           }
         });
