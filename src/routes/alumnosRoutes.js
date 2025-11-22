@@ -48,6 +48,13 @@ router.post("/login", loginAlumno);
 router.get("/me", alumnoActual);
 router.post("/alerta", toggleAlerta);
 
+router.post("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ ok: true });
+  });
+});
+
+
 
 export default router;
 

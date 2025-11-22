@@ -75,6 +75,10 @@
   <img id="panicBtn" src="images/rojo.png" class="panic-btn">
   <p id="panicStatus">Estado: Normal</p>
 </div>
+<br>
+<button id="btnLogoutAlumno" style="background:#ef4444; color:white;">
+  Cerrar sesión
+</button>
   </div>
 
 <script>
@@ -139,7 +143,13 @@ async function cargarAlumno() {
   };
 }
 
+document.getElementById("btnLogoutAlumno").onclick = async () => {
+  await fetch("/api/alumnos/logout", { method: "POST" });
+  window.location.href = "/alumno-login.html";
+};
+
 cargarAlumno();
+
 </script>
 
 
