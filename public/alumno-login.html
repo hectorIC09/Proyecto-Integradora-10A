@@ -1,111 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
+ <head>
   <meta charset="UTF-8">
   <title>Alumno | Campus Watch</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Tailwind CDN para el rediseño visual -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #0f172a;
-      font-family: 'Inter', sans-serif;
-      color: white;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 40px;
-      width: 340px;
-      border-radius: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: none;
-      background: #334155;
-      color: white;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-    }
-
-    #msg {
-      margin-top: 12px;
-      color: #f87171;
+      box-sizing: border-box;
     }
   </style>
-</head>
-<body>
-
-  <div class="card">
-    <h2>Ingreso de Alumno</h2>
-
-    <input type="email" id="email" placeholder="Correo institucional">
-    <input type="text" id="matricula" placeholder="Matrícula">
-
-    <button id="loginBtn">Ingresar</button>
-
-    <div id="msg"></div>
-  </div>
-
-<script>
-document.getElementById("loginBtn").onclick = async () => {
-
-  // ✔ OBTENER VALORES DEL INPUT DE FORMA SEGURA
-  const emailValue = document.getElementById("email").value.trim();
-  const matriculaValue = document.getElementById("matricula").value.trim();
-  const msg = document.getElementById("msg");
-
-  if (!emailValue || !matriculaValue) {
-    msg.textContent = "Completa ambos campos.";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/alumnos/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailValue, matricula: matriculaValue })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-      msg.textContent = data.msg || "Datos incorrectos.";
-    } else {
-      window.location.href = "/alumno-dashboard.html";
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            navyBg: '#0f172a',
+            navyCard: '#1e293b',
+            navyInput: '#334155',
+            bluePrimary: '#3b82f6',
+            bluePrimaryHover: '#1d4ed8',
+            errorText: '#f87171',
+          }
+        }
+      }
     }
+  </script>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="m-0 min-h-full h-full flex items-center justify-center bg-navyBg font-inter text-white">
+  <div class="w-full h-full flex items-center justify-center px-4 py-6">
+   <main class="w-full max-w-md bg-navyCard rounded-2xl shadow-2xl border border-white/5 
+             px-7 py-8 flex flex-col gap-6" aria-labelledby="alumno-title"><!-- Encabezado con icono y título -->
+    <header class="flex flex-col items-center gap-2">
+     <div class="w-14 h-14 rounded-full bg-bluePrimary/10 border border-bluePrimary/40 
+                    flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" aria-hidden="true" class="w-7 h-7 text-bluePrimary"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3zm0 2.2 5 1.9v5.9c0 3.8-2.4 7.2-5 8.5-2.6-1.3-5-4.7-5-8.5V6.1l5-1.9z" /> <path fill="currentColor" d="M12 7a3 3 0 0 0-3 3c0 2.2 1.5 4.1 3 4.9 1.5-.8 3-2.7 3-4.9a3 3 0 0 0-3-3zm0 2a1 1 0 0 1 1 1c0 .8-.4 1.7-1 2.4-.6-.7-1-1.6-1-2.4a1 1 0 0 1 1-1z" />
+      </svg>
+     </div>
+     <div class="text-center">
+      <h1 id="alumno-title" class="text-xl font-semibold tracking-tight">Ingreso de Alumno</h1>
+      <p class="mt-1 text-sm text-slate-300">Accede con tu <span class="font-medium text-bluePrimary">correo institucional</span> y tu <span class="font-medium">matrícula</span>.</p>
+     </div>
+    </header><!-- Formulario -->
+    <section aria-label="Formulario de acceso de alumno" class="flex flex-col gap-4">
+     <div class="flex flex-col gap-3">
+      <div class="text-left"><label for="email" class="block text-sm font-medium text-slate-200 mb-1"> Correo institucional </label>
+       <div class="flex items-center gap-2 bg-navyInput rounded-xl px-3 py-2 
+                     focus-within:ring-2 focus-within:ring-bluePrimary/70 focus-within:ring-offset-2 
+                     focus-within:ring-offset-navyCard transition-shadow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" aria-hidden="true" class="w-5 h-5 text-slate-300"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v1.2l-10 5.6-10-5.6V6a2 2 0 0 1 2-2zm-2 6.3V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-7.7l-10 5.6-10-5.6z" />
+        </svg><input type="email" id="email" placeholder="nombre.apellido@campus.edu" class="w-full bg-transparent border-none outline-none text-sm 
+                       placeholder:text-slate-400" autocomplete="email">
+       </div>
+      </div>
+      <div class="text-left"><label for="matricula" class="block text-sm font-medium text-slate-200 mb-1"> Matrícula </label>
+       <div class="flex items-center gap-2 bg-navyInput rounded-xl px-3 py-2 
+                     focus-within:ring-2 focus-within:ring-bluePrimary/70 focus-within:ring-offset-2 
+                     focus-within:ring-offset-navyCard transition-shadow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" aria-hidden="true" class="w-5 h-5 text-slate-300"><path fill="currentColor" d="M5 3h14a2 2 0 0 1 2 2v1H3V5a2 2 0 0 1 2-2zm-2 5h18v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8zm4 3v2h4v-2H7zm0 4v2h3v-2H7z" />
+        </svg><input type="text" id="matricula" placeholder="Ingresa tu matrícula" class="w-full bg-transparent border-none outline-none text-sm 
+                       placeholder:text-slate-400" autocomplete="off">
+       </div>
+      </div>
+     </div>
+     <p id="msg" class="min-h-[1.25rem] text-xs text-errorText text-left"></p><button id="loginBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 
+                 bg-bluePrimary hover:bg-bluePrimaryHover 
+                 text-white font-medium text-sm 
+                 rounded-xl px-4 py-2.5 
+                 transition-colors focus-visible:outline-none 
+                 focus-visible:ring-2 focus-visible:ring-bluePrimary/70 
+                 focus-visible:ring-offset-2 focus-visible:ring-offset-navyCard"> <span>Ingresar</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" aria-hidden="true" class="w-4 h-4"><path fill="currentColor" d="M13 4v4h-2V6H5v12h6v-2h2v4H3V4h10zm8 8-5 5v-3h-6v-4h6V7l5 5z" />
+      </svg></button>
+    </section><!-- Enlace para regresar -->
+    <footer class="pt-3 border-t border-slate-600/40 mt-2 text-center"><a href="" id="backToMainLogin" class="inline-flex items-center gap-2 text-xs font-medium 
+                 text-bluePrimary hover:text-bluePrimaryHover 
+                 underline underline-offset-4 decoration-bluePrimary/60 
+                 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" aria-hidden="true" class="w-3.5 h-3.5"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+      </svg> Volver </a>
+    </footer>
+   </main>
+  </div>
+  <script>
+    document.getElementById("loginBtn").onclick = async () => {
+      const emailValue = document.getElementById("email").value.trim();
+      const matriculaValue = document.getElementById("matricula").value.trim();
+      const msg = document.getElementById("msg");
 
-  } catch (err) {
-    msg.textContent = "Error de conexión con el servidor.";
-  }
-};
-</script>
+      if (!emailValue || !matriculaValue) {
+        msg.textContent = "Completa ambos campos.";
+        return;
+      }
 
+      try {
+        const res = await fetch("/api/alumnos/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailValue, matricula: matriculaValue })
+        });
 
-</body>
+        const data = await res.json();
+
+        if (!data.ok) {
+          msg.textContent = data.msg || "Datos incorrectos.";
+        } else {
+          window.location.href = "/alumno-dashboard.html";
+        }
+
+      } catch (err) {
+        msg.textContent = "Error de conexión con el servidor.";
+      }
+    };
+     document.getElementById("backToMainLogin").href = "/login.html";
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2bc1b063a98c3d',t:'MTc2Mzg0OTQyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
