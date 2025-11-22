@@ -1,116 +1,767 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | Campus Watch</title>
-
-  <!-- Fonts -->
+  <title>Dashboard | Campus Watch</title><!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-
-  <!-- Mapbox -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-
-  <!-- Estilos -->
-  <link rel="stylesheet" href="styles.css">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"><!-- Mapbox -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script><!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  emailjs.init("0HprKapko61rkW7zp"); 
-</script>
+  <script>
+    emailjs.init("0HprKapko61rkW7zp"); 
+  </script><!-- Element SDK -->
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-</head>
+    body {
+      box-sizing: border-box;
+    }
 
-<body class="dashboard-page">
+    html, body {
+      height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0f1e;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
 
-<header class="main-header">
-  <nav class="container">
-    <a href="/dashboard.html" class="logo"><strong>Campus Watch</strong></a>
+    /* Header moderno con glassmorphism */
+    .main-header {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid #1e293b;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #38bdf8;
+    }
+
+    /* Botones modernos */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+      background: #38bdf8;
+      color: #0f172a;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #0ea5e9;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.98);
+    }
+
+    /* Dashboard Container - Layout Responsivo */
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      height: calc(100% - 140px);
+    }
+
+    /* Panel izquierdo con glassmorphism */
+    .panels-wrapper {
+      background: #0f172a;
+      backdrop-filter: saturate(180%) blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: inset -4px 0 10px rgba(0, 0, 0, 0.35);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      border-right: 1px solid #1e293b;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .panel {
+      background: #1e293b;
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      border: 1px solid #2a3a52;
+    }
+
+    .panel h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid #2f3e55;
+      padding-bottom: 10px;
+    }
+
+    .panel h2::before {
+      content: "👥";
+      font-size: 1.5rem;
+    }
+
+    /* Tabla moderna */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+    }
+
+    .tabla {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.95rem;
+    }
+
+    .tabla thead {
+      background: #111827;
+      color: #94a3b8;
+    }
+
+    .tabla th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
+    }
+
+    .tabla th:first-child {
+      border-top-left-radius: 8px;
+    }
+
+    .tabla th:last-child {
+      border-top-right-radius: 8px;
+    }
+
+    .tabla tbody tr {
+      background: transparent;
+      transition: background-color 0.15s ease;
+      border-bottom: 1px solid #2a3a52;
+    }
+
+    .tabla tbody tr:hover {
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .tabla tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .tabla td {
+      padding: 1rem;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+    }
+
+    /* Mapa con diseño elevado */
+    .map-wrapper {
+      background: #0f172a;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+      position: relative;
+      border-left: 1px solid #1e293b;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+    }
+
+    /* Estilos para Mapbox */
+    .mapboxgl-canvas {
+      background: #0f172a !important;
+    }
+
+    .mapboxgl-ctrl-group {
+      background: #1e293b !important;
+      border: 1px solid #334155 !important;
+      border-radius: 8px !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .mapboxgl-ctrl-group button {
+      color: #e2e8f0 !important;
+    }
+
+    .mapboxgl-ctrl-group button:hover {
+      background: #38bdf8 !important;
+      color: #0f172a !important;
+    }
+
+    .mapboxgl-popup-content {
+      background: #1e293b !important;
+      color: white !important;
+      border: 1px solid #334155 !important;
+      border-radius: 10px !important;
+      padding: 14px 16px !important;
+    }
+
+    /* Modal mejorado */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: saturate(180%) blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      border-radius: 18px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: slideUp 0.3s ease;
+      border: 1px solid #334155;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .close:hover {
+      color: #38bdf8;
+    }
+
+    .modal-content h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      margin-bottom: 2rem;
+    }
+
+    /* Forms modernos */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      background: #1a2332;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+
+    .full-width {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+
+    .form-message {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+
+    .form-message.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .form-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    /* Scrollbar personalizado */
+    .panels-wrapper::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .panels-wrapper::-webkit-scrollbar-track {
+      background: #1e293b;
+      border-radius: 10px;
+    }
+
+    .panels-wrapper::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+      border-radius: 10px;
+    }
+
+    .panels-wrapper::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .map-wrapper {
+        height: 400px;
+        order: -1;
+      }
+
+      .panels-wrapper {
+        height: auto;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        display: none;
+      }
+
+      .logo {
+        font-size: 1.25rem;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+      }
+
+      .modal-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+
+      .dashboard-container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+        gap: 1rem;
+      }
+
+      .panels-wrapper {
+        padding: 1.5rem;
+      }
+
+      .tabla {
+        font-size: 0.85rem;
+      }
+
+      .tabla th,
+      .tabla td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      .logo {
+        font-size: 1.1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .dashboard-header h1 {
+        font-size: 1.25rem;
+      }
+
+      .panel h2 {
+        font-size: 1.1rem;
+      }
+
+      .tabla th,
+      .tabla td {
+        padding: 0.625rem 0.375rem;
+        font-size: 0.8rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+      }
+
+      .modal-content h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="dashboard-page">
+  <header class="main-header">
+   <nav class="container"><a href="/dashboard.html" class="logo"><strong id="app-title">Campus Watch</strong></a>
     <ul class="nav-links">
-      <li><a href="#alumnos-panel">Alumnos</a></li>
-      <li><a href="#map">Mapa en Vivo</a></li>
-      <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
+     <li><a href="#alumnos-panel">Alumnos</a></li>
+     <li><a href="#map">Mapa en Vivo</a></li>
+     <li><button id="btn-logout" class="btn btn-secondary">Cerrar sesión</button></li>
     </ul>
-  </nav>
-</header>
-
-<!-- CONTENEDOR PRINCIPAL (Izquierda tabla | Derecha mapa) -->
-<div class="dashboard-container">
-
-  <!-- PANEL DERECHO (MAPA estilo Apple) -->
-  <div class="map-wrapper">
-    <div id="map"></div>
-  </div>
-
-  <!-- PANEL IZQUIERDO -->
-  <div class="panels-wrapper">
-    
+   </nav>
+  </header><!-- CONTENEDOR PRINCIPAL -->
+  <div class="dashboard-container"><!-- PANEL IZQUIERDO -->
+   <div class="panels-wrapper">
     <div class="dashboard-header">
-      <h1 id="welcome">Bienvenido</h1>
-
-      <!-- ⚡ MODIFICADO: botón ahora abre modal -->
-      <button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
+     <h1 id="welcome">Bienvenido</h1><button id="abrirModal" class="btn btn-primary">+ Registrar Alumno</button>
     </div>
-
     <div class="panel" id="alumnos-panel">
-      <h2>Alumnos</h2>
-
-      <div class="table-container">
-        <table class="tabla">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Matrícula</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="alumnosTableBody">
-            <!-- Se llena con JS -->
-          </tbody>
-        </table>
-      </div>
+     <h2 id="students-heading">Alumnos</h2>
+     <div class="table-container">
+      <table class="tabla">
+       <thead>
+        <tr>
+         <th>Nombre</th>
+         <th>Matrícula</th>
+         <th>Estado</th>
+        </tr>
+       </thead>
+       <tbody id="alumnosTableBody"><!-- Se llena con JS -->
+       </tbody>
+      </table>
+     </div>
     </div>
-
-  </div>
-
-</div>
-
-
-<!-- ⭐⭐⭐⭐⭐ MODAL PARA REGISTRAR ALUMNO ─ LO NUEVO ⭐⭐⭐⭐⭐ -->
-<div id="modalRegistrar" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span id="cerrarModal" class="close">&times;</span>
-
-    <h2>Registrar Alumno</h2>
-
+   </div><!-- PANEL DERECHO (MAPA) -->
+   <div class="map-wrapper">
+    <div id="map"></div>
+   </div>
+  </div><!-- MODAL -->
+  <div id="modalRegistrar" class="modal" style="display:none;">
+   <div class="modal-content"><span id="cerrarModal" class="close">×</span>
+    <h2 id="modal-title">Registrar Alumno</h2>
     <form id="formRegistrarAlumno">
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" id="alumnoNombre" required>
-      </div>
-
-      <div class="form-group">
-        <label>Matrícula</label>
-        <input type="text" id="alumnoMatricula" required>
-      </div>
-
-      <div class="form-group">
-        <label>Correo institucional</label>
-        <input type="email" id="alumnoCorreo" required>
-      </div>
-
-      <button type="submit" class="btn btn-primary full-width">
-        Registrar y Enviar Invitación
-      </button>
-
-      <p id="msgRegistrar" class="form-message"></p>
+     <div class="form-group"><label>Nombre</label> <input type="text" id="alumnoNombre" required>
+     </div>
+     <div class="form-group"><label>Matrícula</label> <input type="text" id="alumnoMatricula" required>
+     </div>
+     <div class="form-group"><label>Correo institucional</label> <input type="email" id="alumnoCorreo" required>
+     </div><button type="submit" class="btn btn-primary full-width" id="submit-button"> Registrar y Enviar Invitación </button>
+     <p id="msgRegistrar" class="form-message"></p>
     </form>
+   </div>
   </div>
-</div>
+  <script src="app.js"></script>
+  <script>
+  // Element SDK Configuration
+  const defaultConfig = {
+    app_title: "Campus Watch",
+    welcome_text: "Bienvenido",
+    register_button_text: "+ Registrar Alumno",
+    logout_button_text: "Cerrar sesión",
+    students_heading: "Alumnos",
+    modal_title: "Registrar Alumno",
+    submit_button_text: "Registrar y Enviar Invitación",
+    primary_color: "#38bdf8",
+    secondary_color: "#0ea5e9",
+    text_color: "#e2e8f0",
+    background_color: "#0a0f1e",
+    accent_color: "#1e293b"
+  };
 
-<script src="app.js"></script>
-</body>
+  async function onConfigChange(config) {
+    const appTitle = config.app_title || defaultConfig.app_title;
+    const welcomeText = config.welcome_text || defaultConfig.welcome_text;
+    const registerButtonText = config.register_button_text || defaultConfig.register_button_text;
+    const logoutButtonText = config.logout_button_text || defaultConfig.logout_button_text;
+    const studentsHeading = config.students_heading || defaultConfig.students_heading;
+    const modalTitle = config.modal_title || defaultConfig.modal_title;
+    const submitButtonText = config.submit_button_text || defaultConfig.submit_button_text;
+
+    const primaryColor = config.primary_color || defaultConfig.primary_color;
+    const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+    const textColor = config.text_color || defaultConfig.text_color;
+    const backgroundColor = config.background_color || defaultConfig.background_color;
+    const accentColor = config.accent_color || defaultConfig.accent_color;
+
+    document.getElementById('app-title').textContent = appTitle;
+    document.getElementById('welcome').textContent = welcomeText;
+    document.getElementById('abrirModal').textContent = registerButtonText;
+    document.getElementById('btn-logout').textContent = logoutButtonText;
+    document.getElementById('students-heading').textContent = studentsHeading;
+    document.getElementById('modal-title').textContent = modalTitle;
+    document.getElementById('submit-button').textContent = submitButtonText;
+
+    document.body.style.background = backgroundColor;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+      .logo, .dashboard-header h1 {
+        background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .btn-primary {
+        background: ${primaryColor};
+        box-shadow: 0 4px 15px ${primaryColor}4d;
+        color: #0f172a;
+      }
+      .btn-primary:hover {
+        background: ${secondaryColor};
+        box-shadow: 0 6px 20px ${primaryColor}66;
+      }
+      .btn-secondary {
+        background: ${primaryColor}1a;
+        color: ${primaryColor};
+        border: 1px solid ${primaryColor}33;
+      }
+      .btn-secondary:hover {
+        background: ${primaryColor}33;
+        border-color: ${primaryColor}4d;
+      }
+      .tabla tbody tr:hover {
+        background: ${primaryColor}14;
+      }
+      .form-group input:focus {
+        border-color: ${primaryColor};
+        box-shadow: 0 0 0 3px ${primaryColor}1a;
+      }
+      .nav-links a:hover {
+        color: ${primaryColor};
+      }
+      .close:hover {
+        color: ${primaryColor};
+      }
+      .panels-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);
+      }
+      .mapboxgl-ctrl-group button:hover {
+        background: ${primaryColor} !important;
+        color: #0f172a !important;
+      }
+      body {
+        background: ${backgroundColor};
+      }
+      .panels-wrapper {
+        background: ${accentColor};
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function mapToCapabilities(config) {
+    return {
+      recolorables: [
+        {
+          get: () => config.primary_color || defaultConfig.primary_color,
+          set: (value) => {
+            config.primary_color = value;
+            window.elementSdk.setConfig({ primary_color: value });
+          }
+        },
+        {
+          get: () => config.secondary_color || defaultConfig.secondary_color,
+          set: (value) => {
+            config.secondary_color = value;
+            window.elementSdk.setConfig({ secondary_color: value });
+          }
+        },
+        {
+          get: () => config.text_color || defaultConfig.text_color,
+          set: (value) => {
+            config.text_color = value;
+            window.elementSdk.setConfig({ text_color: value });
+          }
+        },
+        {
+          get: () => config.background_color || defaultConfig.background_color,
+          set: (value) => {
+            config.background_color = value;
+            window.elementSdk.setConfig({ background_color: value });
+          }
+        },
+        {
+          get: () => config.accent_color || defaultConfig.accent_color,
+          set: (value) => {
+            config.accent_color = value;
+            window.elementSdk.setConfig({ accent_color: value });
+          }
+        }
+      ],
+      borderables: [],
+      fontEditable: undefined,
+      fontSizeable: undefined
+    };
+  }
+
+  function mapToEditPanelValues(config) {
+    return new Map([
+      ["app_title", config.app_title || defaultConfig.app_title],
+      ["welcome_text", config.welcome_text || defaultConfig.welcome_text],
+      ["register_button_text", config.register_button_text || defaultConfig.register_button_text],
+      ["logout_button_text", config.logout_button_text || defaultConfig.logout_button_text],
+      ["students_heading", config.students_heading || defaultConfig.students_heading],
+      ["modal_title", config.modal_title || defaultConfig.modal_title],
+      ["submit_button_text", config.submit_button_text || defaultConfig.submit_button_text]
+    ]);
+  }
+
+  if (window.elementSdk) {
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities,
+      mapToEditPanelValues
+    });
+  }
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a2b036234bc8c3d',t:'MTc2Mzg0MTYyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
