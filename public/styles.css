@@ -1087,3 +1087,11 @@ body.dashboard-page {
   color: var(--text-muted);
 }
 .close:hover { color: var(--primary); }
+
+.link-alumno {
+  color: #1d8aff;
+  font-weight: 500;
+}
+.link-alumno:hover {
+  text-decoration: underline;
+}
